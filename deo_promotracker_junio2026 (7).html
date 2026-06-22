@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DEO Promotracker — Junio 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0efe8;color:#1a1a18;font-size:12px;overflow-x:hidden;max-width:100vw}
+.topbar{background:#1a1a18;padding:.5rem 1.2rem;display:flex;align-items:center;position:sticky;top:0;z-index:200;flex-wrap:wrap;gap:0}
+.tb-brand{color:white;font-size:13px;font-weight:700;padding-right:1rem;border-right:1px solid #333;margin-right:.5rem;white-space:nowrap}
+.apl-tabs{display:flex;overflow-x:auto;flex:1}
+.apl-tab{padding:.4rem .9rem;font-size:11px;font-weight:500;color:#888;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.apl-tab:hover{color:#ccc;background:#2a2a28}
+.apl-tab.active{color:white;border-bottom-color:#185FA5}
+.tb-right{display:flex;gap:6px;align-items:center;padding-left:.75rem;border-left:1px solid #333;margin-left:auto}
+.wbadge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px}
+.wb-ok{background:#185FA5;color:white}
+.btn{font-size:11px;padding:4px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:500;background:#185FA5;color:white}
+.btn:hover{background:#0c447c}
+.canalbar{background:white;border-bottom:1px solid #e0ded8;padding:.4rem 1.2rem;display:flex;gap:6px;align-items:center;position:sticky;top:38px;z-index:199}
+.cbtn{font-size:11px;padding:4px 14px;border-radius:20px;border:1px solid #ddd;background:transparent;cursor:pointer;color:#666;font-weight:500}
+.cbtn.active{background:#185FA5;color:white;border-color:#185FA5}
+.csep{color:#ddd;margin:0 4px}
+.cinfo{font-size:10px;color:#aaa}
+.page{max-width:1180px;margin:.85rem auto;padding:0 1rem}
+.ph{background:white;border-radius:10px;padding:.75rem 1.1rem;margin-bottom:.7rem;border-left:4px solid #185FA5;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px}
+.ph-title{font-size:15px;font-weight:700}
+.ph-sub{font-size:10px;color:#888;margin-top:2px}
+.ph-badges{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.badge{font-size:9px;font-weight:700;padding:3px 9px;border-radius:20px}
+.b-blue{background:#e6f1fb;color:#185FA5}
+.b-dark{background:#1a1a18;color:white}
+.b-ps{background:#fff8e1;color:#e65100;border:1px solid #ffe082}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:.7rem}
+.kpi{background:white;border-radius:8px;padding:.6rem .8rem;border-left:3px solid #ddd}
+.kpi.g{border-left-color:#2e6b10}.kpi.r{border-left-color:#a32d2d}.kpi.b{border-left-color:#185FA5}
+.kpi-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#aaa;margin-bottom:3px}
+.kpi-val{font-size:22px;font-weight:700}
+.kpi-sub{font-size:8px;color:#bbb;margin-top:1px}
+.cg{color:#2e6b10}.cr{color:#a32d2d}.cb{color:#185FA5}.cgr{color:#bbb}
+.main{display:grid;grid-template-columns:1fr 230px;gap:.7rem;margin-bottom:.7rem}
+.left-col{display:flex;flex-direction:column;gap:.7rem}
+.rcol{display:flex;flex-direction:column;gap:.7rem}
+.card{background:white;border-radius:10px;padding:.75rem 1rem;overflow:visible}
+.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#aaa;margin-bottom:.5rem}
+table.pt{width:100%;border-collapse:collapse;font-size:11px}
+table.pt th{font-size:8px;font-weight:700;color:#888;padding:3px 5px;border-bottom:1px solid #eee;text-align:center;background:#fafaf8;white-space:nowrap}
+table.pt th.lh{text-align:left;min-width:110px;position:sticky;left:0;background:#fafaf8;z-index:2}
+table.pt th.lhm{text-align:left;min-width:55px}
+table.pt th.wc{color:#185FA5;background:#e6f1fb}
+table.pt th.hd{color:#0F6E56}
+table.pt th.hr{color:#854F0B}
+table.pt td{padding:4px 5px;border-bottom:.5px solid #f5f5f2;text-align:center;vertical-align:middle;font-variant-numeric:tabular-nums}
+table.pt td.cli{text-align:left;font-weight:700;color:#185FA5;background:#f8f9ff;font-size:10px;position:sticky;left:0;z-index:1;min-width:110px;vertical-align:top;padding-top:6px}
+table.pt td.mrc{text-align:left;min-width:55px}
+table.pt td.wc{background:#eaf3fc}
+table.pt td.wc-niv{background:#d6eaf8;font-weight:700;color:#185FA5}
+table.pt td.pend{color:#ccc;font-size:9px}
+table.pt tr:last-child td{border-bottom:none}
+table.pt .tot-row td{background:#f0efe8;font-weight:700;font-size:10px}
+.br{display:flex;align-items:center;gap:4px}
+.bd{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ix{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;min-width:32px;text-align:center}
+.ix-g{background:#eaf3de;color:#2e6b10}
+.ix-r{background:#fcebeb;color:#a32d2d}
+.ix-na{background:#f0efe8;color:#ccc}
+.promo-niv{font-size:10px;color:#e65100;font-weight:600}
+.promo-comp{font-size:9px;color:#666}
+.promo-sp{font-size:9px;color:#ccc}
+.promo-p{font-size:10px;color:#2e6b10;font-weight:600}
+.arr-up{color:#a32d2d;font-weight:700;font-size:10px}
+.arr-dn{color:#2e6b10;font-weight:700;font-size:10px}
+.al-card{background:white;border-radius:10px;padding:.75rem 1rem}
+.al-item{display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:.5px solid #f5f5f2}
+.al-item:last-child{border-bottom:none}
+.adot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.ar{background:#e24b4a}.ag{background:#53a832}.ap{background:#9c27b0}
+.atxt{font-size:10px;line-height:1.4;color:#1a1a18}
+.ameta{font-size:8px;color:#aaa;margin-top:1px}
+.chart-card{background:white;border-radius:10px;padding:.85rem 1.1rem;margin-bottom:.7rem}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:9px;color:#666;margin-bottom:5px}
+.legend span{display:flex;align-items:center;gap:3px}
+.lb{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.ch-wrap{position:relative;height:195px;width:100%}
+.up{color:#2e6b10;font-size:9px;font-weight:700}
+.dn{color:#a32d2d;font-size:9px;font-weight:700}
+.eq{color:#ccc;font-size:9px}
+.footer{text-align:center;padding:.6rem;font-size:9px;color:#aaa;margin-top:.3rem}
+@media print{body{background:white}.topbar,.canalbar{display:none}.page{padding:0;margin:0;max-width:100%}.main{grid-template-columns:1fr 190px}.ch-wrap{height:150px}}
+@page{size:A4 landscape;margin:.7cm .9cm}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="tb-brand">DEO Promotracker</div>
+  <div class="apl-tabs">
+    <div class="apl-tab active" id="tab-SPRAY"  onclick="setApl('SPRAY')">Spray 150ml</div>
+    <div class="apl-tab"       id="tab-ROLLON" onclick="setApl('ROLLON')">Roll-on</div>
+    <div class="apl-tab"       id="tab-BARRA"  onclick="setApl('BARRA')">Barra</div>
+    <div class="apl-tab"       id="tab-PACK2X" onclick="setApl('PACK2X')">Pack 2x</div>
+    <div class="apl-tab"       id="tab-PACK4X" onclick="setApl('PACK4X')">Pack 4x</div>
+  </div>
+  <div class="tb-right">
+    <span class="wbadge wb-ok">W25 actualizado</span>
+    <button class="btn" onclick="window.print()">&#8659; PDF</button>
+  </div>
+</div>
+
+<div class="canalbar">
+  <button class="cbtn active" id="btn-pyp" onclick="setCanal('PYP')">P&amp;P</button>
+  <button class="cbtn"        id="btn-hys" onclick="setCanal('HYS')">H&amp;S</button>
+  <span class="csep">|</span>
+  <span class="cinfo" id="cinfo"></span>
+</div>
+
+<div class="page">
+  <div class="ph">
+    <div>
+      <div class="ph-title" id="ph-title">Spray 150ml &mdash; Canal P&amp;P</div>
+      <div class="ph-sub">Junio 2026 &middot; W22 &middot; W23 &middot; W24 &middot; W25 &middot; W26</div>
+    </div>
+    <div class="ph-badges" id="ph-badges"></div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="main">
+    <div class="left-col">
+      <div class="card">
+        <div class="sec-lbl">
+          Promo &middot; IX vs Dove &middot; IX vs Rexona
+          &nbsp;&nbsp;
+          <span style="font-weight:400;text-transform:none;font-size:8px;color:#bbb">
+            <span style="color:#e65100;font-weight:600">Naranja</span> = promo Nivea &middot;
+            <span style="color:#2e6b10">&#8593;</span> precio baja &middot;
+            <span style="color:#a32d2d">&#8595;</span> precio sube &middot;
+            <span style="background:#eaf3de;color:#2e6b10;padding:0 3px;border-radius:3px;font-weight:700">88&#8211;90%</span> ok &middot;
+            <span style="background:#fcebeb;color:#a32d2d;padding:0 3px;border-radius:3px;font-weight:700">fuera de rango</span> alerta
+          </span>
+        </div>
+        <table class="pt" id="tbl-main"></table>
+      </div>
+    </div>
+    <div class="rcol">
+      <div class="al-card">
+        <div class="sec-lbl">Cambios de precio promo</div>
+        <div id="alertas"></div>
+      </div>
+    </div>
+  </div>
+  <div class="chart-card" id="chart-section">
+    <div class="sec-lbl">
+      Precio unitario promedio &mdash; Historial W46 &rarr; W26
+      &nbsp;<span style="font-size:8px;color:#185FA5;font-weight:600">&bull; &aacute;rea azul = Junio 2026</span>
+    </div>
+    <div class="legend">
+      <span><span class="lb" style="background:#185FA5"></span>Nivea</span>
+      <span><span class="lb" style="background:#0F6E56"></span>Dove</span>
+      <span><span class="lb" style="background:#854F0B;opacity:.8"></span>Rexona</span>
+    </div>
+    <div class="ch-wrap"><canvas id="chart-main"></canvas></div>
+  </div>
+  <div class="footer" id="footer"></div>
+</div>
+
+<script>
+
+var DATA  = {"SPRAY": {"PYP": {"SB": {"ps": "2x5690", "NIV": {"W22": {"m": "2x", "p": 5490}, "W23": {"m": "2x", "p": 5690}, "W24": {"m": "2x", "p": 5690}, "W25": {"m": "2x", "p": 5690}, "W26": {"m": "2x", "p": 5690}}, "DOV": {"W22": {"m": "2x", "p": 6590}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6790}, "W25": {"m": "2x", "p": 6790}, "W26": {"m": "2x", "p": 6790}}, "REX": {"W22": {"m": "2x", "p": 5990}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 83, "W23": 84, "W24": 84, "W25": 84, "W26": 84}, "IXR": {"W22": 92, "W23": 88, "W24": 88, "W25": 88, "W26": 88}}, "PU": {"ps": "2x5490", "NIV": {"W22": {"m": "2x", "p": 5599}, "W23": {"m": "2x", "p": 5599}, "W24": {"m": "2x", "p": 5599}, "W25": {"m": "2x", "p": 5599}, "W26": {"m": "2x", "p": 5599}}, "DOV": {"W22": {"m": "2x", "p": 6799}, "W23": {"m": "2x", "p": 6799}, "W24": {"m": "2x", "p": 6799}, "W25": {"m": "2x", "p": 6799}, "W26": {"m": "2x", "p": 6799}}, "REX": {"W22": {"m": "2x", "p": 5799}, "W23": {"m": "2x", "p": 6499}, "W24": {"m": "2x", "p": 6499}, "W25": {"m": "2x", "p": 6499}, "W26": {"m": "2x", "p": 6499}}, "IXD": {"W22": 82, "W23": 82, "W24": 82, "W25": 82, "W26": 82}, "IXR": {"W22": 97, "W23": 86, "W24": 86, "W25": 86, "W26": 86}}, "CV": {"ps": "2x5490", "NIV": {"W22": {"m": "2x", "p": 5490}, "W23": {"m": "2x", "p": 5490}, "W24": {"m": "2x", "p": 5490}, "W25": {"m": "2x", "p": 5490}, "W26": {"m": "2x", "p": 5490}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6800}, "W24": {"m": "2x", "p": 6800}, "W25": {"m": "2x", "p": 6800}, "W26": {"m": "2x", "p": 6800}}, "REX": {"W22": {"m": "2x", "p": 5990}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 87, "W23": 81, "W24": 81, "W25": 81, "W26": 81}, "IXR": {"W22": 92, "W23": 85, "W24": 85, "W25": 85, "W26": 85}}, "MA": {"ps": "2x5300", "NIV": {"W22": {"m": "2x", "p": 5000}, "W23": {"m": "2x", "p": 5300}, "W24": {"m": "2x", "p": 5300}, "W25": {"m": "2x", "p": 5300}, "W26": {"m": "2x", "p": 5300}}, "DOV": {"W22": {"m": "2x", "p": 6300}, "W23": {"m": "2x", "p": 6800}, "W24": {"m": "2x", "p": 6800}, "W25": {"m": "2x", "p": 6800}, "W26": {"m": "2x", "p": 6800}}, "REX": {"W22": {"m": "2x", "p": 5800}, "W23": {"m": "2x", "p": 6500}, "W24": {"m": "2x", "p": 6500}, "W25": {"m": "2x", "p": 6500}, "W26": {"m": "2x", "p": 6500}}, "IXD": {"W22": 79, "W23": 78, "W24": 78, "W25": 78, "W26": 78}, "IXR": {"W22": 86, "W23": 82, "W24": 82, "W25": 82, "W26": 82}}, "FA": {"ps": "2x5590", "NIV": {"W22": {"m": "2x", "p": 5590}, "W23": {"m": "2x", "p": 5990}, "W24": {"m": "2x", "p": 5990}, "W25": {"m": "2x", "p": 5990}, "W26": {"m": "2x", "p": 5990}}, "DOV": {"W22": {"m": "2x", "p": 6490}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "REX": {"W22": {"m": "2x", "p": 5990}, "W23": {"m": "2x", "p": 5990}, "W24": {"m": "2x", "p": 5990}, "W25": {"m": "2x", "p": 5990}, "W26": {"m": "2x", "p": 5990}}, "IXD": {"W22": 86, "W23": 92, "W24": 92, "W25": 92, "W26": 92}, "IXR": {"W22": 93, "W23": 100, "W24": 100, "W25": 100, "W26": 100}}}, "HYS": {"LIDER": {"ps": "2x5190", "NIV": {"W22": {"m": "2x", "p": 5090}, "W23": {"m": "2x", "p": 5090}, "W24": {"m": "2x", "p": 5090}, "W25": {"m": "2x", "p": 5090}, "W26": {"m": "2x", "p": 5090}}, "DOV": {"W22": {"m": "2x", "p": 5790}, "W23": {"m": "2x", "p": 5790}, "W24": {"m": "2x", "p": 5790}, "W25": {"m": "2x", "p": 5790}, "W26": {"m": "2x", "p": 5790}}, "REX": {"W22": {"m": "2x", "p": 5590}, "W23": {"m": "2x", "p": 5590}, "W24": {"m": "2x", "p": 5590}, "W25": {"m": "2x", "p": 5590}, "W26": {"m": "2x", "p": 5590}}, "IXD": {"W22": 88, "W23": 88, "W24": 88, "W25": 88, "W26": 88}, "IXR": {"W22": 91, "W23": 91, "W24": 91, "W25": 91, "W26": 91}}, "JUMBO": {"ps": "3x2", "NIV": {"W22": {"m": "2x", "p": 5090}, "W23": {"m": "3x2", "p": 7780}, "W24": {"m": "3x2", "p": 7780}, "W25": {"m": "3x2", "p": 7780}, "W26": {"m": "3x2", "p": 7780}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6290}, "W25": {"m": "2x", "p": 6290}, "W26": {"m": "2x", "p": 6290}}, "REX": {"W22": {"m": "2x", "p": 5590}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 81, "W23": 76, "W24": 82, "W25": 82, "W26": 82}, "IXR": {"W22": 91, "W23": 80, "W24": 80, "W25": 80, "W26": 80}}, "SISA": {"ps": "1x2695/30%off", "NIV": {"W22": {"m": "1x", "p": 2550}, "W23": null, "W24": {"m": "1x", "p": 2695}, "W25": {"m": "1x", "p": 2695}, "W26": {"m": "1x", "p": 2850}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6790}, "W25": {"m": "2x", "p": 6790}, "W26": {"m": "2x", "p": 6790}}, "REX": {"W22": {"m": "2x", "p": 5590}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 81, "W23": null, "W24": 79, "W25": 79, "W26": 84}, "IXR": {"W22": 91, "W23": null, "W24": 83, "W25": 83, "W26": 88}}, "UNIMARC": {"ps": "2x5390", "NIV": {"W22": {"m": "2x", "p": 5490}, "W23": null, "W24": {"m": "2x", "p": 5390}, "W25": {"m": "2x", "p": 5490}, "W26": {"m": "2x", "p": 5490}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6290}, "W25": {"m": "2x", "p": 6790}, "W26": {"m": "2x", "p": 6790}}, "REX": {"W22": {"m": "2x", "p": 5790}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 5790}, "W25": {"m": "2x", "p": 5790}, "W26": {"m": "2x", "p": 5790}}, "IXD": {"W22": 87, "W23": null, "W24": 86, "W25": 81, "W26": null}, "IXR": {"W22": 109, "W23": null, "W24": 93, "W25": 95, "W26": null}}}}, "ROLLON": {"PYP": {"SB": {"ps": "S/P", "NIV": {"W22": null, "W23": {"m": "1x", "p": 2100}, "W24": null, "W25": null, "W26": {"m": "S/P", "p": null}}, "DOV": {"W22": {"m": "2x", "p": 5890}, "W23": {"m": "1x", "p": 2891}, "W24": {"m": "1x", "p": 2891}, "W25": {"m": "1x", "p": 2891}, "W26": {"m": "1x", "p": 2891}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": null, "W23": 73, "W24": null, "W25": null, "W26": null}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "PU": {"ps": "1x2890", "NIV": {"W22": {"m": "1x", "p": 2999}, "W23": {"m": "1x", "p": 2999}, "W24": {"m": "1x", "p": 2999}, "W25": {"m": "1x", "p": 2999}, "W26": {"m": "1x", "p": 2999}}, "DOV": {"W22": {"m": "1x", "p": 2899}, "W23": {"m": "1x", "p": 2899}, "W24": {"m": "1x", "p": 2899}, "W25": {"m": "1x", "p": 2899}, "W26": {"m": "1x", "p": 2899}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": 103, "W23": 103, "W24": 103, "W25": 103, "W26": 103}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "CV": {"ps": "2x5490", "NIV": {"W22": null, "W23": {"m": "2x", "p": 5490}, "W24": {"m": "2x", "p": 5490}, "W25": {"m": "2x", "p": 5490}, "W26": {"m": "2x", "p": 5490}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 5890}, "W24": {"m": "2x", "p": 5890}, "W25": {"m": "2x", "p": 5890}, "W26": {"m": "2x", "p": 5890}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": null, "W23": 93, "W24": 93, "W25": 93, "W26": 93}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "MA": {"ps": "2x5300", "NIV": {"W22": null, "W23": {"m": "2x", "p": 5300}, "W24": {"m": "2x", "p": 5300}, "W25": {"m": "2x", "p": 5300}, "W26": {"m": "2x", "p": 5300}}, "DOV": {"W22": {"m": "2x", "p": 5900}, "W23": {"m": "2x", "p": 5900}, "W24": {"m": "2x", "p": 5900}, "W25": {"m": "2x", "p": 5900}, "W26": {"m": "2x", "p": 5900}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": null, "W23": 90, "W24": 90, "W25": 90, "W26": 90}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "FA": {"ps": "S/P", "NIV": {"W22": {"m": "1x", "p": 2788}, "W23": null, "W24": null, "W25": null, "W26": {"m": "S/P", "p": null}}, "DOV": {"W22": {"m": "2x", "p": 6490}, "W23": {"m": "2x", "p": 6190}, "W24": {"m": "2x", "p": 6190}, "W25": {"m": "2x", "p": 6190}, "W26": {"m": "2X", "p": 6190}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": 86, "W23": null, "W24": null, "W25": null, "W26": null}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}}, "HYS": {"LIDER": {"ps": "1x3000", "NIV": {"W22": null, "W23": {"m": "1x", "p": 2000}, "W24": {"m": "1x", "p": 2000}, "W25": {"m": "1x", "p": 2000}, "W26": {"m": "1x", "p": 2000}}, "DOV": {"W22": null, "W23": {"m": "1x", "p": 2000}, "W24": {"m": "1x", "p": 2000}, "W25": {"m": "1x", "p": 2000}, "W26": {"m": "1x", "p": 2000}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": null, "W23": 100, "W24": 100, "W25": 100, "W26": 100}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "JUMBO": {"ps": "3x2", "NIV": {"W22": {"m": "2x", "p": 5390}, "W23": {"m": "3x2", "p": 7980}, "W24": {"m": "3x2", "p": 7980}, "W25": {"m": "3x2", "p": 7980}, "W26": {"m": "3x2", "p": 7980}}, "DOV": {"W22": {"m": "2x", "p": 6090}, "W23": {"m": "2x", "p": 4000}, "W24": {"m": "2x", "p": 4000}, "W25": {"m": "2x", "p": 4000}, "W26": {"m": "2x", "p": 4000}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": 89, "W23": 133, "W24": 133, "W25": 133, "W26": 133}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "SISA": {"ps": "1x2700/30%off", "NIV": {"W22": {"m": "1x", "p": 2690}, "W23": null, "W24": {"m": "1x", "p": 2695}, "W25": {"m": "1x", "p": 2695}, "W26": {"m": "1x", "p": 2695}}, "DOV": {"W22": {"m": "2x", "p": 6000}, "W23": null, "W24": null, "W25": null, "W26": null}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": 90, "W23": null, "W24": null, "W25": null, "W26": null}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "UNIMARC": {"ps": null, "NIV": {"W22": {"m": "2x", "p": 6390}, "W23": null, "W24": {"m": "2x", "p": 6390}, "W25": {"m": "2x", "p": 4000}, "W26": {"m": "2x", "p": 4000}}, "DOV": {"W22": {"m": "2x", "p": 5990}, "W23": null, "W24": {"m": "1x", "p": 2990}, "W25": {"m": "1x", "p": 2990}, "W26": {"m": "1x", "p": 2990}}, "REX": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXD": {"W22": 107, "W23": null, "W24": 107, "W25": 67, "W26": 67}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}}}, "BARRA": {"PYP": {"SB": {"ps": "S/P", "NIV": {"W22": {"m": "2x", "p": 5839}, "W23": {"m": "1x", "p": 2350}, "W24": null, "W25": null, "W26": {"m": "S/P", "p": null}}, "DOV": {"W22": {"m": "2x", "p": 6590}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6790}, "W25": {"m": "2x", "p": 6790}, "W26": {"m": "2x", "p": 6790}}, "REX": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 89, "W23": 69, "W24": null, "W25": null, "W26": null}, "IXR": {"W22": 93, "W23": 72, "W24": null, "W25": null, "W26": null}}, "PU": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": {"m": "S/P", "p": null}}, "DOV": {"W22": {"m": "2x", "p": 6799}, "W23": {"m": "2x", "p": 6799}, "W24": {"m": "2x", "p": 6799}, "W25": {"m": "2x", "p": 6799}, "W26": {"m": "2x", "p": 6799}}, "REX": {"W22": {"m": "2x", "p": 5799}, "W23": {"m": "2x", "p": 6499}, "W24": {"m": "2x", "p": 6499}, "W25": {"m": "2x", "p": 6499}, "W26": {"m": "2x", "p": 6499}}, "IXD": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "CV": {"ps": "2x5290", "NIV": {"W22": {"m": "2x", "p": 5390}, "W23": {"m": "2x", "p": 5290}, "W24": {"m": "2x", "p": 5290}, "W25": {"m": "2x", "p": 5290}, "W26": {"m": "2x", "p": 5290}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6800}, "W25": {"m": "2x", "p": 6800}, "W26": {"m": "2x", "p": 6800}}, "REX": {"W22": {"m": "2x", "p": 5990}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 86, "W23": 78, "W24": 78, "W25": 78, "W26": 78}, "IXR": {"W22": 90, "W23": 82, "W24": 82, "W25": 82, "W26": 82}}, "MA": {"ps": "2x5300", "NIV": {"W22": {"m": "2x", "p": 5400}, "W23": {"m": "2x", "p": 5300}, "W24": {"m": "2x", "p": 5300}, "W25": {"m": "2x", "p": 5300}, "W26": {"m": "2x", "p": 5300}}, "DOV": {"W22": {"m": "2x", "p": 6300}, "W23": {"m": "2x", "p": 6800}, "W24": {"m": "2x", "p": 6800}, "W25": {"m": "2x", "p": 6800}, "W26": {"m": "2x", "p": 6800}}, "REX": {"W22": {"m": "2x", "p": 5800}, "W23": {"m": "2x", "p": 6500}, "W24": {"m": "2x", "p": 6500}, "W25": {"m": "2x", "p": 6500}, "W26": {"m": "2x", "p": 6500}}, "IXD": {"W22": 86, "W23": 78, "W24": 78, "W25": 78, "W26": 78}, "IXR": {"W22": 93, "W23": 82, "W24": 82, "W25": 82, "W26": 82}}, "FA": {"ps": "2x5790", "NIV": {"W22": null, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 5790}, "W25": {"m": "2x", "p": 5790}, "W26": {"m": "2x", "p": 5790}}, "DOV": {"W22": {"m": "2x", "p": 6490}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "REX": {"W22": {"m": "2x", "p": 5990}, "W23": {"m": "2x", "p": 5990}, "W24": {"m": "2x", "p": 5990}, "W25": {"m": "2x", "p": 5990}, "W26": {"m": "2x", "p": 5990}}, "IXD": {"W22": null, "W23": 105, "W24": 89, "W25": 89, "W26": 89}, "IXR": {"W22": null, "W23": 113, "W24": 97, "W25": 97, "W26": 97}}}, "HYS": {"LIDER": {"ps": "1x3000", "NIV": {"W22": null, "W23": {"m": "1x", "p": 3000}, "W24": {"m": "1x", "p": 3000}, "W25": {"m": "1x", "p": 3000}, "W26": {"m": "1x", "p": 3000}}, "DOV": {"W22": {"m": "2x", "p": 5990}, "W23": {"m": "2x", "p": 5990}, "W24": {"m": "2x", "p": 5990}, "W25": {"m": "2x", "p": 5990}, "W26": {"m": "2x", "p": 5990}}, "REX": {"W22": {"m": "2x", "p": 5590}, "W23": {"m": "2x", "p": 5590}, "W24": {"m": "2x", "p": 5590}, "W25": {"m": "2x", "p": 5590}, "W26": {"m": "2x", "p": 5590}}, "IXD": {"W22": null, "W23": 100, "W24": 100, "W25": 100, "W26": 100}, "IXR": {"W22": null, "W23": 107, "W24": 107, "W25": 107, "W26": 107}}, "JUMBO": {"ps": null, "NIV": {"W22": {"m": "2x", "p": 5690}, "W23": null, "W24": null, "W25": null, "W26": {"m": "S/P", "p": null}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6290}, "W25": {"m": "2x", "p": 6290}, "W26": {"m": "2x", "p": 6290}}, "REX": {"W22": {"m": "2x", "p": 5590}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6290}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 90, "W23": null, "W24": null, "W25": null, "W26": null}, "IXR": {"W22": 102, "W23": null, "W24": null, "W25": null, "W26": null}}, "SISA": {"ps": "1x2850", "NIV": {"W22": {"m": "1x", "p": 2550}, "W23": null, "W24": {"m": "1x", "p": 2850}, "W25": {"m": "1x", "p": 2850}, "W26": {"m": "1x", "p": 2850}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 6790}, "W24": {"m": "2x", "p": 6790}, "W25": {"m": "2x", "p": 6790}, "W26": {"m": "2x", "p": 6790}}, "REX": {"W22": {"m": "2x", "p": 5590}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 6490}, "W25": {"m": "2x", "p": 6490}, "W26": {"m": "2x", "p": 6490}}, "IXD": {"W22": 81, "W23": null, "W24": 84, "W25": 84, "W26": 84}, "IXR": {"W22": 91, "W23": null, "W24": 88, "W25": 88, "W26": 88}}, "UNIMARC": {"ps": "2x5490", "NIV": {"W22": {"m": "2x", "p": 4690}, "W23": null, "W24": {"m": "2x", "p": 5490}, "W25": {"m": "2x", "p": 5490}, "W26": {"m": "2x", "p": 5490}}, "DOV": {"W22": {"m": "2x", "p": 6290}, "W23": {"m": "2x", "p": 5790}, "W24": {"m": "2x", "p": 5790}, "W25": {"m": "2x", "p": 5790}, "W26": {"m": "2x", "p": 6790}}, "REX": {"W22": {"m": "2x", "p": 5790}, "W23": {"m": "2x", "p": 6490}, "W24": {"m": "2x", "p": 5790}, "W25": {"m": "2x", "p": 5790}, "W26": {"m": "2x", "p": 5790}}, "IXD": {"W22": 75, "W23": null, "W24": 95, "W25": 95, "W26": 81}, "IXR": {"W22": 81, "W23": null, "W24": 95, "W25": 95, "W26": 95}}}}, "PACK4X": {"PYP": {"SB": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11999}, "W25": {"m": "SP", "p": 11999}, "W26": {"m": "SP", "p": 11999}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 12999}, "W25": {"m": "SP", "p": 12999}, "W26": {"m": "SP", "p": 12999}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 12999}, "W25": {"m": "SP", "p": 12999}, "W26": {"m": "SP", "p": 12999}}, "IXD": {"W22": null, "W23": null, "W24": 92, "W25": 92, "W26": 92}, "IXR": {"W22": null, "W23": null, "W24": 92, "W25": 92, "W26": 92}}, "PU": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11999}, "W25": {"m": "SP", "p": 11999}, "W26": {"m": "SP", "p": 11999}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "P", "p": 9999}, "W25": {"m": null, "p": 9999}, "W26": {"m": "SP", "p": 12999}}, "REX": {"W22": null, "W23": null, "W24": {"m": "P", "p": 9999}, "W25": {"m": null, "p": 12099}, "W26": {"m": "SP", "p": 12099}}, "IXD": {"W22": null, "W23": null, "W24": 120, "W25": 120, "W26": 92}, "IXR": {"W22": null, "W23": null, "W24": 120, "W25": 99, "W26": 99}}, "CV": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": null, "p": 12190}, "W25": {"m": null, "p": 12190}, "W26": {"m": "SP", "p": 12190}}, "DOV": {"W22": null, "W23": null, "W24": {"m": null, "p": 12490}, "W25": {"m": null, "p": 12490}, "W26": {"m": "SP", "p": 12490}}, "REX": {"W22": null, "W23": null, "W24": {"m": null, "p": null}, "W25": {"m": null, "p": null}, "W26": null}, "IXD": {"W22": null, "W23": null, "W24": 98, "W25": 98, "W26": 98}, "IXR": {"W22": null, "W23": null, "W24": null, "W25": null, "W26": null}}, "MA": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": null, "p": 12199}, "W25": {"m": null, "p": 11899}, "W26": {"m": "SP", "p": 11899}}, "DOV": {"W22": null, "W23": null, "W24": {"m": null, "p": 12699}, "W25": {"m": null, "p": 11699}, "W26": {"m": "SP", "p": 11699}}, "REX": {"W22": null, "W23": null, "W24": {"m": null, "p": 12699}, "W25": {"m": null, "p": 11699}, "W26": {"m": "SP", "p": 11699}}, "IXD": {"W22": null, "W23": null, "W24": 96, "W25": 102, "W26": 102}, "IXR": {"W22": null, "W23": null, "W24": 96, "W25": 102, "W26": 102}}, "FA": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": null, "p": 12300}, "W25": {"m": null, "p": 12300}, "W26": {"m": "SP", "p": 12489}}, "DOV": {"W22": null, "W23": null, "W24": {"m": null, "p": 13319}, "W25": {"m": null, "p": 13319}, "W26": {"m": "SP", "p": 13319}}, "REX": {"W22": null, "W23": null, "W24": {"m": null, "p": 13319}, "W25": {"m": null, "p": 13319}, "W26": {"m": "SP", "p": 13319}}, "IXD": {"W22": null, "W23": null, "W24": 92, "W25": 92, "W26": 94}, "IXR": {"W22": null, "W23": null, "W24": 100, "W25": 100, "W26": 94}}}, "HYS": {"LIDER": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "P", "p": 9990}, "W25": {"m": "P", "p": 9990}, "W26": {"m": "P", "p": 9990}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 9990}, "W25": {"m": "SP", "p": 9990}, "W26": {"m": "SP", "p": 9990}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 10190}, "W25": {"m": "SP", "p": 10190}, "W26": {"m": "SP", "p": 10190}}, "IXD": {"W22": null, "W23": null, "W24": 100, "W25": 100, "W26": 100}, "IXR": {"W22": null, "W23": null, "W24": 98, "W25": 98, "W26": 98}}, "JUMBO": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11490}, "W25": {"m": "SP", "p": 11490}, "W26": {"m": "SP", "p": 11490}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 10990}, "W25": {"m": "SP", "p": 10990}, "W26": {"m": "SP", "p": 10990}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11450}, "W25": {"m": "SP", "p": 11450}, "W26": {"m": "SP", "p": 11450}}, "IXD": {"W22": null, "W23": null, "W24": 105, "W25": 105, "W26": 105}, "IXR": {"W22": null, "W23": null, "W24": 100, "W25": 100, "W26": 100}}, "SISA": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11290}, "W25": {"m": "SP", "p": 11290}, "W26": {"m": "SP", "p": 11290}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11490}, "W25": {"m": "SP", "p": 11490}, "W26": {"m": "SP", "p": 11490}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11490}, "W25": {"m": "SP", "p": 11490}, "W26": {"m": "SP", "p": 11490}}, "IXD": {"W22": null, "W23": null, "W24": 98, "W25": 98, "W26": 98}, "IXR": {"W22": null, "W23": null, "W24": 98, "W25": 98, "W26": 98}}, "UNIMARC": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11490}, "W25": {"m": "SP", "p": 11490}, "W26": {"m": "SP", "p": 11490}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 10490}, "W25": {"m": "SP", "p": 10490}, "W26": {"m": "SP", "p": 10490}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 11250}, "W25": {"m": "SP", "p": 11250}, "W26": {"m": "SP", "p": 11250}}, "IXD": {"W22": null, "W23": null, "W24": 110, "W25": 110, "W26": 110}, "IXR": {"W22": null, "W23": null, "W24": 102, "W25": 102, "W26": 102}}}}, "PACK2X": {"PYP": {"SB": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7499}, "W25": {"m": "SP", "p": 6999}, "W26": {"m": "SP", "p": 7499}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6999}, "W25": {"m": "SP", "p": 6999}, "W26": {"m": "SP", "p": 6999}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6999}, "W25": {"m": "SP", "p": 6999}, "W26": {"m": "SP", "p": 6999}}, "IXD": {"W22": null, "W23": null, "W24": 107, "W25": 100, "W26": 107}, "IXR": {"W22": null, "W23": null, "W24": 107, "W25": 100, "W26": 107}}, "PU": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7499}, "W25": {"m": "SP", "p": 7499}, "W26": {"m": "SP", "p": 7499}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "P", "p": 6599}, "W25": {"m": "P", "p": 6599}, "W26": {"m": "P", "p": 6599}}, "REX": {"W22": null, "W23": null, "W24": {"m": "P", "p": 6599}, "W25": {"m": "P", "p": 6599}, "W26": {"m": "P", "p": 6599}}, "IXD": {"W22": null, "W23": null, "W24": 114, "W25": 114, "W26": 114}, "IXR": {"W22": null, "W23": null, "W24": 114, "W25": 114, "W26": 114}}, "CV": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7690}, "W25": {"m": "SP", "p": 7690}, "W26": {"m": "SP", "p": 7690}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6990}, "W25": {"m": "SP", "p": 6990}, "W26": {"m": "SP", "p": 6990}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6990}, "W25": {"m": "SP", "p": 6990}, "W26": {"m": "SP", "p": 6990}}, "IXD": {"W22": null, "W23": null, "W24": 110, "W25": 110, "W26": 110}, "IXR": {"W22": null, "W23": null, "W24": 110, "W25": 110, "W26": 110}}, "MA": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7599}, "W25": {"m": null, "p": 7499}, "W26": {"m": "SP", "p": 7499}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7099}, "W25": {"m": null, "p": 7099}, "W26": {"m": "SP", "p": 7099}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6599}, "W25": {"m": null, "p": 7099}, "W26": {"m": "SP", "p": 7099}}, "IXD": {"W22": null, "W23": null, "W24": 107, "W25": 106, "W26": 106}, "IXR": {"W22": null, "W23": null, "W24": 115, "W25": 106, "W26": 106}}, "FA": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7499}, "W25": {"m": "SP", "p": 7499}, "W26": {"m": "SP", "p": 7499}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7169}, "W25": {"m": "SP", "p": 7169}, "W26": {"m": "SP", "p": 7169}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7469}, "W25": {"m": "SP", "p": 7469}, "W26": {"m": "SP", "p": 7469}}, "IXD": {"W22": null, "W23": null, "W24": 105, "W25": 105, "W26": 105}, "IXR": {"W22": null, "W23": null, "W24": 100, "W25": 100, "W26": 100}}}, "HYS": {"LIDER": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6990}, "W25": {"m": "SP", "p": 6990}, "W26": {"m": "SP", "p": 6990}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 5650}, "W25": {"m": "P", "p": 4650}, "W26": {"m": "P", "p": 4650}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 5590}, "W25": {"m": "SP", "p": 5590}, "W26": {"m": "SP", "p": 5590}}, "IXD": {"W22": null, "W23": null, "W24": 124, "W25": 150, "W26": 150}, "IXR": {"W22": null, "W23": null, "W24": 125, "W25": 125, "W26": 125}}, "JUMBO": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7250}, "W25": {"m": "SP", "p": 7250}, "W26": {"m": "SP", "p": 7250}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6190}, "W25": {"m": "SP", "p": 6190}, "W26": {"m": "SP", "p": 6190}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6450}, "W25": {"m": "SP", "p": 6450}, "W26": {"m": "SP", "p": 6450}}, "IXD": {"W22": null, "W23": null, "W24": 117, "W25": 117, "W26": 117}, "IXR": {"W22": null, "W23": null, "W24": 112, "W25": 112, "W26": 112}}, "SISA": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 7190}, "W25": {"m": "SP", "p": 7190}, "W26": {"m": "SP", "p": 7190}}, "DOV": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6090}, "W25": {"m": "SP", "p": 6090}, "W26": {"m": "SP", "p": 6090}}, "REX": {"W22": null, "W23": null, "W24": {"m": "SP", "p": 6350}, "W25": {"m": "SP", "p": 6350}, "W26": {"m": "SP", "p": 6350}}, "IXD": {"W22": null, "W23": null, "W24": 118, "W25": 118, "W26": 118}, "IXR": {"W22": null, "W23": null, "W24": 113, "W25": 113, "W26": 113}}, "UNIMARC": {"ps": null, "NIV": {"W22": null, "W23": null, "W24": {"m": null, "p": 7490}, "W25": {"m": "SP", "p": 7190}, "W26": {"m": "SP", "p": 7490}}, "DOV": {"W22": null, "W23": null, "W24": {"m": null, "p": 6190}, "W25": {"m": "SP", "p": 5590}, "W26": {"m": "SP", "p": 6190}}, "REX": {"W22": null, "W23": null, "W24": {"m": null, "p": 6490}, "W25": {"m": "SP", "p": 6490}, "W26": {"m": "SP", "p": 6450}}, "IXD": {"W22": null, "W23": null, "W24": 121, "W25": 129, "W26": 121}, "IXR": {"W22": null, "W23": null, "W24": 115, "W25": 111, "W26": 116}}}}};
+var HIST  = {"sems": ["W46", "W47", "W48", "W49", "W50", "W51", "W52", "W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9", "W10", "W11", "W12", "W13", "W14", "W15", "W16", "W17", "W18", "W19", "W20", "W21", "W22", "W23", "W24", "W25", "W26"], "hist": {"HYS": {"niv": [null, 2878, 2795, 2695, 2695, 2695, 2695, 2695, 2695, 2695, 2795, null, 3127, 2927, 2927, 2580, 2580, 2579, 2579, 2579, 2579, 2550, 2550, 2550, 2548, 2548, 2613, 2547, 2547, 2547, 2569, 2596, 2683], "dov": [null, 3097, 3047, 2960, 3010, 3010, 3010, 3010, 3010, 3010, 3012, null, 2962, 3012, 3012, 3012, 3012, 2962, 2962, 2962, 2962, 3210, 3012, 3012, 3012, 3012, 3020, 3020, 3020, 3020, 3228, 3228, 3208], "rex": [null, 2997, 2963, 2930, 2963, 2963, 2963, 2963, 2927, 2927, 2927, null, 2963, 2895, 2928, 2962, 2895, 2895, 2895, 2895, 2895, 3127, 2895, 2895, 2895, 2895, 2845, 2845, 2795, 2795, 3095, 3095, 3045]}, "PYP": {"niv": [null, 2777, 2797, 2797, 2756, 2748, 2747, 2747, 2747, 2747, 2747, null, 2748, 2748, 2746, 2747, 2747, 2757, 2757, 2607, 2607, 2617, 2635, 2635, 2635, 2760, 2767, 2717, 2717, 2717, 2767, 2767, 2807], "dov": [null, 2968, 2968, 2968, 2968, 3027, 3027, 3027, 3027, 3027, 3058, null, 3088, 3107, 3087, 3087, 3087, 3087, 3087, 3087, 3087, 3097, 3146, 3137, 3097, 3166, 3196, 3196, 3196, 3247, 3368, 3368, 3368], "rex": [null, 2968, 2968, 2968, 2968, 2987, 2987, 2987, 2987, 2987, 2958, null, 3272, 2988, 2958, 2958, 2958, 2959, 2959, 2959, 2959, 2959, 3008, 3008, 3008, 3027, 2976, 2976, 3006, 2976, 3196, 3196, 3197]}}};
+var NAMES = {"SB": "Salcobrand", "CV": "Cruz Verde", "MA": "Maicao", "PU": "Preunic", "FA": "Ahumada", "LIDER": "Lider", "JUMBO": "Jumbo", "SISA": "Santa Isabel", "UNIMARC": "Unimarc"};
+var SEMS  = ['W22','W23','W24','W25','W26'];
+var FMT   = function(v){ return v == null ? '—' : '$' + Math.round(v).toLocaleString('es-CL'); };
+var apl = 'SPRAY', canal = 'PYP', chartInst = null;
+var IS_PACK = function(a){ return a === 'PACK2X' || a === 'PACK4X'; };
+var APL_LBL = {SPRAY:'Spray 150ml',ROLLON:'Roll-on',BARRA:'Barra',PACK2X:'Pack 2x',PACK4X:'Pack 4x'};
+
+function pInfo(p, m, pack) {
+  if (!p) return null;
+  if (pack) return { price: p, label: FMT(p), isPromo: m === 'P', isSP: m === 'SP' || !m };
+  var sm = (m && m !== '-' && m !== 'S/P') ? m.trim() : null;
+  if (!sm) return { price: 0, label: 'S/P', isPromo: false, isSP: true };
+  var qty = parseInt((sm.match(/^(\d+)/) || [0,1])[1]) || 1;
+  return { price: p, label: sm + ' ' + FMT(p), isPromo: false, isSP: false, unit: Math.round(p/qty) };
+}
+
+function ixPill(v) {
+  if (v == null) return '<span class="ix ix-na">—</span>';
+  var cls = (v >= 88 && v <= 90) ? 'ix-g' : 'ix-r';
+  return '<span class="ix ' + cls + '">' + v + '%</span>';
+}
+
+function priceArrow(curr, prev) {
+  if (!curr || !prev || curr.isSP || prev.isSP) return '';
+  if (curr.price === prev.price) return '';
+  if (curr.price > prev.price) return ' <span class="arr-up">↑</span>';
+  return ' <span class="arr-dn">↓</span>';
+}
+
+function deltaIx(p, c) {
+  if (p == null || c == null) return '<span class="eq">—</span>';
+  var d = c - p;
+  if (d === 0) return '<span class="eq">→</span>';
+  return d > 0 ? '<span class="up">↑+' + d + 'pp</span>' : '<span class="dn">↓' + d + 'pp</span>';
+}
+
+function lastSem(clients) {
+  for (var i = SEMS.length - 1; i >= 0; i--) {
+    var s = SEMS[i];
+    var keys = Object.keys(clients);
+    for (var j = 0; j < keys.length; j++) {
+      var d = clients[keys[j]];
+      if ((d.NIV && d.NIV[s] && d.NIV[s].p) || (d.IXD && d.IXD[s] != null)) return s;
+    }
+  }
+  return SEMS[0];
+}
+
+function setApl(a) {
+  apl = a;
+  var keys = Object.keys(APL_LBL);
+  for (var i = 0; i < keys.length; i++) document.getElementById('tab-' + keys[i]).classList.toggle('active', keys[i] === a);
+  document.getElementById('chart-section').style.display = a === 'SPRAY' ? 'block' : 'none';
+  render();
+}
+
+function setCanal(c) {
+  canal = c;
+  document.getElementById('btn-pyp').classList.toggle('active', c === 'PYP');
+  document.getElementById('btn-hys').classList.toggle('active', c === 'HYS');
+  render();
+}
+
+function render() {
+  var clients = DATA[apl][canal];
+  var cliList = Object.keys(clients);
+  var cLabel  = canal === 'PYP' ? 'P&P' : 'H&S';
+  var pack    = IS_PACK(apl);
+  var curSem  = lastSem(clients);
+  var curIdx  = SEMS.indexOf(curSem);
+  var prevSem = curIdx > 0 ? SEMS[curIdx - 1] : null;
+
+  /* Mostrar siempre las últimas 4 semanas (hasta la semana actual) en la tabla.
+     Semanas anteriores quedan disponibles en SEMS para el histórico/gráfico,
+     pero no se muestran en esta tabla — pasarán a un archivo histórico aparte. */
+  var VISIBLE_SEMS = SEMS.slice(Math.max(0, curIdx - 3), curIdx + 1);
+
+  function cliName(k) { return NAMES[k] || k; }
+
+  document.getElementById('cinfo').textContent =
+    canal === 'PYP' ? 'Salcobrand · Preunic · Cruz Verde · Maicao · Ahumada'
+                    : 'Lider · Jumbo · Santa Isabel · Unimarc';
+  document.getElementById('ph-title').textContent = APL_LBL[apl] + ' — Canal ' + cLabel;
+
+  var psList = [];
+  cliList.forEach(function(c){ var ps = clients[c].ps; if(ps && ps !== 'S/P' && psList.indexOf(ps) < 0) psList.push(ps); });
+  document.getElementById('ph-badges').innerHTML =
+    '<span class="badge b-blue">' + curSem + ' — semana actual</span>' +
+    '<span class="badge b-dark">' + cLabel + '</span>' +
+    psList.slice(0,2).map(function(p){ return '<span class="badge b-ps">P.Sug: ' + p + '</span>'; }).join('');
+
+  var ixDV = [], ixRV = [];
+  cliList.forEach(function(c){
+    var vd = clients[c].IXD ? clients[c].IXD[curSem] : null; if(vd != null) ixDV.push(vd);
+    var vr = clients[c].IXR ? clients[c].IXR[curSem] : null; if(vr != null) ixRV.push(vr);
+  });
+  var avgD = ixDV.length ? Math.round(ixDV.reduce(function(a,b){return a+b;})/ixDV.length) : null;
+  var avgR = ixRV.length ? Math.round(ixRV.reduce(function(a,b){return a+b;})/ixRV.length) : null;
+  var kpis = [
+    {cls: avgD == null ? 'b' : (avgD >= 88 && avgD <= 90) ? 'g' : 'r', lbl:'IX Prom. vs Dove',   val: avgD != null ? avgD+'%' : '—', c: avgD == null ? 'cgr' : (avgD >= 88 && avgD <= 90) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
+    {cls: avgR == null ? 'b' : (avgR >= 88 && avgR <= 90) ? 'g' : 'r', lbl:'IX Prom. vs Rexona', val: avgR != null ? avgR+'%' : '—', c: avgR == null ? 'cgr' : (avgR >= 88 && avgR <= 90) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
+    {cls:'b', lbl:'Aplicador', val: APL_LBL[apl], c:'cb', sub:'Junio 2026'},
+  ];
+  document.getElementById('kpis').innerHTML = kpis.map(function(k){
+    return '<div class="kpi ' + k.cls + '"><div class="kpi-lbl">' + k.lbl + '</div>' +
+           '<div class="kpi-val ' + k.c + '" style="font-size:' + (k.val.length > 8 ? '14px' : '22px') + '">' + k.val + '</div>' +
+           '<div class="kpi-sub">' + k.sub + '</div></div>';
+  }).join('');
+
+  var thead = '<thead><tr>' +
+    '<th class="lh" rowspan="2">Cliente</th>' +
+    '<th class="lhm" rowspan="2">Marca / Indice</th>';
+  VISIBLE_SEMS.forEach(function(s) {
+    var iC = s === curSem;
+    var iP = SEMS.indexOf(s) > curIdx;
+    thead += '<th data-sem="1" class="' + (iC ? 'wc' : '') + '" style="' + (iP ? 'color:#ccc' : '') + '">' +
+             s + (iC ? ' ●' : iP ? ' ⏳' : '') + '</th>';
+  });
+  thead += '</tr><tr>';
+  VISIBLE_SEMS.forEach(function(s) {
+    var iC = s === curSem, iP = SEMS.indexOf(s) > curIdx, st = iP ? 'color:#ccc' : '';
+    thead += '<th data-sem="1" class="' + (iC?'wc':'') + '" style="' + st + '">Promo / IX</th>';
+  });
+  thead += '</tr></thead>';
+
+  var tbody = '<tbody>';
+  var totD = VISIBLE_SEMS.map(function(){ return {s:0,n:0}; });
+  var totR = VISIBLE_SEMS.map(function(){ return {s:0,n:0}; });
+
+  cliList.forEach(function(cli) {
+    var d = clients[cli];
+    var marcas = [
+      {key:'NIV', lbl:'Nivea',  col:'#185FA5', isN:true},
+      {key:'DOV', lbl:'Dove',   col:'#0F6E56', isN:false},
+      {key:'REX', lbl:'Rexona', col:'#854F0B', isN:false},
+    ];
+    marcas = marcas.filter(function(m){
+      if (m.key !== 'REX') return true;
+      return d.REX && SEMS.some(function(s){ return d.REX[s] && d.REX[s].p; });
+    });
+    var hasRex = marcas.some(function(m){ return m.key === 'REX'; });
+
+    var ixRows = [{key:'IXD', lbl:'IX vs Dove', col:'#0F6E56'}];
+    if (hasRex) ixRows.push({key:'IXR', lbl:'IX vs Rexona', col:'#854F0B'});
+
+    var rowspan = marcas.length + ixRows.length;
+    var psStr = (d.ps && d.ps !== 'S/P') ? ' <span style="background:#fff8e1;color:#e65100;padding:0 3px;border-radius:2px;font-size:7px">' + d.ps + '</span>' : '';
+
+    marcas.forEach(function(m, mi) {
+      var row = '<tr>';
+      if (mi === 0) {
+        row += '<td class="cli" rowspan="' + rowspan + '">' + cliName(cli) + psStr + '</td>';
+      }
+      row += '<td class="mrc"><div class="br"><div class="bd" style="background:' + m.col + '"></div>' + (m.isN ? '<strong>' + m.lbl + '</strong>' : m.lbl) + '</div></td>';
+
+      VISIBLE_SEMS.forEach(function(s) {
+        var realIdx = SEMS.indexOf(s);
+        var iC = s === curSem, iP = realIdx > curIdx;
+        var entry  = d[m.key] ? d[m.key][s] : null;
+        var entryP = (realIdx > 0 && d[m.key]) ? d[m.key][SEMS[realIdx-1]] : null;
+        var info   = entry  ? pInfo(entry.p,  entry.m,  pack) : null;
+        var infoP  = entryP ? pInfo(entryP.p, entryP.m, pack) : null;
+
+        if (iP) { row += '<td class="pend">⏳</td>'; return; }
+
+        var promoHtml = '<span class="promo-sp">S/P</span>';
+        if (pack) {
+          if (info && info.price) {
+            var arrow = priceArrow(info, infoP);
+            if (info.isPromo) {
+              promoHtml = '<span style="color:#2e6b10;font-weight:700;background:#eaf3de;padding:1px 5px;border-radius:4px">' + info.label + '</span>' + arrow;
+            } else {
+              var pcls = m.isN ? 'promo-niv' : 'promo-comp';
+              promoHtml = '<span class="' + pcls + '">' + info.label + '</span>' + arrow;
+            }
+          }
+        } else {
+          if (info && !info.isSP) {
+            var arrow2 = priceArrow(info, infoP);
+            var pcls2 = m.isN ? 'promo-niv' : 'promo-comp';
+            promoHtml = '<span class="' + pcls2 + '">' + info.label + '</span>' + arrow2;
+          }
+        }
+
+        var wc = iC ? (m.isN ? 'wc-niv' : 'wc') : '';
+        row += '<td class="' + wc + '">' + promoHtml + '</td>';
+      });
+      row += '</tr>';
+      tbody += row;
+    });
+
+    ixRows.forEach(function(ixr) {
+      var row = '<tr>';
+      row += '<td class="mrc" style="padding-left:14px;color:' + ixr.col + ';font-size:9px;font-style:italic">' + ixr.lbl + '</td>';
+      VISIBLE_SEMS.forEach(function(s, si) {
+        var realIdx = SEMS.indexOf(s);
+        var iC = s === curSem, iP = realIdx > curIdx;
+        var val = d[ixr.key] ? d[ixr.key][s] : null;
+
+        if (ixr.key === 'IXD' && val != null) { totD[si].s += val; totD[si].n++; }
+        if (ixr.key === 'IXR' && val != null) { totR[si].s += val; totR[si].n++; }
+
+        if (iP) { row += '<td class="pend">⏳</td>'; return; }
+        row += '<td class="' + (iC?'wc':'') + '">' + ixPill(val) + '</td>';
+      });
+      row += '</tr>';
+      tbody += row;
+    });
+  });
+
+  var totRowD = '<tr class="tot-row"><td class="cli" style="color:#888">Total promedio</td><td class="mrc" style="color:#0F6E56;font-style:italic">IX vs Dove</td>';
+  var totRowR = '<tr class="tot-row"><td class="cli"></td><td class="mrc" style="color:#854F0B;font-style:italic">IX vs Rexona</td>';
+  var anyRex = totR.some(function(t){ return t.n > 0; });
+
+  VISIBLE_SEMS.forEach(function(s, si) {
+    var realIdx = SEMS.indexOf(s);
+    var iC = s === curSem, iP = realIdx > curIdx;
+    if (iP) {
+      totRowD += '<td class="pend">⏳</td>';
+      totRowR += '<td class="pend">⏳</td>';
+      return;
+    }
+    var avD = totD[si].n ? Math.round(totD[si].s/totD[si].n) : null;
+    var avR = totR[si].n ? Math.round(totR[si].s/totR[si].n) : null;
+    totRowD += '<td class="' + (iC?'wc':'') + '">' + ixPill(avD) + '</td>';
+    totRowR += '<td class="' + (iC?'wc':'') + '">' + ixPill(avR) + '</td>';
+  });
+  totRowD += '</tr>';
+  totRowR += '</tr>';
+  tbody += totRowD;
+  if (anyRex) tbody += totRowR;
+  tbody += '</tbody>';
+  document.getElementById('tbl-main').innerHTML = thead + tbody;
+
+  var alerts = [];
+  if (prevSem) {
+    cliList.forEach(function(cli) {
+      var d = clients[cli];
+      [{key:'NIV',lbl:'Nivea',col:'#185FA5'},{key:'DOV',lbl:'Dove',col:'#0F6E56'},{key:'REX',lbl:'Rexona',col:'#854F0B'}].forEach(function(m) {
+        var curr  = d[m.key] ? d[m.key][curSem]  : null;
+        var prev  = d[m.key] ? d[m.key][prevSem] : null;
+        var iCurr = curr ? pInfo(curr.p, curr.m, pack) : null;
+        var iPrev = prev ? pInfo(prev.p, prev.m, pack) : null;
+        if (!iCurr || !iPrev) return;
+        if (iCurr.isSP && iPrev.isSP) return;
+        if (iCurr.price === iPrev.price && iCurr.isSP === iPrev.isSP) return;
+
+        var up = iCurr.price > iPrev.price;
+        var dn = iCurr.price < iPrev.price;
+        var newSP = iCurr.isSP && !iPrev.isSP;
+        var fromSP = !iCurr.isSP && iPrev.isSP;
+
+        var msg = '<span style="color:' + m.col + ';font-weight:600">' + m.lbl + '</span> · ' + cliName(cli) + ': ';
+        var arrow = '';
+        var t = 'ag';
+        if (fromSP) {
+          msg += 'entra promo → ' + iCurr.label;
+          arrow = ' ↓'; t = 'ag';
+        } else if (newSP) {
+          msg += 'sale promo → S/P';
+          arrow = ''; t = 'ar';
+        } else if (up) {
+          msg += iPrev.label + ' ↑ → ' + iCurr.label;
+          t = 'ar';
+        } else if (dn) {
+          msg += iPrev.label + ' ↓ → ' + iCurr.label;
+          t = 'ag';
+        } else return;
+
+        alerts.push({t: t, msg: msg, meta: prevSem + ' → ' + curSem});
+      });
+    });
+  }
+  if (!alerts.length) alerts.push({t:'ag', msg:'Sin cambios de precio promo', meta: (prevSem||'—') + ' → ' + curSem});
+
+  var dc = {ar:'ar', ag:'ag', ap:'ap'};
+  document.getElementById('alertas').innerHTML = alerts.map(function(a){
+    return '<div class="al-item"><div class="adot ' + dc[a.t] + '"></div><div><div class="atxt">' + a.msg + '</div><div class="ameta">' + a.meta + '</div></div></div>';
+  }).join('');
+
+  if (apl === 'SPRAY') {
+    var sems = HIST.sems, nh = HIST.hist[canal].niv, dh = HIST.hist[canal].dov, rh = HIST.hist[canal].rex;
+    var junStart = sems.indexOf('W23');
+    if (chartInst) chartInst.destroy();
+    chartInst = new Chart(document.getElementById('chart-main'), {
+      type: 'line',
+      data: { labels: sems, datasets: [
+        {label:'Nivea', data:nh, borderColor:'#185FA5', borderWidth:2,   tension:.3, pointRadius:2.5, spanGaps:true, fill:false},
+        {label:'Dove',  data:dh, borderColor:'#0F6E56', borderWidth:2,   tension:.3, pointRadius:2.5, spanGaps:true, fill:false},
+        {label:'Rexona',data:rh, borderColor:'#854F0B', borderWidth:1.5, tension:.3, pointRadius:2,   spanGaps:true, fill:false, borderDash:[4,3]},
+      ]},
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+FMT(c.parsed.y);}}}},
+        scales:{
+          x:{grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:8},maxRotation:40,autoSkip:true,maxTicksLimit:16,color:'#aaa'}},
+          y:{grid:{color:'rgba(0,0,0,0.04)'}, ticks:{font:{size:8},color:'#aaa',callback:function(v){return '$'+Math.round(v).toLocaleString('es-CL');}}},
+        }
+      },
+      plugins:[{id:'junArea', beforeDraw:function(ch){
+        var ca=ch.chartArea, sc=ch.scales, ctx=ch.ctx;
+        if(!ca||junStart<0) return;
+        ctx.save();
+        ctx.fillStyle='rgba(24,95,165,0.07)';
+        var x0=sc.x.getPixelForValue(junStart), x1=sc.x.getPixelForValue(sems.length-1);
+        ctx.fillRect(x0,ca.top,x1-x0+18,ca.bottom-ca.top);
+        ctx.fillStyle='rgba(24,95,165,0.85)'; ctx.font='bold 9px sans-serif';
+        ctx.fillText('Junio',x0+4,ca.top+12);
+        ctx.restore();
+      }}]
+    });
+  }
+
+  document.getElementById('footer').textContent =
+    APL_LBL[apl] + ' · Canal ' + cLabel + ' · Junio 2026 · ' +
+    new Date().toLocaleDateString('es-CL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+}
+
+render();
+
+</script>
+</body>
+</html>

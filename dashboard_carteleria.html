@@ -223,7 +223,7 @@
       if (!parsed.length) throw new Error("Sin filas válidas");
       allData = parsed;
       const now = new Date().toLocaleString("es-AR", {day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"});
-      document.getElementById("subtitle").textContent = `Pendiente: ${now} · ${allData.length} registros`;
+      document.getElementById("subtitle").textContent = `Actualizado: ${now} · ${allData.length} registros`;
     } catch(e) {
       allData = DEMO;
       document.getElementById("subtitle").textContent = `Datos de ejemplo · Publicá el sheet como CSV para ver datos reales`;

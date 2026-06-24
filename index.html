@@ -12,6 +12,7 @@
     --paper:#FFFFFF;
     --accent:#2A609C;
     --ok:#1E7A4C;
+    --warn:#D9A21B;
     --hairline:#DDE3E8;
     --muted:#7C8A98;
   }
@@ -95,6 +96,7 @@
   }
   .card-status{display:flex;align-items:center;gap:5px}
   .card-dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+  .card-dot.warn{background:var(--warn)}
   .card-status-text{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.02em}
 
   .card-title{font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:.35rem}
@@ -132,7 +134,7 @@
       <div class="stat-label">Reportes activos</div>
     </div>
     <div class="stat">
-      <div class="stat-num">W26</div>
+      <div class="stat-num">W25</div>
       <div class="stat-label">Última actualización</div>
     </div>
     <div class="stat">
@@ -157,7 +159,7 @@
     </a>
     <a class="card" href="16062026_Promotracker_Body.html">
       <div class="card-top">
-        <span class="card-code">Body</span>
+        <span class="card-code">CC</span>
         <div class="card-status"><span class="card-dot"></span><span class="card-status-text">W26 actualizado</span></div>
       </div>
       <div class="card-title">Promotracker Cremas Corporales</div>
@@ -170,7 +172,7 @@
     <a class="card" href="dashboard_carteleria.html">
       <div class="card-top">
         <span class="card-code">POS</span>
-        <div class="card-status"><span class="card-dot"></span><span class="card-status-text">Pendiente</span></div>
+        <div class="card-status"><span class="card-dot warn"></span><span class="card-status-text">Pendiente</span></div>
       </div>
       <div class="card-title">Ejecución Cartelería</div>
       <div class="card-desc">Estado de cartelería promocional por sala y cliente. % de cumplimiento, motivos de ausencia y detalle por punto de venta.</div>

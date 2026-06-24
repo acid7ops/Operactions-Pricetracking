@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Promociones - Visibilidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#EEF1EC;
+    --surface:#FFFFFF;
+    --surface-2:#E4E7DD;
+    --ink:#1A231F;
+    --ink-soft:#57625A;
+    --line:#D6DACC;
+    --pos:#2E7D52;
+    --pos-soft:#E3F0E6;
+    --neg:#C4502B;
+    --neg-soft:#F8E6DD;
+    --neu:#B6871E;
+    --neu-soft:#F4ECD8;
+    --brand:#0032A0;
+    --brand-ink:#FFFFFF;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(26,35,31,0.06), 0 6px 16px rgba(26,35,31,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .display{font-family:'Barlow Condensed',sans-serif;}
+
+  /* ---------- Shell ---------- */
+  .shell{
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 22px 80px;
+    overflow-x:hidden;
+  }
+
+  /* ---------- Header ---------- */
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+    padding-bottom:18px;
+    border-bottom:2px solid var(--brand);
+  }
+  .brand-block{display:flex;align-items:center;gap:14px;}
+  .brand-mark{
+    width:46px;height:42px;
+    background:var(--brand);
+    color:var(--brand-ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;font-size:14px;
+    letter-spacing:0.02em;
+    border-radius:8px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+  h1{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;
+    font-size:30px;
+    letter-spacing:0.2px;
+    margin:0;
+    line-height:1;
+  }
+  .subtitle{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    margin-top:4px;
+  }
+  .meta-block{
+    text-align:right;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .meta-block .mono{font-size:12.5px;color:var(--ink);}
+  #refreshBtn{
+    margin-top:6px;
+    border:1px solid var(--brand);
+    background:var(--surface);
+    color:var(--brand);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    padding:6px 12px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  #refreshBtn:hover{background:var(--brand);color:var(--brand-ink);}
+
+  /* ---------- KPI strip ---------- */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin-bottom:26px;
+  }
+  .kpi-tag{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 16px 12px;
+    position:relative;
+    box-shadow:var(--shadow);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .kpi-tag .label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  .kpi-tag .value{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;
+    font-size:30px;
+    line-height:1.1;
+    margin-top:2px;
+  }
+  .kpi-tag .sub{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .kpi-tag.pos .value{color:var(--pos);}
+  .kpi-tag.neg .value{color:var(--neg);}
+  .kpi-tag.neu .value{color:var(--neu);}
+
+  /* ---------- Filters ---------- */
+  .filters{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:22px;
+    box-shadow:var(--shadow);
+  }
+  .filter-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+  .filter-group:last-child{margin-bottom:0;}
+  .filter-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:0.08em;
+    color:var(--ink-soft);font-weight:700;
+    width:78px;flex-shrink:0;
+  }
+  .pill{
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:13px;font-weight:600;
+    padding:6px 13px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .12s ease;
+    white-space:nowrap;
+  }
+  .pill:hover{border-color:var(--brand);}
+  .pill.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);}
+  .pill.active.estado-pos{background:var(--pos);border-color:var(--pos);}
+  .pill.active.estado-neg{background:var(--neg);border-color:var(--neg);}
+  .pill.active.estado-neu{background:var(--neu);border-color:var(--neu);}
+  #searchInput{
+    border:1px solid var(--line);
+    background:var(--bg);
+    border-radius:8px;
+    padding:7px 12px;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    width:240px;
+    color:var(--ink);
+  }
+  #searchInput:focus{outline:2px solid var(--brand);outline-offset:1px;}
+
+  /* ---------- Charts grid ---------- */
+  .charts-row{
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    gap:16px;
+    margin-bottom:22px;
+    min-width:0;
+  }
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 18px 12px;
+    box-shadow:var(--shadow);
+    min-width:0;
+    overflow:hidden;
+  }
+  .panel h2{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:17px;
+    font-weight:700;
+    margin:0 0 2px;
+  }
+  .panel .panel-sub{
+    font-size:12px;color:var(--ink-soft);margin-bottom:10px;
+  }
+  .chart-wrap{position:relative;height:260px;}
+  .bar-scroll{position:relative;height:240px;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;padding-bottom:4px;}
+  .bar-inner{height:236px;min-width:100%;}
+  #barShowAllToggle{
+    display:none;
+    margin-top:8px;
+    border:none;background:none;
+    color:var(--brand);font-weight:600;font-size:12px;
+    cursor:pointer;padding:0;text-decoration:underline;
+  }
+  #backToAll{
+    display:none;
+    margin-bottom:8px;
+    border:none;background:none;
+    color:var(--brand);font-weight:600;font-size:12.5px;
+    cursor:pointer;padding:0;text-decoration:underline;
+  }
+
+  /* ---------- Detail toggle / drawer ---------- */
+  .detail-toggle{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 18px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .detail-toggle .left{display:flex;align-items:center;gap:10px;}
+  .detail-toggle .count-badge{
+    background:var(--brand);color:var(--brand-ink);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;font-weight:600;
+    padding:3px 9px;border-radius:6px;
+  }
+  .detail-toggle .ttl{font-weight:700;font-size:14.5px;}
+  .chev{transition:transform .15s ease;font-size:13px;color:var(--ink-soft);}
+  .detail-toggle.open .chev{transform:rotate(180deg);}
+
+  #detailPanel{
+    display:none;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 var(--radius) var(--radius);
+    margin-top:-1px;
+    overflow:hidden;
+  }
+  #detailPanel.open{display:block;}
+  .table-scroll{max-height:520px;overflow:auto;}
+  table{width:100%;border-collapse:collapse;font-size:12.8px;}
+  thead th{
+    position:sticky;top:0;
+    background:var(--surface-2);
+    text-align:left;
+    padding:9px 10px;
+    font-size:11px;text-transform:uppercase;letter-spacing:0.05em;
+    color:var(--ink-soft);
+    border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:9px 10px;
+    border-bottom:1px solid var(--line);
+    vertical-align:middle;
+  }
+  tbody tr:hover{background:var(--bg);}
+  tbody tr.alert-row td{background:var(--neg-soft);}
+  .status-chip{
+    display:inline-block;
+    font-size:11px;font-weight:700;
+    padding:3px 9px;border-radius:5px;
+    white-space:nowrap;
+  }
+  .status-chip.pos{background:var(--pos-soft);color:var(--pos);}
+  .status-chip.neg{background:var(--neg-soft);color:var(--neg);}
+  .status-chip.neu{background:var(--neu-soft);color:var(--neu);}
+  .diff-flag{
+    display:inline-flex;align-items:center;gap:4px;
+    font-size:11px;font-weight:700;color:var(--neg);
+  }
+  .diff-flag::before{content:"⚠";font-size:11px;}
+  td.codigo{font-family:'IBM Plex Mono',monospace;font-size:12px;}
+  .empty-state{padding:40px 20px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+
+  /* ---------- Status / loading ---------- */
+  #statusMsg{
+    text-align:center;padding:60px 20px;color:var(--ink-soft);font-size:14px;
+  }
+  #statusMsg.error{color:var(--neg);}
+
+  footer{
+    text-align:center;color:var(--ink-soft);font-size:11.5px;margin-top:30px;
+  }
+
+  @media (max-width:880px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .charts-row{grid-template-columns:1fr;}
+    #searchInput{width:100%;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="top">
+    <div class="brand-block">
+      <div class="brand-mark">PROMO</div>
+      <div>
+        <h1>Promociones - Visibilidad</h1>
+        <div class="subtitle">Cumplimiento de precio sugerido por retailer · Trade Marketing</div>
+      </div>
+    </div>
+    <div class="meta-block">
+      <div>Última actualización</div>
+      <div class="mono" id="lastUpdated">—</div>
+      <button id="refreshBtn">Actualizar datos</button>
+    </div>
+  </header>
+
+  <div id="statusMsg">Cargando datos desde la planilla…</div>
+
+  <div id="appBody" style="display:none;">
+
+    <div class="kpi-row">
+      <div class="kpi-tag">
+        <div class="label">Promociones</div>
+        <div class="value" id="kpiTotal">0</div>
+        <div class="sub">en la vista actual</div>
+      </div>
+      <div class="kpi-tag pos">
+        <div class="label">Implementado</div>
+        <div class="value" id="kpiPosPct">0%</div>
+        <div class="sub" id="kpiPosCount">0 promociones</div>
+      </div>
+      <div class="kpi-tag neg">
+        <div class="label">No implementado</div>
+        <div class="value" id="kpiNegPct">0%</div>
+        <div class="sub" id="kpiNegCount">0 promociones</div>
+      </div>
+      <div class="kpi-tag neu">
+        <div class="label">Pendiente</div>
+        <div class="value" id="kpiNeuPct">0%</div>
+        <div class="sub" id="kpiNeuCount">0 por levantar en terreno</div>
+      </div>
+      <div class="kpi-tag">
+        <div class="label">Retailers / SKUs</div>
+        <div class="value" id="kpiClientesLocales">0 / 0</div>
+        <div class="sub">en la vista actual</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <span class="filter-label">Retailer</span>
+        <div id="clientPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Categoría</span>
+        <div id="categoriaPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <div id="estadoPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Buscar</span>
+        <input id="searchInput" type="text" placeholder="Producto, canal, mecánica…">
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="panel">
+        <h2>Avance general</h2>
+        <div class="panel-sub" id="donutSub">Implementado vs. no implementado vs. pendiente</div>
+        <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2 id="barTitle">Por retailer</h2>
+        <button id="backToAll">← Volver a todos los retailers</button>
+        <div class="panel-sub" id="barSub">Haz clic en una barra para ver el detalle de ese retailer o categoría</div>
+        <div class="bar-scroll">
+          <div class="bar-inner" id="barInner"><canvas id="barChart"></canvas></div>
+        </div>
+        <button id="barShowAllToggle" style="display:none;"></button>
+      </div>
+    </div>
+
+    <div class="detail-toggle" id="detailToggle">
+      <div class="left">
+        <span class="ttl">Ver detalle de promociones</span>
+        <span class="count-badge mono" id="detailCount">0</span>
+      </div>
+      <span class="chev">▾</span>
+    </div>
+    <div id="detailPanel">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Retailer</th><th>Canal</th><th>Sell Out</th><th>Descripción</th>
+              <th>Categoría</th><th>Mecánica</th><th>Sugerido</th><th>Diferencia</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none;">No hay registros que coincidan con los filtros.</div>
+      </div>
+    </div>
+
+    <footer>Datos alimentados por levantamiento de terreno · Google Sheets</footer>
+  </div>
+</div>
+
+<script>
+// =======================================================================
+// ⚠️ PEGA AQUÍ TU LINK DE PUBLICACIÓN CSV (Archivo → Compartir → Publicar
+// en la web → formato CSV). Debe terminar en output=csv
+// =======================================================================
+const CSV_URL = "PEGA_AQUI_TU_LINK_CSV";
+
+const DIFF_MIN = 0;
+const DIFF_MAX = 1000;
+
+let RAW = [];
+let state = {
+  cliente: "Todos",       // Retailer
+  categoria: "Todos",
+  estado: "Todos",        // Status
+  search: "",
+  drill: null,            // { type:'categoria', value:'Face' } cuando se entra al detalle de un retailer
+  barShowAll: false
+};
+const MAX_BARS_DEFAULT = 12;
+
+let donutChart, barChart;
+
+// ---------- helpers ----------
+function classify(estado){
+  const e = (estado || "").toLowerCase().trim();
+  if(e.startsWith("no ")) return "neg";
+  if(e.includes("implementado")) return "pos";
+  if(e.includes("pendiente")) return "neu";
+  return "neu";
+}
+function parsePrice(v){
+  if(v === null || v === undefined) return null;
+  const s = String(v).trim();
+  if(s === "" || s === "-" || s === "—") return null;
+  const cleaned = s.replace(/\$/g,"").replace(/\./g,"").replace(/,/g,".").trim();
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? null : n;
+}
+function fmtMoney(n){
+  if(n === null || n === undefined) return "—";
+  return "$" + Math.round(n).toLocaleString("es-CL");
+}
+function diffOutOfRange(diff){
+  if(diff === null) return false;
+  return diff < DIFF_MIN || diff > DIFF_MAX;
+}
+
+// ---------- load data ----------
+function loadData(){
+  document.getElementById("statusMsg").style.display = "block";
+  document.getElementById("statusMsg").classList.remove("error");
+  document.getElementById("statusMsg").textContent = "Cargando datos desde la planilla…";
+  document.getElementById("appBody").style.display = "none";
+
+  fetch(CSV_URL + (CSV_URL.includes("?") ? "&_=" : "?_=") + Date.now())
+    .then(res => {
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    })
+    .then(csvText => {
+      const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
+      RAW = parsed.data.map(r => {
+        const sugerido = parsePrice(r["SUGERIDO"]);
+        const diferencia = parsePrice(r["Diferencia"]);
+        return {
+          retailer: (r["Retailer"]||"").trim(),
+          canal: (r["Canal"]||"").trim(),
+          sellOutStart: (r["SELL OUT START"]||r["SELL OUT ST"]||"").trim(),
+          sellOutEnd: (r["SELL OUT END"]||"").trim(),
+          descripcion: (r["DESCRIPCIÓN"]||r["DESCRIPCION"]||"").trim(),
+          categoria: (r["Categoría"]||r["Categoria"]||"").trim(),
+          mecanica: (r["MECANICA"]||"").trim(),
+          sugerido: sugerido,
+          status: (r["STATUS"]||r["Status"]||"").trim(),
+          diferencia: diferencia
+        };
+      }).filter(r => r.retailer);
+
+      if(RAW.length === 0) throw new Error("La planilla no devolvió registros.");
+
+      document.getElementById("statusMsg").style.display = "none";
+      document.getElementById("appBody").style.display = "block";
+      document.getElementById("lastUpdated").textContent =
+        new Date().toLocaleString("es-CL", {dateStyle:"medium", timeStyle:"short"});
+
+      buildClientPills();
+      buildCategoriaPills();
+      buildEstadoPills();
+
+      const ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      ready.then(() => {
+        render();
+        setTimeout(() => { if(donutChart) donutChart.update(); if(barChart) barChart.update(); }, 150);
+      });
+    })
+    .catch(err => {
+      document.getElementById("statusMsg").classList.add("error");
+      document.getElementById("statusMsg").textContent =
+        "No se pudieron cargar los datos (" + err.message + "). Revisa que la planilla esté publicada como CSV y vuelve a intentar.";
+    });
+}
+
+// ---------- filter pills ----------
+function buildClientPills(){
+  const clientes = [...new Set(RAW.map(r => r.retailer))].filter(Boolean).sort();
+  const wrap = document.getElementById("clientPills");
+  wrap.innerHTML = "";
+  wrap.appendChild(makePill("Todos", state.cliente === "Todos", () => setCliente("Todos")));
+  clientes.forEach(c => wrap.appendChild(makePill(c, state.cliente === c, () => setCliente(c))));
+}
+function buildCategoriaPills(){
+  const categorias = [...new Set(RAW.map(r => r.categoria))].filter(Boolean).sort();
+  const wrap = document.getElementById("categoriaPills");
+  wrap.innerHTML = "";
+  wrap.appendChild(makePill("Todos", state.categoria === "Todos", () => setCategoria("Todos")));
+  categorias.forEach(c => wrap.appendChild(makePill(c, state.categoria === c, () => setCategoria(c))));
+}
+function buildEstadoPills(){
+  const estados = [...new Set(RAW.map(r => r.status))].filter(Boolean).sort();
+  const wrap = document.getElementById("estadoPills");
+  wrap.innerHTML = "";
+  wrap.appendChild(makePill("Todos", state.estado === "Todos", () => setEstado("Todos"), null));
+  estados.forEach(e => wrap.appendChild(makePill(e, state.estado === e, () => setEstado(e), classify(e))));
+}
+function makePill(label, active, onClick, cls){
+  const b = document.createElement("button");
+  b.className = "pill" + (active ? " active" : "") + (active && cls ? " estado-" + cls : "");
+  b.textContent = label;
+  b.onclick = onClick;
+  return b;
+}
+function setCliente(c){
+  state.cliente = c;
+  state.drill = null;
+  state.barShowAll = false;
+  buildClientPills();
+  render();
+}
+function setCategoria(c){
+  state.categoria = c;
+  buildCategoriaPills();
+  render();
+}
+function setEstado(e){
+  state.estado = e;
+  buildEstadoPills();
+  render();
+}
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  state.search = e.target.value.toLowerCase();
+  render();
+});
+document.getElementById("backToAll").addEventListener("click", () => {
+  state.drill = null;
+  document.getElementById("backToAll").style.display = "none";
+  render();
+});
+
+// ---------- filtering ----------
+function filteredRows(){
+  return RAW.filter(r => {
+    if(state.cliente !== "Todos" && r.retailer !== state.cliente) return false;
+    if(state.categoria !== "Todos" && r.categoria !== state.categoria) return false;
+    if(state.estado !== "Todos" && r.status !== state.estado) return false;
+    if(state.drill && state.drill.type === "categoria" && r.categoria !== state.drill.value) return false;
+    if(state.search){
+      const hay = (r.descripcion + " " + r.canal + " " + r.mecanica).toLowerCase();
+      if(!hay.includes(state.search)) return false;
+    }
+    return true;
+  });
+}
+
+// ---------- render ----------
+function render(){
+  const rows = filteredRows();
+
+  const total = rows.length;
+  const pos = rows.filter(r => classify(r.status) === "pos").length;
+  const neg = rows.filter(r => classify(r.status) === "neg").length;
+  const neu = rows.filter(r => classify(r.status) === "neu").length;
+  const pctPos = total ? Math.round((pos/total)*100) : 0;
+  const pctNeg = total ? Math.round((neg/total)*100) : 0;
+  const pctNeu = total ? Math.round((neu/total)*100) : 0;
+
+  document.getElementById("kpiTotal").textContent = total;
+  document.getElementById("kpiPosPct").textContent = pctPos + "%";
+  document.getElementById("kpiPosCount").textContent = pos + " promociones";
+  document.getElementById("kpiNegPct").textContent = pctNeg + "%";
+  document.getElementById("kpiNegCount").textContent = neg + " promociones";
+  document.getElementById("kpiNeuPct").textContent = pctNeu + "%";
+  document.getElementById("kpiNeuCount").textContent = neu + " por levantar en terreno";
+  document.getElementById("kpiClientesLocales").textContent =
+    new Set(rows.map(r=>r.retailer)).size + " / " + new Set(rows.map(r=>r.descripcion)).size;
+
+  renderDonutSafe(rows);
+  renderBarSafe(rows);
+  renderTable(rows);
+}
+
+function renderDonutSafe(rows){
+  try { renderDonut(rows); }
+  catch(err){
+    console.error("Error en el gráfico de avance general:", err);
+    document.getElementById("donutSub").textContent = "No se pudo dibujar el gráfico (ver consola)";
+  }
+}
+function renderBarSafe(rows){
+  try { renderBar(rows); }
+  catch(err){
+    console.error("Error en el gráfico por retailer/categoría:", err);
+    document.getElementById("barSub").textContent = "No se pudo dibujar el gráfico (ver consola)";
+  }
+}
+
+function renderDonut(rows){
+  const counts = {};
+  rows.forEach(r => {
+    const cls = classify(r.status);
+    const label = r.status || "Pendiente";
+    counts[label] = counts[label] || {n:0, cls};
+    counts[label].n++;
+  });
+  const labels = Object.keys(counts);
+  const data = labels.map(l => counts[l].n);
+  const colors = labels.map(l => ({pos:"#2E7D52", neg:"#C4502B", neu:"#B6871E"}[counts[l].cls]));
+
+  const total = rows.length;
+  const pos = rows.filter(r => classify(r.status) === "pos").length;
+  const pctPos = total ? Math.round((pos/total)*100) : 0;
+
+  document.getElementById("donutSub").textContent =
+    state.cliente === "Todos" ? "Todos los retailers" : "Retailer: " + state.cliente;
+
+  if(donutChart) donutChart.destroy();
+  const ctx = document.getElementById("donutChart");
+  if(labels.length === 0){
+    donutChart = null;
+    return;
+  }
+
+  const centerTextPlugin = {
+    id: "centerText",
+    afterDraw(chart){
+      const {ctx, chartArea:{width, height, left, top}} = chart;
+      const cx = left + width/2, cy = top + height/2;
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "800 30px 'Barlow Condensed', sans-serif";
+      ctx.fillStyle = "#2E7D52";
+      ctx.fillText(pctPos + "%", cx, cy - 9);
+      ctx.font = "600 10.5px 'Inter', sans-serif";
+      ctx.fillStyle = "#57625A";
+      ctx.fillText("IMPLEMENTADO", cx, cy + 14);
+      ctx.restore();
+    }
+  };
+
+  donutChart = new Chart(ctx, {
+    type: "doughnut",
+    data: { labels, datasets:[{ data, backgroundColor: colors, borderWidth:0 }] },
+    options:{
+      maintainAspectRatio:false,
+      cutout:"68%",
+      plugins:{
+        legend:{ position:"bottom", labels:{ font:{family:"Inter", size:11.5}, color:"#57625A", boxWidth:10 } }
+      }
+    },
+    plugins:[centerTextPlugin]
+  });
+}
+
+function renderBar(rows){
+  const backBtn = document.getElementById("backToAll");
+  let groupKeyFn, title, sub;
+
+  if(state.cliente === "Todos"){
+    groupKeyFn = r => r.retailer;
+    title = "Por retailer";
+    sub = "Haz clic en una barra para entrar al detalle de ese retailer";
+    backBtn.style.display = "none";
+  } else {
+    groupKeyFn = r => r.categoria || "Sin categoría";
+    title = "Categorías en " + state.cliente;
+    sub = "Haz clic en una barra para ver solo esa categoría";
+    backBtn.style.display = "inline-block";
+  }
+  document.getElementById("barTitle").textContent = title;
+  document.getElementById("barSub").textContent = sub;
+
+  const groups = {};
+  rows.forEach(r => {
+    const k = groupKeyFn(r);
+    groups[k] = groups[k] || {pos:0, neg:0, neu:0};
+    groups[k][classify(r.status)]++;
+  });
+
+  const allLabels = Object.keys(groups).sort((a,b) => {
+    const ga = groups[a], gb = groups[b];
+    const pctA = (ga.pos+ga.neg+ga.neu) ? ga.pos/(ga.pos+ga.neg+ga.neu) : 0;
+    const pctB = (gb.pos+gb.neg+gb.neu) ? gb.pos/(gb.pos+gb.neg+gb.neu) : 0;
+    return pctA - pctB;
+  });
+
+  const toggleBtn = document.getElementById("barShowAllToggle");
+  const tooMany = allLabels.length > MAX_BARS_DEFAULT;
+  let labels = allLabels;
+  if(tooMany && !state.barShowAll){
+    labels = allLabels.slice(0, MAX_BARS_DEFAULT);
+  }
+
+  if(tooMany){
+    toggleBtn.style.display = "inline-block";
+    toggleBtn.textContent = state.barShowAll
+      ? `← Mostrar solo los ${MAX_BARS_DEFAULT} con menor cumplimiento`
+      : `Ver los ${allLabels.length} grupos →`;
+    toggleBtn.onclick = () => { state.barShowAll = !state.barShowAll; render(); };
+    document.getElementById("barSub").textContent = state.barShowAll
+      ? `Mostrando los ${allLabels.length} grupos · clic en una barra para ver el detalle`
+      : `Mostrando los ${MAX_BARS_DEFAULT} grupos con menor cumplimiento de ${allLabels.length} · clic para ver el detalle`;
+  } else {
+    toggleBtn.style.display = "none";
+  }
+
+  const barInner = document.getElementById("barInner");
+  const minPxPerBar = 46;
+  barInner.style.width = (labels.length * minPxPerBar > barInner.parentElement.clientWidth)
+    ? (labels.length * minPxPerBar) + "px"
+    : "100%";
+
+  const posData = labels.map(l => groups[l].pos);
+  const negData = labels.map(l => groups[l].neg);
+  const neuData = labels.map(l => groups[l].neu);
+  const pctMap = {};
+  labels.forEach(l => {
+    const g = groups[l];
+    const t = g.pos+g.neg+g.neu;
+    pctMap[l] = t ? Math.round((g.pos/t)*100) : 0;
+  });
+
+  if(barChart) barChart.destroy();
+  const ctx = document.getElementById("barChart");
+  if(labels.length === 0) { barChart = null; return; }
+
+  const hasNeu = neuData.some(v => v > 0);
+  const datasets = [
+    { label:"Implementado", data:posData, backgroundColor:"#2E7D52", stack:"s" },
+    { label:"No implementado", data:negData, backgroundColor:"#C4502B", stack:"s" }
+  ];
+  if(hasNeu) datasets.push({ label:"Pendiente", data:neuData, backgroundColor:"#B6871E", stack:"s" });
+
+  const totalLabelPlugin = {
+    id:"totalLabelPlugin",
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = "700 11px 'IBM Plex Mono', monospace";
+      ctx.fillStyle = "#1A231F";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      labels.forEach((label, i) => {
+        let topY = Infinity;
+        chart.data.datasets.forEach((ds, dsIndex) => {
+          const meta = chart.getDatasetMeta(dsIndex);
+          const bar = meta.data[i];
+          if(bar) topY = Math.min(topY, bar.y);
+        });
+        const anyBar = chart.getDatasetMeta(0).data[i];
+        if(!anyBar || topY === Infinity) return;
+        ctx.fillText(pctMap[label] + "%", anyBar.x, topY - 5);
+      });
+      ctx.restore();
+    }
+  };
+
+  barChart = new Chart(ctx, {
+    type:"bar",
+    data:{ labels, datasets },
+    options:{
+      maintainAspectRatio:false,
+      layout:{ padding:{ top:20 } },
+      scales:{
+        x:{ stacked:true, ticks:{font:{family:"IBM Plex Mono", size:10.5}, color:"#57625A"}, grid:{display:false} },
+        y:{ stacked:true, beginAtZero:true, ticks:{precision:0, font:{family:"Inter", size:11}, color:"#57625A"}, grid:{color:"#E3E6DC"} }
+      },
+      plugins:{ legend:{ position:"bottom", labels:{font:{family:"Inter", size:11}, color:"#57625A", boxWidth:10} } },
+      onClick:(evt, elements) => {
+        if(!elements.length) return;
+        const idx = elements[0].index;
+        const label = labels[idx];
+        if(state.cliente === "Todos"){
+          setCliente(label);
+        } else {
+          state.drill = { type:"categoria", value: label };
+          openDetail(true);
+          render();
+        }
+      },
+      onHover:(evt, elements) => { evt.native.target.style.cursor = elements.length ? "pointer" : "default"; }
+    },
+    plugins:[totalLabelPlugin]
+  });
+}
+
+function renderTable(rows){
+  const tbody = document.getElementById("tableBody");
+  document.getElementById("detailCount").textContent = rows.length;
+  tbody.innerHTML = "";
+  document.getElementById("emptyState").style.display = rows.length ? "none" : "block";
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    const cls = classify(r.status);
+    const fueraDeRango = diffOutOfRange(r.diferencia);
+    if(fueraDeRango) tr.classList.add("alert-row");
+
+    const sellOut = [r.sellOutStart, r.sellOutEnd].filter(Boolean).join(" → ") || "—";
+    const diffCell = r.diferencia === null
+      ? "—"
+      : fmtMoney(r.diferencia) + (fueraDeRango ? ` <span class="diff-flag">fuera de rango</span>` : "");
+
+    tr.innerHTML = `
+      <td>${r.retailer}</td>
+      <td>${r.canal || "—"}</td>
+      <td class="mono">${sellOut}</td>
+      <td>${r.descripcion}</td>
+      <td>${r.categoria || "—"}</td>
+      <td class="mono">${r.mecanica || "—"}</td>
+      <td class="mono">${fmtMoney(r.sugerido)}</td>
+      <td class="mono">${diffCell}</td>
+      <td><span class="status-chip ${cls}">${r.status || "Pendiente"}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ---------- detail drawer ----------
+const detailToggle = document.getElementById("detailToggle");
+const detailPanel = document.getElementById("detailPanel");
+detailToggle.addEventListener("click", () => openDetail(!detailPanel.classList.contains("open")));
+function openDetail(open){
+  detailPanel.classList.toggle("open", open);
+  detailToggle.classList.toggle("open", open);
+}
+
+document.getElementById("refreshBtn").addEventListener("click", loadData);
+
+loadData();
+</script>
+</body>
+</html>

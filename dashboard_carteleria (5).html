@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartelería - Visibilidad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#EEF1EC;
+    --surface:#FFFFFF;
+    --surface-2:#E4E7DD;
+    --ink:#1A231F;
+    --ink-soft:#57625A;
+    --line:#D6DACC;
+    --pos:#2E7D52;
+    --pos-soft:#E3F0E6;
+    --neg:#C4502B;
+    --neg-soft:#F8E6DD;
+    --neu:#B6871E;
+    --neu-soft:#F4ECD8;
+    --brand:#0032A0;
+    --brand-ink:#FFFFFF;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(26,35,31,0.06), 0 6px 16px rgba(26,35,31,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .display{font-family:'Barlow Condensed',sans-serif;}
+
+  /* ---------- Shell ---------- */
+  .shell{
+    max-width:1180px;
+    margin:0 auto;
+    padding:28px 22px 80px;
+    overflow-x:hidden;
+  }
+
+  /* ---------- Header ---------- */
+  header.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-bottom:26px;
+    padding-bottom:18px;
+    border-bottom:2px solid var(--brand);
+  }
+  .brand-block{display:flex;align-items:center;gap:14px;}
+  .brand-mark{
+    width:46px;height:42px;
+    background:var(--brand);
+    color:var(--brand-ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;font-size:13px;
+    letter-spacing:0.02em;
+    border-radius:8px;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+  }
+  h1{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;
+    font-size:30px;
+    letter-spacing:0.2px;
+    margin:0;
+    line-height:1;
+  }
+  .subtitle{
+    color:var(--ink-soft);
+    font-size:13.5px;
+    margin-top:4px;
+  }
+  .meta-block{
+    text-align:right;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .meta-block .mono{font-size:12.5px;color:var(--ink);}
+  #refreshBtn{
+    margin-top:6px;
+    border:1px solid var(--brand);
+    background:var(--surface);
+    color:var(--brand);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12.5px;
+    padding:6px 12px;
+    border-radius:7px;
+    cursor:pointer;
+  }
+  #refreshBtn:hover{background:var(--brand);color:var(--brand-ink);}
+
+  /* ---------- KPI strip ---------- */
+  .kpi-row{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:12px;
+    margin-bottom:26px;
+  }
+  .kpi-tag{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px 16px 12px;
+    position:relative;
+    box-shadow:var(--shadow);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+  .kpi-tag .label{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  .kpi-tag .value{
+    font-family:'Barlow Condensed',sans-serif;
+    font-weight:800;
+    font-size:30px;
+    line-height:1.1;
+    margin-top:2px;
+  }
+  .kpi-tag .sub{
+    font-size:11.5px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .kpi-tag.pos .value{color:var(--pos);}
+  .kpi-tag.neg .value{color:var(--neg);}
+  .kpi-tag.neu .value{color:var(--neu);}
+
+  /* ---------- Filters ---------- */
+  .filters{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin-bottom:22px;
+    box-shadow:var(--shadow);
+  }
+  .filter-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;}
+  .filter-group:last-child{margin-bottom:0;}
+  .filter-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:0.08em;
+    color:var(--ink-soft);font-weight:700;
+    width:78px;flex-shrink:0;
+  }
+  .pill{
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-size:13px;font-weight:600;
+    padding:6px 13px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .12s ease;
+    white-space:nowrap;
+  }
+  .pill:hover{border-color:var(--brand);}
+  .pill.active{background:var(--brand);color:var(--brand-ink);border-color:var(--brand);}
+  .pill.active.estado-pos{background:var(--pos);border-color:var(--pos);}
+  .pill.active.estado-neg{background:var(--neg);border-color:var(--neg);}
+  .pill.active.estado-neu{background:var(--neu);border-color:var(--neu);}
+  #searchInput{
+    border:1px solid var(--line);
+    background:var(--bg);
+    border-radius:8px;
+    padding:7px 12px;
+    font-family:'Inter',sans-serif;
+    font-size:13px;
+    width:240px;
+    color:var(--ink);
+  }
+  #searchInput:focus{outline:2px solid var(--brand);outline-offset:1px;}
+
+  /* ---------- Charts grid ---------- */
+  .charts-row{
+    display:grid;
+    grid-template-columns:0.85fr 1.15fr;
+    gap:16px;
+    margin-bottom:22px;
+    min-width:0;
+  }
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px 18px 12px;
+    box-shadow:var(--shadow);
+    min-width:0;
+    overflow:hidden;
+  }
+  .panel h2{
+    font-family:'Barlow Condensed',sans-serif;
+    font-size:17px;
+    font-weight:700;
+    margin:0 0 2px;
+  }
+  .panel .panel-sub{
+    font-size:12px;color:var(--ink-soft);margin-bottom:10px;
+  }
+  .chart-wrap{position:relative;height:260px;}
+  .bar-scroll{position:relative;height:240px;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;padding-bottom:4px;}
+  .bar-inner{height:236px;min-width:100%;}
+
+  /* ---------- Detail toggle / drawer ---------- */
+  .detail-toggle{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:14px 18px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+  }
+  .detail-toggle .left{display:flex;align-items:center;gap:10px;}
+  .detail-toggle .count-badge{
+    background:var(--brand);color:var(--brand-ink);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;font-weight:600;
+    padding:3px 9px;border-radius:6px;
+  }
+  .detail-toggle .ttl{font-weight:700;font-size:14.5px;}
+  .chev{transition:transform .15s ease;font-size:13px;color:var(--ink-soft);}
+  .detail-toggle.open .chev{transform:rotate(180deg);}
+
+  #detailPanel{
+    display:none;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 var(--radius) var(--radius);
+    margin-top:-1px;
+    overflow:hidden;
+  }
+  #detailPanel.open{display:block;}
+  .table-scroll{max-height:520px;overflow:auto;}
+  table{width:100%;border-collapse:collapse;font-size:12.8px;}
+  thead th{
+    position:sticky;top:0;
+    background:var(--surface-2);
+    text-align:left;
+    padding:9px 10px;
+    font-size:11px;text-transform:uppercase;letter-spacing:0.05em;
+    color:var(--ink-soft);
+    border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:9px 10px;
+    border-bottom:1px solid var(--line);
+    vertical-align:middle;
+  }
+  tbody tr:hover{background:var(--bg);}
+  tbody tr.alert-row td{background:var(--neg-soft);}
+  .status-chip{
+    display:inline-block;
+    font-size:11px;font-weight:700;
+    padding:3px 9px;border-radius:5px;
+    white-space:nowrap;
+  }
+  .status-chip.pos{background:var(--pos-soft);color:var(--pos);}
+  .status-chip.neg{background:var(--neg-soft);color:var(--neg);}
+  .status-chip.neu{background:var(--neu-soft);color:var(--neu);}
+  td.codigo{font-family:'IBM Plex Mono',monospace;font-size:12px;}
+  .empty-state{padding:40px 20px;text-align:center;color:var(--ink-soft);font-size:13.5px;}
+  .detalle-cell{color:var(--ink-soft);font-style:italic;}
+  .foto-link{
+    color:var(--brand);
+    font-weight:600;
+    font-size:12px;
+    text-decoration:none;
+  }
+  .foto-link:hover{text-decoration:underline;}
+  .foto-empty{color:var(--ink-soft);font-size:12px;}
+
+  /* ---------- Status / loading ---------- */
+  #statusMsg{
+    text-align:center;padding:60px 20px;color:var(--ink-soft);font-size:14px;
+  }
+  #statusMsg.error{color:var(--neg);}
+
+  footer{
+    text-align:center;color:var(--ink-soft);font-size:11.5px;margin-top:30px;
+  }
+
+  @media (max-width:880px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .charts-row{grid-template-columns:1fr;}
+    #searchInput{width:100%;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="top">
+    <div class="brand-block">
+      <div class="brand-mark">CART</div>
+      <div>
+        <h1>Cartelería - Visibilidad</h1>
+        <div class="subtitle">Ejecución de cartelería promocional por sala y cliente · Field Sales Operations</div>
+      </div>
+    </div>
+    <div class="meta-block">
+      <div>Última actualización</div>
+      <div class="mono" id="lastUpdated">—</div>
+      <button id="refreshBtn">Actualizar datos</button>
+    </div>
+  </header>
+
+  <div id="statusMsg">Cargando datos desde la planilla…</div>
+
+  <div id="appBody" style="display:none;">
+
+    <div class="kpi-row">
+      <div class="kpi-tag">
+        <div class="label">Salas relevadas</div>
+        <div class="value" id="kpiTotal">0</div>
+        <div class="sub">en la vista actual</div>
+      </div>
+      <div class="kpi-tag pos">
+        <div class="label">Con cartelería</div>
+        <div class="value" id="kpiPosPct">0%</div>
+        <div class="sub" id="kpiPosCount">0 salas</div>
+      </div>
+      <div class="kpi-tag neg">
+        <div class="label">Sin cartelería</div>
+        <div class="value" id="kpiNegPct">0%</div>
+        <div class="sub" id="kpiNegCount">0 salas</div>
+      </div>
+      <div class="kpi-tag neu">
+        <div class="label">Parcial</div>
+        <div class="value" id="kpiNeuPct">0%</div>
+        <div class="sub" id="kpiNeuCount">0 salas por completar</div>
+      </div>
+      <div class="kpi-tag">
+        <div class="label">Clientes / Salas</div>
+        <div class="value" id="kpiClientesLocales">0 / 0</div>
+        <div class="sub">en la vista actual</div>
+      </div>
+    </div>
+
+    <div class="filters">
+      <div class="filter-group">
+        <span class="filter-label">Cliente</span>
+        <div id="clientPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Canal</span>
+        <div id="canalPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Estatus</span>
+        <div id="estadoPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Categoría</span>
+        <div id="categoriaPills"></div>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Buscar</span>
+        <input id="searchInput" type="text" placeholder="Sala, cliente, detalle…">
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="panel">
+        <h2>Avance general</h2>
+        <div class="panel-sub" id="donutSub">Con cartelería vs. sin cartelería vs. parcial</div>
+        <div class="chart-wrap"><canvas id="donutChart"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2 id="barTitle">Por cliente</h2>
+        <div class="panel-sub" id="barSub">Haz clic en una barra para ver el detalle de ese cliente</div>
+        <div class="bar-scroll">
+          <div class="bar-inner" id="barInner"><canvas id="barChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="coveragePanel" style="margin-bottom:22px; display:none;">
+      <h2 id="coverageTitle">Cobertura fotográfica</h2>
+      <div class="panel-sub" id="coverageSub">% de salas con evidencia fotográfica cargada para esta categoría</div>
+      <div class="charts-row" style="margin-bottom:0;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div class="chart-wrap" style="height:180px; width:180px;"><canvas id="coverageDonut"></canvas></div>
+        </div>
+        <div class="chart-wrap" style="height:180px;"><canvas id="coverageBarChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="detail-toggle" id="detailToggle">
+      <div class="left">
+        <span class="ttl">Ver detalle de relevamiento</span>
+        <span class="count-badge mono" id="detailCount">0</span>
+      </div>
+      <span class="chev">▾</span>
+    </div>
+    <div id="detailPanel">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th><th>Cliente</th><th>Canal</th><th>Sala</th><th>Cartelería</th><th>Detalle</th>
+              <th>Foto Deo Spray</th><th>Foto Deo Roll On</th><th>Foto Deo Barra</th><th>Foto Facial</th><th>Foto Corporales</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="empty-state" id="emptyState" style="display:none;">No hay registros que coincidan con los filtros.</div>
+      </div>
+    </div>
+
+    <footer>Datos alimentados por levantamiento de terreno · Google Sheets</footer>
+  </div>
+</div>
+
+<script>
+// =======================================================================
+// Link de publicación CSV (Archivo → Compartir → Publicar en la web →
+// formato CSV). Debe terminar en output=csv
+// =======================================================================
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQKnKv_8K3WZKRz1nnuDNLwTcIbwWR9IXMu_W0PSh7-ezeygLgC18AH_dpT7nIVYOwOzZv6SfmMnq1T/pub?gid=0&single=true&output=csv";
+
+let RAW = [];
+let state = {
+  cliente: "Todos",
+  canal: "Todos",
+  estado: "Todos",
+  categoria: "Todos",
+  search: "",
+  drill: null
+};
+
+let donutChart, barChart, coverageDonutChart, coverageBarChart;
+
+// ---------- helpers ----------
+const CANAL_MAP = {
+  "preunic": "P&P", "maicao": "P&P", "cruzverde": "P&P", "salcobrand": "P&P", "fasa": "P&P",
+  "jumbo": "H&S", "lider": "H&S", "santa isabel": "H&S", "tottus": "H&S", "unimarc": "H&S"
+};
+function getCanal(cliente){
+  const key = (cliente || "").toLowerCase().trim();
+  return CANAL_MAP[key] || "Sin canal";
+}
+
+const CATEGORIAS = [
+  { key: "deospray",  label: "Deo Spray" },
+  { key: "deorollon", label: "Deo Roll On" },
+  { key: "deobarra",  label: "Deo Barra" },
+  { key: "facial",    label: "Facial" },
+  { key: "corporales",label: "Corporales" }
+];
+
+function classify(carteleria){
+  const v = (carteleria || "").toLowerCase().trim();
+  if (v === "con cartelería" || v === "con carteleria") return "pos";
+  if (v === "sin cartelería" || v === "sin carteleria") return "neg";
+  if (v === "parcial" || v === "parical" || v.includes("parcial") || v.includes("parical")) return "neu";
+  return v ? "neu" : "neu";
+}
+function classifyLabel(cls){
+  if(cls === "pos") return "Con cartelería";
+  if(cls === "neg") return "Sin cartelería";
+  return "Parcial";
+}
+function tieneFoto(val){
+  const v = (val || "").trim().toLowerCase();
+  return v !== "" && v !== "sin foto" && v !== "-" && v !== "—";
+}
+function parseCSVLine(line) {
+  const result = [];
+  let cur = "", inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    if (line[i] === '"') { inQ = !inQ; }
+    else if (line[i] === ',' && !inQ) { result.push(cur.trim()); cur = ""; }
+    else { cur += line[i]; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+function parseCSV(text) {
+  const lines = text.trim().split("\n").filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().replace(/[^a-záéíóúüñ]/gi,' ').trim());
+  const idx = (keys) => headers.findIndex(h => keys.some(k => h.includes(k)));
+  const iFecha   = idx(["fecha","date"]);
+  const iCliente = idx(["cliente","client","empresa"]);
+  const iSala    = idx(["sala","local","punto","pdv"]);
+  const iCart    = idx(["cartel","cart"]);
+  const iDet     = idx(["detalle","motivo","razon","razón","descripcion","descripción","observ"]);
+  const iFotoDeoSpray  = idx(["foto deo spray"]);
+  const iFotoDeoRollOn = idx(["foto deo roll"]);
+  const iFotoDeoBarra  = idx(["foto deo barra"]);
+  const iFotoFacial    = idx(["foto face","foto facial"]);
+  const iFotoCorp      = idx(["foto body","foto corporales"]);
+  return lines.slice(1).map(line => {
+    const cols = parseCSVLine(line);
+    const g = (i) => i >= 0 ? (cols[i] || "").replace(/"/g,"").trim() : "";
+    const fechaRaw = g(iFecha);
+    const fechaParsed = fechaRaw ? new Date(fechaRaw) : null;
+    const fechaFmt = (fechaParsed && !isNaN(fechaParsed)) ? fechaParsed.toLocaleDateString("es-AR", {day:"2-digit",month:"2-digit",year:"numeric"}) : fechaRaw;
+    const cliente = g(iCliente);
+    return {
+      fecha: fechaFmt || "—",
+      cliente: cliente,
+      canal: getCanal(cliente),
+      sala: g(iSala),
+      carteleria: g(iCart),
+      detalle: g(iDet),
+      fotos: {
+        deospray: g(iFotoDeoSpray),
+        deorollon: g(iFotoDeoRollOn),
+        deobarra: g(iFotoDeoBarra),
+        facial: g(iFotoFacial),
+        corporales: g(iFotoCorp)
+      }
+    };
+  }).filter(r => r.sala || r.carteleria);
+}
+
+// ---------- load data ----------
+function loadData(){
+  document.getElementById("statusMsg").style.display = "block";
+  document.getElementById("statusMsg").classList.remove("error");
+  document.getElementById("statusMsg").textContent = "Cargando datos desde la planilla…";
+  document.getElementById("appBody").style.display = "none";
+
+  fetch(CSV_URL + (CSV_URL.includes("?") ? "&_=" : "?_=") + Date.now())
+    .then(res => {
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      return res.text();
+    })
+    .then(csvText => {
+      RAW = parseCSV(csvText);
+      if(RAW.length === 0) throw new Error("La planilla no devolvió registros.");
+
+      document.getElementById("statusMsg").style.display = "none";
+      document.getElementById("appBody").style.display = "block";
+      document.getElementById("lastUpdated").textContent =
+        new Date().toLocaleString("es-CL", {dateStyle:"medium", timeStyle:"short"});
+
+      buildClientPills();
+      buildCanalPills();
+      buildEstadoPills();
+      buildCategoriaPills();
+
+      const ready = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+      ready.then(() => {
+        render();
+        setTimeout(() => { if(donutChart) donutChart.update(); if(barChart) barChart.update(); }, 150);
+      });
+    })
+    .catch(err => {
+      document.getElementById("statusMsg").classList.add("error");
+      document.getElementById("statusMsg").textContent =
+        "No se pudieron cargar los datos (" + err.message + "). Revisa que la planilla esté publicada como CSV y vuelve a intentar.";
+    });
+}
+
+// ---------- filter pills ----------
+function buildClientPills(){
+  const clientes = [...new Set(RAW.map(r => r.cliente))].filter(Boolean).sort();
+  const wrap = document.getElementById("clientPills");
+  wrap.innerHTML = "";
+  wrap.appendChild(makePill("Todos", state.cliente === "Todos", () => setCliente("Todos")));
+  clientes.forEach(c => wrap.appendChild(makePill(c, state.cliente === c, () => setCliente(c))));
+}
+function buildEstadoPills(){
+  const ORDER = ["Sin cartelería", "Parcial", "Con cartelería"];
+  const present = [...new Set(RAW.map(r => classifyLabel(classify(r.carteleria))))];
+  const estados = ORDER.filter(o => present.includes(o));
+  const wrap = document.getElementById("estadoPills");
+  wrap.innerHTML = "";
+  wrap.appendChild(makePill("Todos", state.estado === "Todos", () => setEstado("Todos"), null));
+  estados.forEach(e => {
+    const cls = e === "Con cartelería" ? "pos" : e === "Sin cartelería" ? "neg" : "neu";
+    wrap.appendChild(makePill(e, state.estado === e, () => setEstado(e), cls));
+  });
+}
+function buildCanalPills(){
+  const canales = [...new Set(RAW.map(r => r.canal))].filter(Boolean).sort();
+  const wrap = document.getElementById("canalPills");
+  wrap.innerHTML = "";
+  wrap.appendChild(makePill("Todos", state.canal === "Todos", () => setCanal("Todos")));
+  canales.forEach(c => wrap.appendChild(makePill(c, state.canal === c, () => setCanal(c))));
+}
+function buildCategoriaPills(){
+  const wrap = document.getElementById("categoriaPills");
+  wrap.innerHTML = "";
+  wrap.appendChild(makePill("Todos", state.categoria === "Todos", () => setCategoria("Todos")));
+  CATEGORIAS.forEach(c => wrap.appendChild(makePill(c.label, state.categoria === c.key, () => setCategoria(c.key))));
+}
+function makePill(label, active, onClick, cls){
+  const b = document.createElement("button");
+  b.className = "pill" + (active ? " active" : "") + (active && cls ? " estado-" + cls : "");
+  b.textContent = label;
+  b.onclick = onClick;
+  return b;
+}
+function setCliente(c){
+  state.cliente = c;
+  state.drill = null;
+  buildClientPills();
+  render();
+}
+function setEstado(e){
+  state.estado = e;
+  buildEstadoPills();
+  render();
+}
+function setCanal(c){
+  state.canal = c;
+  buildCanalPills();
+  render();
+}
+function setCategoria(c){
+  state.categoria = c;
+  buildCategoriaPills();
+  render();
+}
+
+document.getElementById("searchInput").addEventListener("input", (e) => {
+  state.search = e.target.value.toLowerCase();
+  render();
+});
+
+// ---------- filtering ----------
+function filteredRows(){
+  return RAW.filter(r => {
+    if(state.cliente !== "Todos" && r.cliente !== state.cliente) return false;
+    if(state.canal !== "Todos" && r.canal !== state.canal) return false;
+    if(state.estado !== "Todos" && classifyLabel(classify(r.carteleria)) !== state.estado) return false;
+    if(state.search){
+      const hay = (r.sala + " " + r.cliente + " " + r.detalle).toLowerCase();
+      if(!hay.includes(state.search)) return false;
+    }
+    return true;
+  });
+}
+
+// ---------- render ----------
+function render(){
+  const rows = filteredRows();
+
+  const total = rows.length;
+  const pos = rows.filter(r => classify(r.carteleria) === "pos").length;
+  const neg = rows.filter(r => classify(r.carteleria) === "neg").length;
+  const neu = rows.filter(r => classify(r.carteleria) === "neu").length;
+  const pctPos = total ? Math.round((pos/total)*100) : 0;
+  const pctNeg = total ? Math.round((neg/total)*100) : 0;
+  const pctNeu = total ? Math.round((neu/total)*100) : 0;
+
+  document.getElementById("kpiTotal").textContent = total;
+  document.getElementById("kpiPosPct").textContent = pctPos + "%";
+  document.getElementById("kpiPosCount").textContent = pos + " salas";
+  document.getElementById("kpiNegPct").textContent = pctNeg + "%";
+  document.getElementById("kpiNegCount").textContent = neg + " salas";
+  document.getElementById("kpiNeuPct").textContent = pctNeu + "%";
+  document.getElementById("kpiNeuCount").textContent = neu + " salas por completar";
+  document.getElementById("kpiClientesLocales").textContent =
+    new Set(rows.map(r=>r.cliente)).size + " / " + new Set(rows.map(r=>r.sala)).size;
+
+  renderDonutSafe(rows);
+  renderBarSafe(rows);
+  renderCoverageSafe(rows);
+  renderTable(rows);
+}
+
+function renderDonutSafe(rows){
+  try { renderDonut(rows); }
+  catch(err){
+    console.error("Error en el gráfico de avance general:", err);
+    document.getElementById("donutSub").textContent = "No se pudo dibujar el gráfico (ver consola)";
+  }
+}
+function renderBarSafe(rows){
+  try { renderBar(rows); }
+  catch(err){
+    console.error("Error en el gráfico por cliente:", err);
+    document.getElementById("barSub").textContent = "No se pudo dibujar el gráfico (ver consola)";
+  }
+}
+function renderCoverageSafe(rows){
+  try { renderCoverage(rows); }
+  catch(err){ console.error("Error en el gráfico de cobertura fotográfica:", err); }
+}
+
+function renderCoverage(rows){
+  const panel = document.getElementById("coveragePanel");
+  if(state.categoria === "Todos"){
+    panel.style.display = "none";
+    return;
+  }
+  panel.style.display = "block";
+
+  const cat = CATEGORIAS.find(c => c.key === state.categoria);
+  document.getElementById("coverageTitle").textContent = "Cobertura fotográfica · " + cat.label;
+  document.getElementById("coverageSub").textContent =
+    "% de salas con evidencia fotográfica cargada para " + cat.label + " sobre la vista filtrada actual";
+
+  const conFoto = rows.filter(r => tieneFoto(r.fotos[cat.key])).length;
+  const sinFoto = rows.length - conFoto;
+  const pct = rows.length ? Math.round((conFoto / rows.length) * 100) : 0;
+
+  if(coverageDonutChart) coverageDonutChart.destroy();
+  const ctxD = document.getElementById("coverageDonut");
+  const coverageCenterText = {
+    id: "coverageCenterText",
+    afterDraw(chart){
+      const {ctx, chartArea:{width, height, left, top}} = chart;
+      const cx = left + width/2, cy = top + height/2;
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "800 24px 'Barlow Condensed', sans-serif";
+      ctx.fillStyle = "#0032A0";
+      ctx.fillText(pct + "%", cx, cy - 6);
+      ctx.font = "600 9.5px 'Inter', sans-serif";
+      ctx.fillStyle = "#57625A";
+      ctx.fillText("CON FOTO", cx, cy + 12);
+      ctx.restore();
+    }
+  };
+  coverageDonutChart = new Chart(ctxD, {
+    type: "doughnut",
+    data: {
+      labels: ["Con foto", "Sin foto"],
+      datasets: [{ data: [conFoto, sinFoto], backgroundColor: ["#0032A0", "#D6DACC"], borderWidth: 0 }]
+    },
+    options: {
+      maintainAspectRatio: false,
+      cutout: "70%",
+      plugins: { legend: { position:"bottom", labels:{ font:{family:"Inter", size:11}, color:"#57625A", boxWidth:10 } } }
+    },
+    plugins: [coverageCenterText]
+  });
+
+  // Cobertura por cliente para esta categoría
+  const groups = {};
+  rows.forEach(r => {
+    const k = r.cliente || "Sin cliente";
+    groups[k] = groups[k] || { con:0, sin:0 };
+    if(tieneFoto(r.fotos[cat.key])) groups[k].con++; else groups[k].sin++;
+  });
+  const labels = Object.keys(groups).sort((a,b) => {
+    const ga = groups[a], gb = groups[b];
+    const pa = (ga.con+ga.sin) ? ga.con/(ga.con+ga.sin) : 0;
+    const pb = (gb.con+gb.sin) ? gb.con/(gb.con+gb.sin) : 0;
+    return pa - pb;
+  });
+  const conData = labels.map(l => groups[l].con);
+  const sinData = labels.map(l => groups[l].sin);
+
+  if(coverageBarChart) coverageBarChart.destroy();
+  const ctxB = document.getElementById("coverageBarChart");
+  if(labels.length === 0){ coverageBarChart = null; return; }
+  coverageBarChart = new Chart(ctxB, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        { label:"Con foto", data:conData, backgroundColor:"#0032A0", stack:"s" },
+        { label:"Sin foto", data:sinData, backgroundColor:"#D6DACC", stack:"s" }
+      ]
+    },
+    options: {
+      maintainAspectRatio:false,
+      scales: {
+        x:{ stacked:true, ticks:{font:{family:"IBM Plex Mono", size:10.5}, color:"#57625A"}, grid:{display:false} },
+        y:{ stacked:true, beginAtZero:true, ticks:{precision:0, font:{family:"Inter", size:11}, color:"#57625A"}, grid:{color:"#E3E6DC"} }
+      },
+      plugins: { legend: { position:"bottom", labels:{font:{family:"Inter", size:11}, color:"#57625A", boxWidth:10} } }
+    }
+  });
+}
+
+function renderDonut(rows){
+  const ORDER = ["Con cartelería", "Sin cartelería", "Parcial"];
+  const COLORS = { "Con cartelería":"#2E7D52", "Sin cartelería":"#C4502B", "Parcial":"#B6871E" };
+
+  const counts = { "Con cartelería":0, "Sin cartelería":0, "Parcial":0 };
+  rows.forEach(r => {
+    counts[classifyLabel(classify(r.carteleria))]++;
+  });
+
+  const labels = ORDER.filter(l => counts[l] > 0);
+  const data = labels.map(l => counts[l]);
+  const colors = labels.map(l => COLORS[l]);
+
+  const total = rows.length;
+  const pos = counts["Con cartelería"];
+  const pctPos = total ? Math.round((pos/total)*100) : 0;
+
+  document.getElementById("donutSub").textContent =
+    state.cliente === "Todos" ? "Todos los clientes" : "Cliente: " + state.cliente;
+
+  if(donutChart) donutChart.destroy();
+  const ctx = document.getElementById("donutChart");
+  if(labels.length === 0){
+    donutChart = null;
+    return;
+  }
+
+  const centerTextPlugin = {
+    id: "centerTextCarteleria",
+    afterDraw(chart){
+      const {ctx, chartArea:{width, height, left, top}} = chart;
+      const cx = left + width/2, cy = top + height/2;
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "800 30px 'Barlow Condensed', sans-serif";
+      ctx.fillStyle = "#2E7D52";
+      ctx.fillText(pctPos + "%", cx, cy - 9);
+      ctx.font = "600 10.5px 'Inter', sans-serif";
+      ctx.fillStyle = "#57625A";
+      ctx.fillText("CON CARTELERÍA", cx, cy + 14);
+      ctx.restore();
+    }
+  };
+
+  donutChart = new Chart(ctx, {
+    type: "doughnut",
+    data: { labels, datasets:[{ data, backgroundColor: colors, borderWidth:0 }] },
+    options:{
+      maintainAspectRatio:false,
+      cutout:"68%",
+      plugins:{
+        legend:{ position:"bottom", labels:{ font:{family:"Inter", size:11.5}, color:"#57625A", boxWidth:10 } }
+      }
+    },
+    plugins:[centerTextPlugin]
+  });
+}
+
+function renderBar(rows){
+  let title = "Por cliente";
+  let sub = "Haz clic en una barra para ver el detalle de ese cliente";
+  document.getElementById("barTitle").textContent = title;
+  document.getElementById("barSub").textContent = sub;
+
+  const groups = {};
+  rows.forEach(r => {
+    const k = r.cliente || "Sin cliente";
+    groups[k] = groups[k] || {pos:0, neg:0, neu:0};
+    groups[k][classify(r.carteleria)]++;
+  });
+
+  const labels = Object.keys(groups).sort((a,b) => {
+    const ga = groups[a], gb = groups[b];
+    const pctA = (ga.pos+ga.neg+ga.neu) ? ga.pos/(ga.pos+ga.neg+ga.neu) : 0;
+    const pctB = (gb.pos+gb.neg+gb.neu) ? gb.pos/(gb.pos+gb.neg+gb.neu) : 0;
+    return pctA - pctB;
+  });
+
+  const barInner = document.getElementById("barInner");
+  const minPxPerBar = 46;
+  barInner.style.width = (labels.length * minPxPerBar > barInner.parentElement.clientWidth)
+    ? (labels.length * minPxPerBar) + "px"
+    : "100%";
+
+  const posData = labels.map(l => groups[l].pos);
+  const negData = labels.map(l => groups[l].neg);
+  const neuData = labels.map(l => groups[l].neu);
+  const pctMap = {};
+  labels.forEach(l => {
+    const g = groups[l];
+    const t = g.pos+g.neg+g.neu;
+    pctMap[l] = t ? Math.round((g.pos/t)*100) : 0;
+  });
+
+  if(barChart) barChart.destroy();
+  const ctx = document.getElementById("barChart");
+  if(labels.length === 0) { barChart = null; return; }
+
+  const hasNeu = neuData.some(v => v > 0);
+  const datasets = [
+    { label:"Con cartelería", data:posData, backgroundColor:"#2E7D52", stack:"s" },
+    { label:"Sin cartelería", data:negData, backgroundColor:"#C4502B", stack:"s" }
+  ];
+  if(hasNeu) datasets.push({ label:"Parcial", data:neuData, backgroundColor:"#B6871E", stack:"s" });
+
+  const totalLabelPlugin = {
+    id:"totalLabelPluginCarteleria",
+    afterDatasetsDraw(chart){
+      const {ctx} = chart;
+      ctx.save();
+      ctx.font = "700 11px 'IBM Plex Mono', monospace";
+      ctx.fillStyle = "#1A231F";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      labels.forEach((label, i) => {
+        let topY = Infinity;
+        chart.data.datasets.forEach((ds, dsIndex) => {
+          const meta = chart.getDatasetMeta(dsIndex);
+          const bar = meta.data[i];
+          if(bar) topY = Math.min(topY, bar.y);
+        });
+        const anyBar = chart.getDatasetMeta(0).data[i];
+        if(!anyBar || topY === Infinity) return;
+        ctx.fillText(pctMap[label] + "%", anyBar.x, topY - 5);
+      });
+      ctx.restore();
+    }
+  };
+
+  barChart = new Chart(ctx, {
+    type:"bar",
+    data:{ labels, datasets },
+    options:{
+      maintainAspectRatio:false,
+      layout:{ padding:{ top:20 } },
+      scales:{
+        x:{ stacked:true, ticks:{font:{family:"IBM Plex Mono", size:10.5}, color:"#57625A"}, grid:{display:false} },
+        y:{ stacked:true, beginAtZero:true, ticks:{precision:0, font:{family:"Inter", size:11}, color:"#57625A"}, grid:{color:"#E3E6DC"} }
+      },
+      plugins:{ legend:{ position:"bottom", labels:{font:{family:"Inter", size:11}, color:"#57625A", boxWidth:10} } },
+      onClick:(evt, elements) => {
+        if(!elements.length) return;
+        const idx = elements[0].index;
+        const label = labels[idx];
+        setCliente(label);
+      },
+      onHover:(evt, elements) => { evt.native.target.style.cursor = elements.length ? "pointer" : "default"; }
+    },
+    plugins:[totalLabelPlugin]
+  });
+}
+
+function renderTable(rows){
+  const tbody = document.getElementById("tableBody");
+  document.getElementById("detailCount").textContent = rows.length;
+  tbody.innerHTML = "";
+  document.getElementById("emptyState").style.display = rows.length ? "none" : "block";
+
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    const cls = classify(r.carteleria);
+    if(cls === "neg") tr.classList.add("alert-row");
+
+    const fotoCell = (val) => tieneFoto(val)
+      ? `<a class="foto-link" href="${val}" target="_blank" rel="noopener">Ver</a>`
+      : `<span class="foto-empty">—</span>`;
+
+    tr.innerHTML = `
+      <td class="mono">${r.fecha || "—"}</td>
+      <td>${r.cliente || "—"}</td>
+      <td class="mono">${r.canal || "—"}</td>
+      <td class="codigo">${r.sala || "—"}</td>
+      <td><span class="status-chip ${cls}">${classifyLabel(cls)}</span></td>
+      <td class="detalle-cell">${r.detalle || "—"}</td>
+      <td>${fotoCell(r.fotos.deospray)}</td>
+      <td>${fotoCell(r.fotos.deorollon)}</td>
+      <td>${fotoCell(r.fotos.deobarra)}</td>
+      <td>${fotoCell(r.fotos.facial)}</td>
+      <td>${fotoCell(r.fotos.corporales)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ---------- detail drawer ----------
+const detailToggle = document.getElementById("detailToggle");
+const detailPanel = document.getElementById("detailPanel");
+detailToggle.addEventListener("click", () => openDetail(!detailPanel.classList.contains("open")));
+function openDetail(open){
+  detailPanel.classList.toggle("open", open);
+  detailToggle.classList.toggle("open", open);
+}
+
+document.getElementById("refreshBtn").addEventListener("click", loadData);
+
+loadData();
+</script>
+</body>
+</html>

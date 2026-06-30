@@ -94,9 +94,11 @@
     border-radius:4px;
     padding:3px 8px;
   }
+  .card-code.muted{color:var(--muted);background:#EAEDF0}
   .card-status{display:flex;align-items:center;gap:5px}
   .card-dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
   .card-dot.warn{background:var(--warn)}
+  .card-dot.closed{background:var(--muted)}
   .card-status-text{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.02em}
 
   .card-title{font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:.35rem}
@@ -192,6 +194,18 @@
       </div>
       <div class="card-title">Promociones &middot; Visibilidad</div>
       <div class="card-desc">Cumplimiento de precio sugerido por retailer: implementado vs. no implementado, con diferencia de precio levantada en terreno.</div>
+    </a>
+  </div>
+
+  <div class="section-label">Histórico</div>
+  <div class="grid">
+    <a class="card" href="historico/index.html">
+      <div class="card-top">
+        <span class="card-code muted">ARCH</span>
+        <div class="card-status"><span class="card-dot closed"></span><span class="card-status-text">Solo lectura</span></div>
+      </div>
+      <div class="card-title">Meses cerrados</div>
+      <div class="card-desc">Snapshots congelados de reportes por mes, una vez cerrado el período. No se actualizan.</div>
     </a>
   </div>
 </div>

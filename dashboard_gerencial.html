@@ -324,7 +324,7 @@ function renderKPIs(){
 }
 
 function renderBreadcrumb(){
-  let html = `<span class="crumb ${state.level==='nacional'?'active':''}" onclick="goNacional()">Gerencia</span>`;
+  let html = `<span class="crumb ${state.level==='nacional'?'active':''}" onclick="goNacional()">General</span>`;
   if(state.responsable) html += `<span class="sep">›</span><span class="crumb ${state.level==='responsable'?'active':''}" onclick="goResponsable('${state.responsable}')">${state.responsable}</span>`;
   if(state.supervisor) html += `<span class="sep">›</span><span class="crumb ${state.level==='supervisor'?'active':''}" onclick="goSupervisor('${state.responsable}','${state.supervisor}')">${state.supervisor}</span>`;
   if(state.storeCode) html += `<span class="sep">›</span><span class="crumb active">${state.storeCode}</span>`;
@@ -428,7 +428,7 @@ function renderSideResponsable(){
   const supervisors = [...new Set(recs.map(r=>r.supervisor))];
   const aggd = supervisors.map(sup=>({sup, agg: aggregate(recs.filter(r=>r.supervisor===sup))}));
   aggd.sort((a,b)=> currentMetric==='msl' ? (a.agg.avg??101)-(b.agg.avg??101) : (b.agg.avg??-1)-(a.agg.avg??-1));
-  let html = `<div class="side-header"><span class="back-link" onclick="goNacional()">‹ Volver a Gerencia</span><h2>${state.responsable}</h2><p>Supervisores a su cargo — ordenados por oportunidad de <b>${metricLabel()}</b></p></div><div class="cards">`;
+  let html = `<div class="side-header"><span class="back-link" onclick="goNacional()">‹ Volver a General</span><h2>${state.responsable}</h2><p>Supervisores a su cargo — ordenados por oportunidad de <b>${metricLabel()}</b></p></div><div class="cards">`;
   aggd.forEach(({sup, agg})=>{
     const color = tierColor(agg.avg);
     html += `<div class="card" onclick="goSupervisor('${state.responsable}','${sup}')">

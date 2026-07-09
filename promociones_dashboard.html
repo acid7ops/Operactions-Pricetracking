@@ -251,6 +251,20 @@
   .detail-toggle .ttl{font-weight:700;font-size:14.5px;}
   .chev{transition:transform .15s ease;font-size:13px;color:var(--ink-soft);}
   .detail-toggle.open .chev{transform:rotate(180deg);}
+  #downloadBtn{
+    border:1px solid var(--brand);
+    background:var(--surface);
+    color:var(--brand);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:12px;
+    padding:5px 11px;
+    border-radius:7px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .12s ease;
+  }
+  #downloadBtn:hover{background:var(--brand);color:var(--brand-ink);}
 
   #detailPanel{
     display:none;
@@ -323,10 +337,10 @@
 
   <header class="top">
     <div class="brand-block">
-      <div class="brand-mark">OPS</div>
+      <div class="brand-mark">PROMO</div>
       <div>
         <h1>Promociones - Visibilidad</h1>
-        <div class="subtitle">Cumplimiento de precio sugerido por retailer · Operaciones</div>
+        <div class="subtitle">Cumplimiento de precio sugerido por retailer · Trade Marketing</div>
       </div>
     </div>
     <div class="meta-block">
@@ -413,7 +427,10 @@
         <span class="ttl">Ver detalle de promociones</span>
         <span class="count-badge mono" id="detailCount">0</span>
       </div>
-      <span class="chev">▾</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button id="downloadBtn" onclick="event.stopPropagation()">⬇ Descargar Excel</button>
+        <span class="chev">▾</span>
+      </div>
     </div>
     <div id="detailPanel">
       <div class="table-scroll">
@@ -439,7 +456,7 @@
 // ⚠️ PEGA AQUÍ TU LINK DE PUBLICACIÓN CSV (Archivo → Compartir → Publicar
 // en la web → formato CSV). Debe terminar en output=csv
 // =======================================================================
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQn8-L-v_djcotm7EiUQvSLjHlCQElXjq55NEDg_Rfc56E8Mx3WPwmI-dyrQt0pIgjJhofvvBLFdL02/pub?output=csv";
+const CSV_URL = "PEGA_AQUI_TU_LINK_CSV";
 
 const DIFF_MIN = 0;
 const DIFF_MAX = 1000;
@@ -905,6 +922,41 @@ function openDetail(open){
   detailToggle.classList.toggle("open", open);
 }
 
+// ---------- descarga CSV (compatible con Excel) ----------
+function downloadCSV(){
+  const rows = filteredRows();
+  if(!rows.length){ alert("No hay datos para descargar con los filtros actuales."); return; }
+
+  const headers = ["Retailer","Canal","Sell Out Start","Sell Out End","Descripción","Categoría","Mecánica","Sugerido","Diferencia","Status","Estatus Real"];
+  const escape = v => {
+    const s = (v === null || v === undefined) ? "" : String(v);
+    return s.includes(",") || s.includes('"') || s.includes("\n") ? `"${s.replace(/"/g,'""')}"` : s;
+  };
+  const lines = [
+    headers.join(","),
+    ...rows.map(r => [
+      r.retailer, r.canal, r.sellOutStart, r.sellOutEnd,
+      r.descripcion, r.categoria, r.mecanica,
+      r.sugerido !== null ? r.sugerido : "",
+      r.diferencia !== null ? r.diferencia : "",
+      r.statusManual, r.estatusReal
+    ].map(escape).join(","))
+  ];
+
+  // BOM para que Excel abra con tildes correctamente
+  const blob = new Blob(["\uFEFF" + lines.join("\r\n")], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const fecha = new Date().toLocaleDateString("es-CL").replace(/\//g,"-");
+  a.download = `Promociones_${fecha}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("downloadBtn").addEventListener("click", downloadCSV);
 document.getElementById("refreshBtn").addEventListener("click", loadData);
 
 loadData();

@@ -311,7 +311,7 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--faint);font-fam
     </div>
   </div>
 
-  <footer>SECONDARY SHELF · VISIBILITY · OPERATIONS · CHILE </footer>
+  <footer>SECONDARY SHELF · VISIBILITY · BEIERSDORF SALES OPERATIONS · DATOS EN VIVO DESDE GOOGLE SHEETS</footer>
 </div>
 
 <!-- Lightbox -->
@@ -334,10 +334,12 @@ let donutChart, barChart;
 /* ---------- Categoría ---------- */
 function inferCategoria(exhibicion){
   const e = (exhibicion||"").toLowerCase();
+  if(e.includes("eucerin")) return "Eucerin";
+  if(e.includes("multicategor") || e.includes("bajo meson") || e.includes("sobre meson")) return "Multicategoría";
   if(e.includes("c18") || e.includes("deo") || e.includes("desodor")) return "DEO";
-  if(e.includes("c14") || e.includes("face") || e.includes("facial") || e.includes("eucerin")) return "Face";
+  if(e.includes("c14") || e.includes("face") || e.includes("facial")) return "Face";
   if(e.includes("body") || e.includes("corporal") || e.includes("crema") || e.includes("skin") || e.includes("paylod") || e.includes("always")) return "Body";
-  return "Eucerin";
+  return "Otros";
 }
 function classify(estado){
   const e = (estado||"").toLowerCase().trim();
@@ -418,7 +420,7 @@ function buildEstadoPills(){
   w.appendChild(makePill("No Implementado", state.estado==="No Implementado", ()=>setEstado("No Implementado"), "neg"));
 }
 function buildCatPills(){
-  const cats = ["Todos","DEO","Face","Body","Eucerin"];
+  const cats = ["Todos","DEO","Face","Body","Eucerin","Multicategoría","Otros"];
   const w = document.getElementById("catPills"); w.innerHTML="";
   cats.forEach(c=>w.appendChild(makePill(c, state.categoria===c, ()=>setCategoria(c))));
 }

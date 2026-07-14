@@ -369,7 +369,7 @@ table.pt tr:hover td:not(.cli){background:var(--mist)}
               <span style="color:#e65100;font-weight:600">Naranja</span> = promo Nivea &middot;
               <span style="color:#2e6b10">&#8593;</span> precio baja &middot;
               <span style="color:#a32d2d">&#8595;</span> precio sube &middot;
-              <span style="background:#eaf3de;color:#2e6b10;padding:0 3px;border-radius:3px;font-weight:700">88&#8211;90%</span> ok &middot;
+              <span style="background:#eaf3de;color:#2e6b10;padding:0 3px;border-radius:3px;font-weight:700">88&#8211;92%</span> ok &middot;
               <span style="background:#fcebeb;color:#a32d2d;padding:0 3px;border-radius:3px;font-weight:700">fuera de rango</span> alerta
             </span>
           </span>
@@ -433,7 +433,7 @@ function pInfo(p, m, pack) {
 
 function ixPill(v) {
   if (v == null) return '<span class="ix ix-na">—</span>';
-  var cls = (v >= 88 && v <= 90) ? 'ix-g' : 'ix-r';
+  var cls = (v >= 88 && v <= 92) ? 'ix-g' : 'ix-r';
   return '<span class="ix ' + cls + '">' + v + '%</span>';
 }
 
@@ -521,8 +521,8 @@ function render() {
   var avgD = ixDV.length ? Math.round(ixDV.reduce(function(a,b){return a+b;})/ixDV.length) : null;
   var avgR = ixRV.length ? Math.round(ixRV.reduce(function(a,b){return a+b;})/ixRV.length) : null;
   var kpis = [
-    {cls: avgD == null ? 'b' : (avgD >= 88 && avgD <= 90) ? 'g' : 'r', lbl:'IX Prom. vs Dove',   val: avgD != null ? avgD+'%' : '—', c: avgD == null ? 'cgr' : (avgD >= 88 && avgD <= 90) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
-    {cls: avgR == null ? 'b' : (avgR >= 88 && avgR <= 90) ? 'g' : 'r', lbl:'IX Prom. vs Rexona', val: avgR != null ? avgR+'%' : '—', c: avgR == null ? 'cgr' : (avgR >= 88 && avgR <= 90) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
+    {cls: avgD == null ? 'b' : (avgD >= 88 && avgD <= 92) ? 'g' : 'r', lbl:'IX Prom. vs Dove',   val: avgD != null ? avgD+'%' : '—', c: avgD == null ? 'cgr' : (avgD >= 88 && avgD <= 92) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
+    {cls: avgR == null ? 'b' : (avgR >= 88 && avgR <= 92) ? 'g' : 'r', lbl:'IX Prom. vs Rexona', val: avgR != null ? avgR+'%' : '—', c: avgR == null ? 'cgr' : (avgR >= 88 && avgR <= 92) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
     {cls:'b', lbl:'Aplicador', val: APL_LBL[apl], c:'cb', sub:'Junio 2026'},
   ];
   document.getElementById('kpis').innerHTML = kpis.map(function(k){

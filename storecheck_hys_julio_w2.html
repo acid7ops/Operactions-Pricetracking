@@ -364,11 +364,11 @@ function renderHome(){
   var t = DATA.total;
 
   var kpis = [
-    {lbl:'MSL Nacional', val: pct(t.msl), c: pctColor(t.msl,true), sub:'En percha'},
-    {lbl:'Void', val: pct(t.void), c: pctColor(t.void,false), sub:'Espacio vacío'},
-    {lbl:'Backstock', val: pct(t.back), c: pctColor(t.back,false), sub:'En bodega'},
-    {lbl:'Replenishment', val: pct(t.repl), c: pctColor(t.repl,false), sub:'Pendiente'},
-    {lbl:'Quiebre', val: pct(t.quiebre), c: pctColor(t.quiebre,false), sub:'Sin stock'},
+    {lbl:'MSL General', val: pct(t.msl), c: pctColor(t.msl,true), sub:'MSL'},
+    {lbl:'Void', val: pct(t.void), c: pctColor(t.void,false), sub:'Catalogación'},
+    {lbl:'Backstock', val: pct(t.back), c: pctColor(t.back,false), sub:'Stock Fantasma'},
+    {lbl:'Replenishment', val: pct(t.repl), c: pctColor(t.repl,false), sub:'Replenishment'},
+    {lbl:'Quiebre', val: pct(t.quiebre), c: pctColor(t.quiebre,false), sub:'Quiebre'},
   ];
   var kpisHtml = kpis.map(function(k){
     return '<div class="kpi" style="border-left-color:' + k.c + '"><div class="kpi-lbl">' + k.lbl + '</div>' +

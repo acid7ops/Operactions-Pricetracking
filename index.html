@@ -46,7 +46,7 @@
 
   .eyebrow{
     font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--aent);margin-bottom:.6rem;
+    color:var(--accent);margin-bottom:.6rem;
   }
   .title{font-size:28px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:.5rem}
   .subtitle{font-size:13.5px;color:var(--steel);margin-bottom:2rem;max-width:520px;line-height:1.5}
@@ -67,7 +67,7 @@
     font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
     color:var(--muted);margin-bottom:.9rem;
   }
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-bottom:2rem}
 
   .card{
     background:var(--paper);
@@ -89,7 +89,7 @@
   .card-code{
     font-family:'SF Mono',ui-monospace,Menlo,monospace;
     font-size:11px;font-weight:700;letter-spacing:.03em;
-    color:var(--aent);
+    color:var(--accent);
     background:#EAF0F7;
     border-radius:4px;
     padding:3px 8px;
@@ -111,6 +111,12 @@
     font-size:10.5px;color:var(--muted);
     letter-spacing:.02em;
   }
+  @media(max-width:640px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .stat:nth-child(2){border-right:none}
+    .page{padding:2rem 1.2rem 1.5rem}
+    .title{font-size:23px}
+  }
 </style>
 </head>
 <body>
@@ -122,7 +128,7 @@
     <div class="tb-sep">/</div>
     <div class="tb-sub">Sales Operations</div>
   </div>
-  <div class="tb-right">JUNIO · 2026</div>
+  <div class="tb-right">JULIO · 2026</div>
 </div>
 
 <div class="page">
@@ -132,7 +138,7 @@
 
   <div class="stats">
     <div class="stat">
-      <div class="stat-num">06</div>
+      <div class="stat-num">07</div>
       <div class="stat-label">Reportes activos</div>
     </div>
     <div class="stat">
@@ -144,7 +150,7 @@
       <div class="stat-label">Categorías de precio</div>
     </div>
     <div class="stat">
-      <div class="stat-num">4</div>
+      <div class="stat-num">5</div>
       <div class="stat-label">Reportes de ejecución</div>
     </div>
   </div>
@@ -203,6 +209,14 @@
       <div class="card-title">Backstock Derma · Cobertura MSL</div>
       <div class="card-desc">Vista gerencial nacional por responsable y store manager: MSL, Backstock y detalle por sala y SKU foco, con mapa geolocalizado.</div>
     </a>
+    <a class="card" href="storecheck_hys_julio_w2.html">
+      <div class="card-top">
+        <span class="card-code">H&S</span>
+        <div class="card-status"><span class="card-dot"></span><span class="card-status-text">W2 Julio actualizado</span></div>
+      </div>
+      <div class="card-title">Storecheck H&S</div>
+      <div class="card-desc">Buscador de sala con gap de MSL, Void, Backstock, Replenishment y Quiebre. Detalle por categoría (Face, Deo, Body), SKU y sell out histórico con filtro por mes.</div>
+    </a>
   </div>
 
   <div class="section-label">Histórico</div>
@@ -218,7 +232,7 @@
   </div>
 </div>
 
-<div class="footer">Body Care &middot; Nivea &middot; Sales Operations &middot; Junio 2026</div>
+<div class="footer">Body Care &middot; Nivea &middot; Sales Operations &middot; Julio 2026</div>
 
 </body>
 </html>

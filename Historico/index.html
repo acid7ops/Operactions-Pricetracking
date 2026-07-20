@@ -6,119 +6,37 @@
 <title>Histórico · Centro de Reportes</title>
 <style>
   :root{
-    --ink:#0B1F3A;
-    --steel:#43586E;
-    --mist:#F3F5F7;
-    --paper:#FFFFFF;
-    --accent:#2A609C;
-    --ok:#1E7A4C;
-    --warn:#D9A21B;
-    --hairline:#DDE3E8;
-    --muted:#7C8A98;
+    --ink:#0B1F3A;--steel:#43586E;--mist:#F3F5F7;--paper:#FFFFFF;
+    --accent:#2A609C;--ok:#1E7A4C;--warn:#D9A21B;--hairline:#DDE3E8;--muted:#7C8A98;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  body{
-    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    background:var(--mist);
-    color:var(--ink);
-    min-height:100vh;
-    display:flex;
-    flex-direction:column;
-  }
-
-  .topbar{
-    background:var(--ink);
-    padding:.85rem 2rem;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-  }
+  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--mist);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;}
+  .topbar{background:var(--ink);padding:.85rem 2rem;display:flex;align-items:center;justify-content:space-between;}
   .tb-left{display:flex;align-items:center;gap:.6rem}
   .tb-mark{width:8px;height:8px;background:#8FA3B8;border-radius:1px}
   .tb-brand{color:#fff;font-size:13px;font-weight:600;letter-spacing:.02em}
   .tb-sep{color:#3A4C63;font-size:13px}
   .tb-sub{color:#8FA3B8;font-size:12px;letter-spacing:.02em}
   .tb-right{color:#5B7090;font-size:11px;font-family:'SF Mono',ui-monospace,Menlo,monospace;letter-spacing:.02em}
-
   .page{max-width:880px;margin:0 auto;padding:3rem 2rem 2rem;flex:1;width:100%}
-
-  .back-link{
-    display:inline-flex;align-items:center;gap:.3rem;
-    font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;
-    margin-bottom:1.6rem;
-  }
+  .back-link{display:inline-flex;align-items:center;gap:.3rem;font-size:12px;color:var(--accent);text-decoration:none;font-weight:600;margin-bottom:1.6rem;}
   .back-link:hover{text-decoration:underline}
-
-  .eyebrow{
-    font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--muted);margin-bottom:.6rem;
-  }
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;}
   .title{font-size:26px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:.5rem}
   .subtitle{font-size:13.5px;color:var(--steel);margin-bottom:2.4rem;max-width:560px;line-height:1.5}
-
-  .section-label{
-    font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--muted);margin-bottom:.9rem;
-  }
+  .section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.9rem;}
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2.4rem}
-
-  .card{
-    background:var(--paper);
-    border:1px solid var(--hairline);
-    border-radius:10px;
-    padding:1.3rem 1.4rem;
-    text-decoration:none;
-    color:inherit;
-    display:block;
-    position:relative;
-    transition:border-color .15s, box-shadow .15s, transform .15s;
-  }
-  .card:hover{
-    border-color:#B9C8D6;
-    box-shadow:0 6px 20px rgba(11,31,58,.08);
-    transform:translateY(-1px);
-  }
+  .card{background:var(--paper);border:1px solid var(--hairline);border-radius:10px;padding:1.3rem 1.4rem;text-decoration:none;color:inherit;display:block;position:relative;transition:border-color .15s,box-shadow .15s,transform .15s;}
+  .card:hover{border-color:#B9C8D6;box-shadow:0 6px 20px rgba(11,31,58,.08);transform:translateY(-1px);}
   .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
-  .card-code{
-    font-family:'SF Mono',ui-monospace,Menlo,monospace;
-    font-size:11px;font-weight:700;letter-spacing:.03em;
-    color:var(--muted);
-    background:#EAEDF0;
-    border-radius:4px;
-    padding:3px 8px;
-  }
+  .card-code{font-family:'SF Mono',ui-monospace,Menlo,monospace;font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--muted);background:#EAEDF0;border-radius:4px;padding:3px 8px;}
   .card-status{display:flex;align-items:center;gap:5px}
   .card-dot{width:6px;height:6px;border-radius:50%;background:var(--muted)}
   .card-status-text{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.02em}
-
   .card-title{font-size:14.5px;font-weight:700;color:var(--ink);margin-bottom:.35rem}
   .card-desc{font-size:12px;color:var(--steel);line-height:1.55}
-
-  .empty{
-    border:1px dashed var(--hairline);border-radius:10px;
-    padding:2.4rem 1.4rem;text-align:center;
-    font-size:12.5px;color:var(--muted);
-    margin-bottom:2.4rem;
-  }
-
-  .howto{
-    border:1px solid var(--hairline);border-radius:10px;
-    background:var(--paper);
-    padding:1.1rem 1.3rem;
-    font-size:11.5px;color:var(--steel);line-height:1.6;
-  }
-  .howto b{color:var(--ink)}
-  .howto code{
-    font-family:'SF Mono',ui-monospace,Menlo,monospace;
-    background:#EAEDF0;padding:1px 5px;border-radius:3px;font-size:11px;
-  }
-
-  .footer{
-    border-top:1px solid var(--hairline);
-    text-align:center;padding:1.2rem;
-    font-size:10.5px;color:var(--muted);
-    letter-spacing:.02em;
-  }
+  .footer{border-top:1px solid var(--hairline);text-align:center;padding:1.2rem;font-size:10.5px;color:var(--muted);letter-spacing:.02em;}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -138,11 +56,10 @@
 
   <div class="eyebrow">Archivo &middot; Sales Operations</div>
   <div class="title">Histórico de reportes</div>
-  <div class="subtitle">Snapshots congelados de cada mes cerrado. Los datos quedan fijos en el momento del cierre y no se actualizan.</div>
+  <div class="subtitle">Snapshots congelados de cada período cerrado. Los datos quedan fijos en el momento del cierre y no se actualizan.</div>
 
   <div class="section-label">Secondary Shelf &middot; Visibility</div>
   <div class="grid">
-
     <a class="card" href="2026-06_secondary-shelf.html">
       <div class="card-top">
         <span class="card-code">JUN 26</span>
@@ -151,27 +68,28 @@
       <div class="card-title">Junio 2026</div>
       <div class="card-desc">809 registros &middot; 7 clientes &middot; 86% implementado al cierre.</div>
     </a>
-
     <a class="card" href="2026-07_secondary-shelf.html">
       <div class="card-top">
         <span class="card-code">JUL 26</span>
         <div class="card-status"><span class="card-dot"></span><span class="card-status-text">Cerrado</span></div>
       </div>
-      <div class="card-title">Julio 2026 - Primera Semana</div>
+      <div class="card-title">Julio 2026 — Primera Semana</div>
       <div class="card-desc">856 registros &middot; 6 clientes &middot; 81% implementado al cierre.</div>
     </a>
-
-    <!--
-      NUEVO MES: copia el bloque <a class="card">...</a> de arriba,
-      cambia el href, el código (ej. "JUL 26"), el título y la descripción.
-      No toques nada más en este archivo.
-    -->
-
   </div>
 
-  <div class="howto">
-    <b>Cómo cerrar un mes nuevo:</b> exporta los datos del período a un archivo con sufijo de fecha (ej. <code>2026-07_secondary-shelf.html</code>), súbelo a esta misma carpeta <code>/historico/</code>, y agrega su tarjeta en esta página copiando el bloque de ejemplo de arriba.
+  <div class="section-label">Ejecución Cartelería</div>
+  <div class="grid">
+    <a class="card" href="2026-07_W1_carteleria.html">
+      <div class="card-top">
+        <span class="card-code">JUL 26 · W1</span>
+        <div class="card-status"><span class="card-dot"></span><span class="card-status-text">Cerrado</span></div>
+      </div>
+      <div class="card-title">Julio 2026 — Primera Semana</div>
+      <div class="card-desc">568 registros &middot; 9 clientes &middot; 85% con cartelería al cierre.</div>
+    </a>
   </div>
+
 </div>
 
 <div class="footer">Body Care &middot; Nivea &middot; Sales Operations &middot; Archivo mensual</div>

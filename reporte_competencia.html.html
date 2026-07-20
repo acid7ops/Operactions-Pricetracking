@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reporte Competencia · PDV</title>
+<style>
+  :root{
+    --bg: #12181f;
+    --surface: #1c242e;
+    --surface-2: #232c38;
+    --line: #2c3644;
+    --text: #eef1f4;
+    --muted: #8b96a3;
+    --amber: #ffb020;
+    --amber-dim: #7a5a1a;
+    --green: #35c48c;
+    --red: #ff6b5e;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0; height:100%;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    padding: 0 0 40px;
+  }
+  .app{
+    width:100%;
+    max-width: 480px;
+    display:flex;
+    flex-direction:column;
+  }
+  header{
+    padding: 28px 20px 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow{
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 0 0 8px;
+  }
+  h1{
+    font-family: 'Archivo', 'Inter', sans-serif;
+    font-weight: 800;
+    font-stretch: condensed;
+    letter-spacing: -0.01em;
+    font-size: 26px;
+    margin: 0 0 6px;
+  }
+  .sub{
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  main{ padding: 20px; display:flex; flex-direction:column; gap:20px; }
+
+  .field label{
+    display:block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .field input[type="text"], .field textarea{
+    width:100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 14px;
+    color: var(--text);
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color .15s ease;
+  }
+  .field input[type="text"]:focus, .field textarea:focus{
+    border-color: var(--amber);
+  }
+  .field textarea{ resize: vertical; min-height: 70px; }
+
+  /* Botón de captura de foto: elemento firma */
+  .capture{
+    position: relative;
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    padding: 28px 20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 14px;
+    cursor:pointer;
+    overflow:hidden;
+  }
+  .capture.has-photo{ border-style: solid; border-color: var(--green); padding: 0; }
+  .capture input[type="file"]{
+    position:absolute; inset:0; opacity:0; cursor:pointer;
+  }
+  .shutter{
+    width: 68px; height:68px;
+    border-radius: 50%;
+    border: 3px solid var(--amber);
+    display:flex; align-items:center; justify-content:center;
+    position: relative;
+    flex-shrink:0;
+  }
+  .shutter::after{
+    content:'';
+    width: 46px; height:46px;
+    border-radius:50%;
+    background: var(--amber);
+  }
+  .shutter-ring{
+    position:absolute; inset:-8px;
+    border-radius:50%;
+    border: 1px solid var(--amber-dim);
+    animation: pulse 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ transform: scale(1); opacity:.6; }
+    50%{ transform: scale(1.12); opacity:0; }
+  }
+  .capture-label{
+    font-size: 14px;
+    color: var(--muted);
+    text-align:center;
+  }
+  .capture-label strong{ color: var(--text); display:block; font-size:15px; margin-bottom:2px; }
+  .preview-wrap{ width:100%; position:relative; }
+  .preview-wrap img{ width:100%; display:block; max-height: 320px; object-fit:cover; }
+  .preview-badge{
+    position:absolute; top:10px; right:10px;
+    background: rgba(18,24,31,0.85);
+    color: var(--green);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--green);
+  }
+
+  .submit-btn{
+    background: var(--amber);
+    color: #1a1305;
+    border:none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Archivo', sans-serif;
+    letter-spacing: 0.02em;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition: transform .1s ease, opacity .15s ease;
+  }
+  .submit-btn:active{ transform: scale(0.98); }
+  .submit-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  .spinner{
+    width:16px; height:16px;
+    border-radius:50%;
+    border: 2px solid rgba(0,0,0,0.25);
+    border-top-color:#1a1305;
+    animation: spin .7s linear infinite;
+    display:none;
+  }
+  .submit-btn.loading .spinner{ display:inline-block; }
+  .submit-btn.loading .btn-text{ display:none; }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  .status{
+    display:none;
+    align-items:center;
+    gap:10px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height:1.4;
+  }
+  .status.show{ display:flex; }
+  .status.ok{ background: rgba(53,196,140,0.12); color: var(--green); border:1px solid rgba(53,196,140,0.35); }
+  .status.err{ background: rgba(255,107,94,0.12); color: var(--red); border:1px solid rgba(255,107,94,0.35); }
+
+  footer{
+    padding: 0 20px;
+    color: var(--muted);
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 11px;
+    text-align:center;
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <p class="eyebrow">Centro de Reportes · Operaciones</p>
+    <h1>Reporte de Competencia</h1>
+    <p class="sub">Cliente, marca y foto. Así de simple.</p>
+  </header>
+
+  <main>
+    <form id="reportForm">
+      <div class="field" style="margin-bottom:20px;">
+        <label for="cliente">Cliente</label>
+        <input type="text" id="cliente" name="cliente" placeholder="Ej: Jumbo Providencia" required autocomplete="off">
+      </div>
+
+      <div class="field" style="margin-bottom:20px;">
+        <label for="marca">Marca</label>
+        <input type="text" id="marca" name="marca" placeholder="Ej: Marca X" required autocomplete="off">
+      </div>
+
+      <div class="field" style="margin-bottom:20px;">
+        <label>Foto</label>
+        <div class="capture" id="captureBox">
+          <input type="file" id="foto" name="foto" accept="image/*" capture="environment" required>
+          <div class="shutter"><span class="shutter-ring"></span></div>
+          <div class="capture-label">
+            <strong>Tocar para sacar foto</strong>
+            Se abre la cámara del celular
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span class="spinner"></span>
+        <span class="btn-text">Enviar reporte</span>
+      </button>
+
+      <div class="status" id="statusBox" style="margin-top:14px;"></div>
+    </form>
+  </main>
+
+  <footer>ID de sesión: <span id="sid"></span></footer>
+</div>
+
+<script>
+  // ⚠️ Reemplazar por la URL real del webhook de producción en n8n
+  const WEBHOOK_URL = "https://TU-INSTANCIA-N8N.com/webhook/reporte-competencia";
+
+  document.getElementById('sid').textContent = Math.random().toString(36).slice(2,8).toUpperCase();
+
+  const captureBox = document.getElementById('captureBox');
+  let currentFile = null;
+
+  function resetCaptureBox(){
+    captureBox.classList.remove('has-photo');
+    captureBox.innerHTML = `
+      <input type="file" id="foto" accept="image/*" capture="environment" required>
+      <div class="shutter"><span class="shutter-ring"></span></div>
+      <div class="capture-label">
+        <strong>Tocar para sacar foto</strong>
+        Se abre la cámara del celular
+      </div>
+    `;
+    document.getElementById('foto').addEventListener('change', onFotoChange);
+  }
+
+  function onFotoChange(ev){
+    const file = ev.target.files[0];
+    if(!file) return;
+    currentFile = file;
+    const reader = new FileReader();
+    reader.onload = e => {
+      captureBox.classList.add('has-photo');
+      captureBox.innerHTML = `
+        <div class="preview-wrap">
+          <img src="${e.target.result}" alt="Foto capturada">
+          <span class="preview-badge">✓ Foto lista</span>
+        </div>
+      `;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  document.getElementById('foto').addEventListener('change', onFotoChange);
+
+  const form = document.getElementById('reportForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const statusBox = document.getElementById('statusBox');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusBox.className = 'status';
+    statusBox.textContent = '';
+
+    if(!currentFile){
+      statusBox.classList.add('show','err');
+      statusBox.textContent = 'Falta sacar la foto.';
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('cliente', document.getElementById('cliente').value);
+    formData.append('marca', document.getElementById('marca').value);
+    formData.append('fecha', new Date().toISOString());
+    formData.append('foto', currentFile);
+
+    submitBtn.classList.add('loading');
+    submitBtn.disabled = true;
+
+    try{
+      const res = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+      if(!res.ok) throw new Error('bad status');
+
+      statusBox.classList.add('show','ok');
+      statusBox.textContent = '✓ Reporte enviado. Gracias, ya quedó registrado.';
+      form.reset();
+      currentFile = null;
+      resetCaptureBox();
+    }catch(err){
+      statusBox.classList.add('show','err');
+      statusBox.textContent = 'No se pudo enviar. Revisá tu conexión e intentá de nuevo.';
+    }finally{
+      submitBtn.classList.remove('loading');
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>

@@ -48,8 +48,31 @@
     font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
     color:var(--accent);margin-bottom:.6rem;
   }
-  .title{font-size:28px;font-weight:700;letter-spacing:-.01em;color:var(--ink);margin-bottom:.5rem}
+  .title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:.5rem;flex-wrap:wrap}
+  .title{font-size:28px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
   .subtitle{font-size:13.5px;color:var(--steel);margin-bottom:2rem;max-width:520px;line-height:1.5}
+
+  /* ---- quick action button ---- */
+  .quick-action{
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+    background:var(--accent);
+    color:#fff;
+    text-decoration:none;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.01em;
+    padding:.5rem .85rem;
+    border-radius:7px;
+    white-space:nowrap;
+    transition:background .15s, transform .15s;
+    flex-shrink:0;
+    margin-top:.15rem;
+  }
+  .quick-action:hover{background:#1F4A78;transform:translateY(-1px)}
+  .quick-action-icon{font-size:13px;line-height:1}
+  .quick-action-wrap{display:flex;justify-content:center;padding-top:1rem}
 
   /* ---- stat strip ---- */
   .stats{
@@ -133,7 +156,9 @@
 
 <div class="page">
   <div class="eyebrow">SC&M &middot; Ventas &amp; Operaciones</div>
-  <div class="title">Centro de Reportes</div>
+  <div class="title-row">
+    <div class="title">Centro de Reportes</div>
+  </div>
   <div class="subtitle">Selecciona un reporte para ver el detalle de precios, promociones y ejecución en punto de venta.</div>
 
   <div class="stats">
@@ -228,6 +253,12 @@
       </div>
       <div class="card-title">Historico - Meses Cerrados</div>
       <div class="card-desc">Reportes cerrados por mes.</div>
+    </a>
+  </div>
+  <div class="quick-action-wrap">
+    <a class="quick-action" href="reporte_competencia.html">
+      <span class="quick-action-icon">📷</span>
+      Reportar competencia
     </a>
   </div>
 </div>

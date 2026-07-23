@@ -274,4 +274,24 @@
 <div class="footer">Body Care &middot; Nivea &middot; Sales Operations &middot; Julio 2026</div>
 
 </body>
+  <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
+<script type="module">
+  import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
+
+  createChat({
+    webhookUrl: 'https://teamopsbdf.app.n8n.cloud/webhook/github-html-agent-webhook/chat',
+    mode: 'window',
+    showWelcomeScreen: true,
+    initialMessages: [
+      '¡Hola! Puedo ayudarte a explorar los archivos HTML de este repositorio. ¿Qué necesitas saber?'
+    ],
+    i18n: {
+      en: {
+        title: 'Asistente del repositorio',
+        subtitle: 'Pregúntame sobre el contenido HTML',
+        inputPlaceholder: 'Escribe tu pregunta...'
+      }
+    }
+  });
+</script>
 </html>

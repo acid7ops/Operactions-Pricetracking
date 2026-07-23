@@ -254,11 +254,11 @@
       <div class="field" style="margin-bottom:20px;">
         <label>Foto</label>
         <div class="capture" id="captureBox">
-          <input type="file" id="foto" name="foto" accept="image/*" capture="environment" required>
+          <input type="file" id="foto" name="foto" accept="image/*" required>
           <div class="shutter"><span class="shutter-ring"></span></div>
           <div class="capture-label">
-            <strong>Tocar para sacar foto</strong>
-            Se abre la cámara del celular
+            <strong>Tocar para agregar foto</strong>
+            Cámara, galería o archivos
           </div>
         </div>
       </div>
@@ -287,11 +287,11 @@
   function resetCaptureBox(){
     captureBox.classList.remove('has-photo');
     captureBox.innerHTML = `
-      <input type="file" id="foto" accept="image/*" capture="environment" required>
+      <input type="file" id="foto" accept="image/*" required>
       <div class="shutter"><span class="shutter-ring"></span></div>
       <div class="capture-label">
-        <strong>Tocar para sacar foto</strong>
-        Se abre la cámara del celular
+        <strong>Tocar para agregar foto</strong>
+        Cámara, galería o archivos
       </div>
     `;
     document.getElementById('foto').addEventListener('change', onFotoChange);

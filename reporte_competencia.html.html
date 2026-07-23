@@ -252,6 +252,11 @@
       </div>
 
       <div class="field" style="margin-bottom:20px;">
+        <label for="detalle">Detalle <span style="text-transform:none; opacity:.7;">(opcional)</span></label>
+        <textarea id="detalle" name="detalle" placeholder="Ej: Mueble exhibidor, promotora activa, degustación..." autocomplete="off"></textarea>
+      </div>
+
+      <div class="field" style="margin-bottom:20px;">
         <label>Foto</label>
         <div class="capture" id="captureBox">
           <input type="file" id="foto" name="foto" accept="image/*" required>
@@ -277,7 +282,7 @@
 
 <script>
   // ⚠️ Reemplazar por la URL real del webhook de producción en n8n
-  const WEBHOOK_URL = "https://teamopsbdf.app.n8n.cloud/webhook/reporte-competencia";
+  const WEBHOOK_URL = "https://TU-INSTANCIA-N8N.com/webhook/reporte-competencia";
 
   document.getElementById('sid').textContent = Math.random().toString(36).slice(2,8).toUpperCase();
 
@@ -335,6 +340,7 @@
     formData.append('cliente', document.getElementById('cliente').value);
     formData.append('marca', document.getElementById('marca').value);
     formData.append('precio', document.getElementById('precio').value);
+    formData.append('detalle', document.getElementById('detalle').value);
     formData.append('fecha', new Date().toISOString());
     formData.append('foto', currentFile);
 

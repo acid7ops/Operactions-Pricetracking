@@ -72,7 +72,7 @@
     color: var(--muted);
     margin-bottom: 8px;
   }
-  .field input[type="text"], .field textarea{
+  .field input[type="text"], .field input[type="number"], .field textarea{
     width:100%;
     background: var(--surface);
     border: 1px solid var(--line);
@@ -84,10 +84,28 @@
     outline: none;
     transition: border-color .15s ease;
   }
-  .field input[type="text"]:focus, .field textarea:focus{
+  .field input[type="text"]:focus, .field input[type="number"]:focus, .field textarea:focus{
     border-color: var(--amber);
   }
   .field textarea{ resize: vertical; min-height: 70px; }
+
+  .price-wrap{ position:relative; }
+  .price-wrap .prefix{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color: var(--muted);
+    font-size:16px;
+    pointer-events:none;
+  }
+  .price-wrap input[type="number"]{ padding-left: 34px; }
+  .price-wrap input[type="number"]::-webkit-inner-spin-button,
+  .price-wrap input[type="number"]::-webkit-outer-spin-button{
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .price-wrap input[type="number"]{ -moz-appearance: textfield; }
 
   /* Botón de captura de foto: elemento firma */
   .capture{
@@ -210,7 +228,7 @@
   <header>
     <p class="eyebrow">Centro de Reportes · Operaciones</p>
     <h1>Reporte de Competencia</h1>
-    <p class="sub">Cliente, marca y foto. Así de simple.</p>
+    <p class="sub">Cliente, marca, precio y foto. Así de simple.</p>
   </header>
 
   <main>
@@ -223,6 +241,14 @@
       <div class="field" style="margin-bottom:20px;">
         <label for="marca">Marca</label>
         <input type="text" id="marca" name="marca" placeholder="Ej: Marca X" required autocomplete="off">
+      </div>
+
+      <div class="field" style="margin-bottom:20px;">
+        <label for="precio">Precio</label>
+        <div class="price-wrap">
+          <span class="prefix">$</span>
+          <input type="number" id="precio" name="precio" placeholder="Ej: 2990" min="0" step="1" inputmode="numeric" required autocomplete="off">
+        </div>
       </div>
 
       <div class="field" style="margin-bottom:20px;">
@@ -308,6 +334,7 @@
     const formData = new FormData();
     formData.append('cliente', document.getElementById('cliente').value);
     formData.append('marca', document.getElementById('marca').value);
+    formData.append('precio', document.getElementById('precio').value);
     formData.append('fecha', new Date().toISOString());
     formData.append('foto', currentFile);
 

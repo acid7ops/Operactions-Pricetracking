@@ -6,16 +6,16 @@
 <title>Reporte Competencia · PDV</title>
 <style>
   :root{
-    --bg: #12181f;
-    --surface: #1c242e;
-    --surface-2: #232c38;
-    --line: #2c3644;
-    --text: #eef1f4;
-    --muted: #8b96a3;
-    --amber: #ffb020;
-    --amber-dim: #7a5a1a;
-    --green: #35c48c;
-    --red: #ff6b5e;
+    --bg: #ffffff;
+    --surface: #f4f7fb;
+    --surface-2: #eef2f8;
+    --line: #d7e0ec;
+    --text: #0a1f44;
+    --muted: #5b6b85;
+    --amber: #003da5;
+    --amber-dim: #b9c9e6;
+    --green: #1f9d55;
+    --red: #d63b3b;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
   html,body{margin:0; padding:0; height:100%;}
@@ -35,15 +35,16 @@
     flex-direction:column;
   }
   header{
-    padding: 28px 20px 18px;
-    border-bottom: 1px solid var(--line);
+    padding: 28px 20px 22px;
+    background: var(--amber);
+    border-bottom: 4px solid #001f52;
   }
   .eyebrow{
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--amber);
+    color: #a8c4f2;
     margin: 0 0 8px;
   }
   h1{
@@ -53,9 +54,10 @@
     letter-spacing: -0.01em;
     font-size: 26px;
     margin: 0 0 6px;
+    color: #ffffff;
   }
   .sub{
-    color: var(--muted);
+    color: #dbe6f7;
     font-size: 14px;
     margin: 0;
     line-height: 1.4;
@@ -170,7 +172,7 @@
 
   .submit-btn{
     background: var(--amber);
-    color: #1a1305;
+    color: #ffffff;
     border:none;
     border-radius: 12px;
     padding: 16px;
@@ -191,8 +193,8 @@
   .spinner{
     width:16px; height:16px;
     border-radius:50%;
-    border: 2px solid rgba(0,0,0,0.25);
-    border-top-color:#1a1305;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color:#ffffff;
     animation: spin .7s linear infinite;
     display:none;
   }
@@ -210,8 +212,8 @@
     line-height:1.4;
   }
   .status.show{ display:flex; }
-  .status.ok{ background: rgba(53,196,140,0.12); color: var(--green); border:1px solid rgba(53,196,140,0.35); }
-  .status.err{ background: rgba(255,107,94,0.12); color: var(--red); border:1px solid rgba(255,107,94,0.35); }
+  .status.ok{ background: rgba(31,157,85,0.10); color: var(--green); border:1px solid rgba(31,157,85,0.35); }
+  .status.err{ background: rgba(214,59,59,0.10); color: var(--red); border:1px solid rgba(214,59,59,0.35); }
 
   footer{
     padding: 0 20px;
@@ -241,6 +243,11 @@
       <div class="field" style="margin-bottom:20px;">
         <label for="marca">Marca</label>
         <input type="text" id="marca" name="marca" placeholder="Ej: Marca X" required autocomplete="off">
+      </div>
+
+      <div class="field" style="margin-bottom:20px;">
+        <label for="producto">Producto</label>
+        <input type="text" id="producto" name="producto" placeholder="Ej: Detergente 3L" required autocomplete="off">
       </div>
 
       <div class="field" style="margin-bottom:20px;">
@@ -282,7 +289,7 @@
 
 <script>
   // ⚠️ Reemplazar por la URL real del webhook de producción en n8n
-  const WEBHOOK_URL = "https://TU-INSTANCIA-N8N.com/webhook/reporte-competencia";
+  const WEBHOOK_URL = "https://teamopsbdf.app.n8n.cloud/webhook/reporte-competencia";
 
   document.getElementById('sid').textContent = Math.random().toString(36).slice(2,8).toUpperCase();
 
@@ -339,6 +346,7 @@
     const formData = new FormData();
     formData.append('cliente', document.getElementById('cliente').value);
     formData.append('marca', document.getElementById('marca').value);
+    formData.append('producto', document.getElementById('producto').value);
     formData.append('precio', document.getElementById('precio').value);
     formData.append('detalle', document.getElementById('detalle').value);
     formData.append('fecha', new Date().toISOString());

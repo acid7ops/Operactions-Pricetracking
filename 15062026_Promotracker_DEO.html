@@ -195,68 +195,55 @@ function renderPromoCalendar() {
 // ────────────────────────────────────────────────────────────
 
 
-// ── PASSWORD LOCK ──────────────────────────────────────────
-var PC_UNLOCKED = false;
-var _PC = [115,99,109,50,54]; // obfuscated
 
-function _pwdCheck(s) {
+
+// ── PASSWORD LOCK ─────────────────────────────────────────
+var PC_UNLOCKED = false;
+var _PC = [115,99,109,50,54]; // scm26 as char codes
+
+function _pwdOk(s) {
   if (s.length !== _PC.length) return false;
-  for (var i=0;i<_PC.length;i++) {
+  for (var i = 0; i < _PC.length; i++) {
     if (s.charCodeAt(i) !== _PC[i]) return false;
   }
   return true;
 }
 
-var _pendingTab = null;
-var _pendingBtn = null;
-
-var _origSwitchTab = switchTab;
-switchTab = function(tab, btn) {
-  if (tab === 'promo-calendar' && !PC_UNLOCKED) {
-    _pendingTab = tab;
-    _pendingBtn = btn;
-    pwdShow();
-    return;
+function pcTabClick(btn) {
+  if (PC_UNLOCKED) {
+    switchTab('promo-calendar', btn);
+  } else {
+    document.getElementById('pwd-overlay').style.display = 'flex';
+    document.getElementById('pwd-error').textContent = '';
+    var inp = document.getElementById('pwd-input');
+    inp.value = '';
+    inp.classList.remove('error');
+    setTimeout(function(){ inp.focus(); }, 100);
+    // Store btn reference
+    window._pwdBtn = btn;
   }
-  _origSwitchTab(tab, btn);
-};
-
-function pwdShow() {
-  document.getElementById('pwd-overlay').style.display = 'flex';
-  document.getElementById('pwd-error').textContent = '';
-  var inp = document.getElementById('pwd-input');
-  inp.value = '';
-  inp.classList.remove('error');
-  setTimeout(function(){ inp.focus(); }, 100);
 }
 
 function pwdCancel() {
   document.getElementById('pwd-overlay').style.display = 'none';
-  _pendingTab = null;
-  _pendingBtn = null;
 }
 
 function pwdSubmit() {
-  var val = document.getElementById('pwd-input').value;
-  if (_pwdCheck(val)) {
+  var inp = document.getElementById('pwd-input');
+  var val = inp.value;
+  if (_pwdOk(val)) {
     PC_UNLOCKED = true;
     document.getElementById('pwd-overlay').style.display = 'none';
-    if (_pendingTab && _pendingBtn) {
-      _origSwitchTab(_pendingTab, _pendingBtn);
-      _pendingTab = null;
-      _pendingBtn = null;
-    }
+    switchTab('promo-calendar', window._pwdBtn);
   } else {
-    var inp = document.getElementById('pwd-input');
-    var err = document.getElementById('pwd-error');
     inp.classList.remove('error');
     void inp.offsetWidth;
     inp.classList.add('error');
     inp.value = '';
-    err.textContent = 'Contraseña incorrecta';
+    document.getElementById('pwd-error').textContent = 'Contraseña incorrecta';
   }
 }
-// ────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────
 
 </script>
 <style>
@@ -821,7 +808,7 @@ table.pc-table td.cur-mes-td{background:#EBF4FC}
 
 <div class="tab-bar">
   <button class="main-tab active" id="main-tab-tracker" onclick="switchTab('tracker',this)">📊 Promotracker</button>
-  <button class="main-tab" id="main-tab-calendar" onclick="switchTab('promo-calendar',this)">📅 Promo Calendar</button>
+  <button class="main-tab" id="main-tab-calendar" onclick="pcTabClick(this)">📅 Promo Calendar</button>
 </div>
 <div class="tab-content active" id="tab-tracker">
 <div class="page">
@@ -1263,13 +1250,7 @@ function pcUpdateSummary() {
     '<div class="pc-sum-card"><div class="pc-sum-val" style="color:var(--faint)">' + (total?pct+'%':'—') + '</div><div class="pc-sum-lbl">Cumplimiento</div></div>';
 }
 
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-content').forEach(function(el){ el.classList.remove('active'); });
-  document.querySelectorAll('.main-tab').forEach(function(el){ el.classList.remove('active'); });
-  document.getElementById('tab-' + tab).classList.add('active');
-  btn.classList.add('active');
-  if (tab === 'promo-calendar') renderPromoCalendar();
-}
+
 
 function pcSetCanal(canal, btn) {
   PC_CANAL = canal;
@@ -1406,68 +1387,55 @@ function renderPromoCalendar() {
 // ────────────────────────────────────────────────────────────
 
 
-// ── PASSWORD LOCK ──────────────────────────────────────────
-var PC_UNLOCKED = false;
-var _PC = [115,99,109,50,54]; // obfuscated
 
-function _pwdCheck(s) {
+
+// ── PASSWORD LOCK ─────────────────────────────────────────
+var PC_UNLOCKED = false;
+var _PC = [115,99,109,50,54]; // scm26 as char codes
+
+function _pwdOk(s) {
   if (s.length !== _PC.length) return false;
-  for (var i=0;i<_PC.length;i++) {
+  for (var i = 0; i < _PC.length; i++) {
     if (s.charCodeAt(i) !== _PC[i]) return false;
   }
   return true;
 }
 
-var _pendingTab = null;
-var _pendingBtn = null;
-
-var _origSwitchTab = switchTab;
-switchTab = function(tab, btn) {
-  if (tab === 'promo-calendar' && !PC_UNLOCKED) {
-    _pendingTab = tab;
-    _pendingBtn = btn;
-    pwdShow();
-    return;
+function pcTabClick(btn) {
+  if (PC_UNLOCKED) {
+    switchTab('promo-calendar', btn);
+  } else {
+    document.getElementById('pwd-overlay').style.display = 'flex';
+    document.getElementById('pwd-error').textContent = '';
+    var inp = document.getElementById('pwd-input');
+    inp.value = '';
+    inp.classList.remove('error');
+    setTimeout(function(){ inp.focus(); }, 100);
+    // Store btn reference
+    window._pwdBtn = btn;
   }
-  _origSwitchTab(tab, btn);
-};
-
-function pwdShow() {
-  document.getElementById('pwd-overlay').style.display = 'flex';
-  document.getElementById('pwd-error').textContent = '';
-  var inp = document.getElementById('pwd-input');
-  inp.value = '';
-  inp.classList.remove('error');
-  setTimeout(function(){ inp.focus(); }, 100);
 }
 
 function pwdCancel() {
   document.getElementById('pwd-overlay').style.display = 'none';
-  _pendingTab = null;
-  _pendingBtn = null;
 }
 
 function pwdSubmit() {
-  var val = document.getElementById('pwd-input').value;
-  if (_pwdCheck(val)) {
+  var inp = document.getElementById('pwd-input');
+  var val = inp.value;
+  if (_pwdOk(val)) {
     PC_UNLOCKED = true;
     document.getElementById('pwd-overlay').style.display = 'none';
-    if (_pendingTab && _pendingBtn) {
-      _origSwitchTab(_pendingTab, _pendingBtn);
-      _pendingTab = null;
-      _pendingBtn = null;
-    }
+    switchTab('promo-calendar', window._pwdBtn);
   } else {
-    var inp = document.getElementById('pwd-input');
-    var err = document.getElementById('pwd-error');
     inp.classList.remove('error');
     void inp.offsetWidth;
     inp.classList.add('error');
     inp.value = '';
-    err.textContent = 'Contraseña incorrecta';
+    document.getElementById('pwd-error').textContent = 'Contraseña incorrecta';
   }
 }
-// ────────────────────────────────────────────────────────────
+// ──────────────────────────────────────────────────────────
 
 </script>
 

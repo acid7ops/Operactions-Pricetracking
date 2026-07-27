@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Promo Calendar DEO 2026 — Nivea Chile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nivea:#0057A8;--nivea-deep:#00294F;--nivea-mid:#0A3D73;--nivea-light:#E6F1FB;
+  --ink:#0B1C2C;--muted:#5B6B7C;--faint:#8698A8;
+  --paper:#FFFFFF;--canvas:#EEF3F9;--line:#DCE6F0;--mist:#E7EFF8;
+  --green:#158A4A;--green-bg:#EAF3DE;--red:#C0392B;--red-bg:#FCEBEB;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;
+  --sh-sm:0 1px 3px rgba(10,27,46,.07);--sh-md:0 4px 16px rgba(10,27,46,.09);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden}
+body{font-family:'Inter',sans-serif;background:var(--canvas);color:var(--ink);font-size:12px;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+
+/* TOPBAR */
+.topbar{
+  background:linear-gradient(135deg,var(--nivea-deep) 0%,var(--nivea-mid) 100%);
+  padding:.6rem 1.4rem;display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 4px 20px rgba(10,27,46,.18);position:sticky;top:0;z-index:100;
+}
+.tb-brand{color:white;display:flex;flex-direction:column;gap:1px}
+.tb-brand-eye{font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:#A9CDEF;font-weight:500}
+.tb-brand-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:-.01em}
+.tb-right{display:flex;gap:8px;align-items:center}
+.tb-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;
+  padding:3px 10px;border-radius:20px;letter-spacing:.04em;
+  background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);
+}
+
+/* PAGE */
+.page{max-width:1280px;margin:.9rem auto;padding:0 1.2rem}
+
+/* HEADER */
+.ph{
+  background:white;border-radius:var(--r-lg);padding:.8rem 1.2rem;
+  margin-bottom:.75rem;border-left:4px solid var(--nivea);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+  box-shadow:var(--sh-sm);
+}
+.ph-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600}
+.ph-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-top:3px;letter-spacing:.04em}
+.ph-legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted)}
+.sem-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* SUMMARY */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:.75rem}
+.sum-card{
+  background:white;border-radius:var(--r-md);padding:.65rem .9rem;
+  border:1px solid var(--line);box-shadow:var(--sh-sm);text-align:center;
+}
+.sum-val{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:600;line-height:1;margin-bottom:3px}
+.sum-lbl{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--faint);letter-spacing:.05em;text-transform:uppercase}
+.sum-val.green{color:var(--green)}.sum-val.red{color:var(--red)}.sum-val.blue{color:var(--nivea)}
+
+/* FILTERS */
+.filters{display:flex;gap:6px;margin-bottom:.75rem;flex-wrap:wrap}
+.filter-btn{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;
+  padding:5px 14px;border-radius:20px;border:1px solid var(--line);
+  background:white;color:var(--muted);cursor:pointer;transition:all .15s;letter-spacing:.03em;
+}
+.filter-btn:hover{border-color:var(--nivea);color:var(--nivea)}
+.filter-btn.active{background:var(--nivea-deep);color:white;border-color:var(--nivea-deep)}
+
+/* CARDS */
+.card{
+  background:white;border-radius:var(--r-lg);padding:.85rem 1rem;
+  margin-bottom:.75rem;border:1px solid var(--line);box-shadow:var(--sh-sm);
+}
+.card-title{
+  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;
+  color:var(--nivea-deep);margin-bottom:.7rem;display:flex;align-items:center;gap:8px;
+}
+.canal-badge{
+  font-family:'IBM Plex Mono',monospace;font-size:8px;
+  padding:2px 8px;border-radius:10px;background:var(--nivea-light);color:var(--nivea);font-weight:600;
+}
+.sec-lbl{
+  font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.07em;color:var(--faint);margin-bottom:.5rem;
+}
+
+/* TABLE */
+table.pc{width:100%;border-collapse:collapse;font-size:11px}
+table.pc.scroll{width:auto;min-width:100%}
+.tbl-wrap{overflow-x:auto}
+table.pc th{
+  font-family:'IBM Plex Mono',monospace;font-size:7.5px;font-weight:600;
+  color:var(--faint);padding:5px 6px;border-bottom:1px solid var(--line);
+  text-align:center;background:var(--canvas);white-space:nowrap;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+table.pc th.th-cli{text-align:left;min-width:110px;position:sticky;left:0;background:var(--canvas);z-index:2}
+table.pc th.cur{color:var(--nivea);background:var(--nivea-light)}
+table.pc td{padding:5px 6px;border-bottom:.5px solid var(--mist);text-align:center;vertical-align:middle}
+table.pc td.td-cli{
+  text-align:left;font-family:'Space Grotesk',sans-serif;font-weight:600;
+  color:var(--nivea-deep);font-size:10.5px;background:#F5F8FD;
+  position:sticky;left:0;z-index:1;border-right:1px solid var(--line);
+  min-width:110px;
+}
+table.pc td.cur-td{background:#EBF4FC}
+table.pc tr:hover td:not(.td-cli){background:var(--mist)}
+
+/* CELL */
+.pc-cell{
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:2px 0;cursor:pointer;min-height:38px;justify-content:center;
+}
+.pc-cell:hover .sem{transform:scale(1.2);transition:transform .15s}
+.sem{
+  width:9px;height:9px;border-radius:50%;flex-shrink:0;
+  transition:transform .15s;
+}
+.sem-0{background:#B0BEC5}
+.sem-1{background:var(--green)}
+.sem-2{background:var(--red)}
+.pc-plan{
+  font-family:'IBM Plex Mono',monospace;font-size:8.5px;
+  color:var(--muted);letter-spacing:.02em;line-height:1.3;
+  max-width:68px;text-align:center;
+}
+.pc-plan.tac{color:var(--nivea);font-weight:600}
+.no-plan{color:var(--mist);font-size:9px}
+
+/* FOOTER */
+.footer{text-align:center;padding:.7rem;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--faint);letter-spacing:.04em}
+
+@media print{
+  body{background:white}.topbar{display:none}.page{padding:0;margin:0}
+  .filters,.summary{display:none}
+}
+@page{size:A4 landscape;margin:.7cm .9cm}
+
+/* ── LOGIN SCREEN ── */
+#login-screen {
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg, #00294F 0%, #0A3D73 60%, #0057A8 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.login-box {
+  background:white;border-radius:16px;
+  padding:2.5rem 2.2rem;width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  text-align:center;
+}
+.login-logo {
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,#00294F,#0057A8);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1.2rem;font-size:24px;
+}
+.login-title {
+  font-family:'Space Grotesk',sans-serif;
+  font-size:18px;font-weight:700;color:#00294F;
+  margin-bottom:4px;
+}
+.login-sub {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;color:#8698A8;letter-spacing:.06em;
+  text-transform:uppercase;margin-bottom:1.8rem;
+}
+.login-label {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;font-weight:600;color:#5B6B7C;
+  text-align:left;margin-bottom:5px;letter-spacing:.05em;
+  text-transform:uppercase;
+}
+.login-input {
+  width:100%;border:1.5px solid #DCE6F0;border-radius:8px;
+  padding:10px 14px;font-size:14px;font-family:'Inter',sans-serif;
+  text-align:center;letter-spacing:.15em;outline:none;color:#0B1C2C;
+  transition:border-color .15s;margin-bottom:1rem;
+}
+.login-input:focus { border-color:#0057A8; }
+.login-input.error {
+  border-color:#C0392B;
+  animation:shake .35s ease;
+}
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-5px)}
+  80%{transform:translateX(5px)}
+}
+.login-btn {
+  width:100%;padding:11px;border:none;
+  border-radius:8px;
+  background:linear-gradient(135deg,#00294F,#0057A8);
+  color:white;font-family:'Space Grotesk',sans-serif;
+  font-size:14px;font-weight:600;cursor:pointer;
+  transition:opacity .15s;letter-spacing:.01em;
+}
+.login-btn:hover { opacity:.9; }
+.login-error {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px;color:#C0392B;
+  margin-top:.6rem;min-height:14px;letter-spacing:.03em;
+}
+.login-footer {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px;color:#B0BEC5;margin-top:1.5rem;
+  letter-spacing:.04em;
+}
+
+</style>
+</head>
+<body>
+
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🔒</div>
+    <div class="login-title">Promo Calendar 2026</div>
+    <div class="login-sub">Nivea Chile · Documento Confidencial</div>
+    <div class="login-label">Contraseña de acceso</div>
+    <input class="login-input" id="login-input" type="password"
+           placeholder="••••••"
+           autocomplete="off"
+           onkeydown="if(event.key==='Enter') loginSubmit()">
+    <button class="login-btn" onclick="loginSubmit()">Ingresar</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-footer">ACCESO RESTRINGIDO · SOLO USO INTERNO</div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-brand-eye">PROMO CALENDAR · NIVEA CHILE · 2026</div>
+    <div class="tb-brand-name">DEO · Seguimiento Estrategia Comercial</div>
+  </div>
+  <div class="tb-right">
+    <span class="tb-badge" id="mes-badge">Julio 2026</span>
+    <button onclick="window.print()" style="font-family:Inter,sans-serif;font-size:11px;padding:5px 13px;border-radius:6px;border:none;cursor:pointer;font-weight:600;background:rgba(255,255,255,.15);color:white;">↓ PDF</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <div class="ph">
+    <div>
+      <div class="ph-title">Promo Calendar 2026 — Verificación vs Ejecución</div>
+      <div class="ph-sub">Pincha cada semáforo para marcarlo · ⚪ sin evaluar → 🟢 cumple → 🔴 no cumple</div>
+    </div>
+    <div class="ph-legend">
+      <div class="leg-item"><div class="sem-dot" style="background:#B0BEC5"></div>Sin evaluar</div>
+      <div class="leg-item"><div class="sem-dot" style="background:var(--green)"></div>Cumple plan</div>
+      <div class="leg-item"><div class="sem-dot" style="background:var(--red)"></div>No cumple</div>
+    </div>
+  </div>
+
+  <div class="summary" id="summary">
+    <div class="sum-card"><div class="sum-val blue" id="s-total">0</div><div class="sum-lbl">Con plan</div></div>
+    <div class="sum-card"><div class="sum-val green" id="s-green">0</div><div class="sum-lbl">Cumplen ✅</div></div>
+    <div class="sum-card"><div class="sum-val red" id="s-red">0</div><div class="sum-lbl">No cumplen ❌</div></div>
+    <div class="sum-card"><div class="sum-val" style="color:var(--faint)" id="s-pct">—</div><div class="sum-lbl">Cumplimiento</div></div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" onclick="setCanal('ALL',this)">Todos</button>
+    <button class="filter-btn" onclick="setCanal('P&P',this)">Solo P&P</button>
+    <button class="filter-btn" onclick="setCanal('H&S',this)">Solo H&S</button>
+  </div>
+
+  <div id="tables"></div>
+
+  <div class="footer">Promo Calendar DEO 2026 · Nivea Chile · Confidencial</div>
+</div>
+
+<script>
+var CAL = {"P&P|CV|Spray 150ml|2": "2x5.490", "P&P|CV|Spray 150ml|3": "2x4.990", "P&P|CV|Spray 150ml|4": "2x5.490 (TAC)", "P&P|CV|Spray 150ml|5": "2x5490", "P&P|CV|Spray 150ml|6": "2x5490", "P&P|CV|Spray 150ml|7": "2x5590 (TAC)", "P&P|CV|Spray 150ml|8": "2x5590", "P&P|CV|Spray 150ml|9": "2x5590", "P&P|CV|Spray 150ml|10": "2x5590", "P&P|CV|Spray 150ml|11": "2x5590", "P&P|CV|Spray 150ml|12": "2x5590", "P&P|CV|Barra|1": "2x5790", "P&P|CV|Barra|3": "2x5.390", "P&P|CV|Barra|5": "1x2690", "P&P|CV|Barra|6": "2x5290", "P&P|CV|Barra|8": "2x5390", "P&P|CV|Barra|9": "2x5390", "P&P|CV|Barra|12": "2x5790", "P&P|CV|Roll-on|2": "1x2000", "P&P|CV|Roll-on|4": "2x5490", "P&P|CV|Roll-on|5": "1x3000 (TAC)", "P&P|CV|Roll-on|6": "2x5490", "P&P|CV|Roll-on|7": "1x3000 (TAC)", "P&P|CV|Roll-on|8": "2x5490", "P&P|CV|Roll-on|9": "2x5490", "P&P|CV|Roll-on|10": "2x5490", "P&P|CV|Roll-on|12": "1x2000", "P&P|MA|Spray 150ml|2": "2x5490", "P&P|MA|Spray 150ml|3": "2x5000", "P&P|MA|Spray 150ml|4": "2x5000", "P&P|MA|Spray 150ml|5": "2x5000", "P&P|MA|Spray 150ml|6": "2x5300", "P&P|MA|Spray 150ml|7": "2x5500 (TAC)", "P&P|MA|Spray 150ml|8": "2x5500", "P&P|MA|Spray 150ml|9": "2x5500", "P&P|MA|Spray 150ml|10": "2x5500", "P&P|MA|Spray 150ml|11": "2x5500", "P&P|MA|Spray 150ml|12": "2x5500", "P&P|MA|Barra|1": "2x5790", "P&P|MA|Barra|3": "2x5390", "P&P|MA|Barra|5": "2x5400", "P&P|MA|Barra|6": "2x5300", "P&P|MA|Barra|8": "2x5790", "P&P|MA|Barra|9": "2x5790", "P&P|MA|Barra|12": "2x5790", "P&P|MA|Roll-on|2": "1x2000", "P&P|MA|Roll-on|3": "1x2000", "P&P|MA|Roll-on|4": "1x2500", "P&P|MA|Roll-on|5": "1x3000 (TAC)", "P&P|MA|Roll-on|6": "2x5300", "P&P|MA|Roll-on|7": "2x5.490 (TAC)", "P&P|MA|Roll-on|8": "2x5490", "P&P|MA|Roll-on|9": "2x5490", "P&P|MA|Roll-on|10": "2x5490", "P&P|MA|Roll-on|11": "2x5490", "P&P|MA|Roll-on|12": "1x2000", "P&P|SB|Spray 150ml|1": "2x5490", "P&P|SB|Spray 150ml|2": "2x5490", "P&P|SB|Spray 150ml|3": "2x4990", "P&P|SB|Spray 150ml|4": "2x5490", "P&P|SB|Spray 150ml|5": "2x5490", "P&P|SB|Spray 150ml|6": "2x5690", "P&P|SB|Spray 150ml|7": "2x5690", "P&P|SB|Spray 150ml|8": "2x5690", "P&P|SB|Spray 150ml|9": "2x5690", "P&P|SB|Spray 150ml|10": "2x5590", "P&P|SB|Spray 150ml|11": "2x5590", "P&P|SB|Spray 150ml|12": "2x5590", "P&P|SB|Barra|1": "2x5790", "P&P|SB|Barra|2": "2x5690", "P&P|SB|Barra|4": "2x5490", "P&P|SB|Barra|5": "2x5790", "P&P|SB|Barra|7": "2x5790", "P&P|SB|Barra|10": "2x5790", "P&P|SB|Barra|12": "2x5790", "P&P|SB|Roll-on|3": "1x2500", "P&P|SB|Roll-on|4": "2x5490", "P&P|SB|Roll-on|12": "2x5490", "P&P|FA|Spray 150ml|1": "2x5490", "P&P|FA|Spray 150ml|3": "2x5490", "P&P|FA|Spray 150ml|5": "2x5490", "P&P|FA|Spray 150ml|6": "2x5590", "P&P|FA|Spray 150ml|8": "2x5590 (PAI)", "P&P|FA|Spray 150ml|9": "2x5590", "P&P|FA|Spray 150ml|10": "2x5590", "P&P|FA|Spray 150ml|12": "2x5590", "P&P|FA|Barra|2": "2x5790", "P&P|FA|Barra|6": "2x5790", "P&P|FA|Roll-on|3": "1x2500", "P&P|FA|Roll-on|5": "2x5490", "P&P|FA|Roll-on|7": "2x5490", "P&P|FA|Roll-on|11": "2x5490", "P&P|FA|Roll-on|12": "2x5490", "P&P|FA|Packs|4": "x2 5490 (PAI)", "P&P|PU|Spray 150ml|1": "2x5490", "P&P|PU|Spray 150ml|2": "2x5490", "P&P|PU|Spray 150ml|3": "2x5490", "P&P|PU|Spray 150ml|4": "2x5490", "P&P|PU|Spray 150ml|5": "2x5490", "P&P|PU|Spray 150ml|6": "2x5490", "P&P|PU|Spray 150ml|7": "2x5590", "P&P|PU|Spray 150ml|8": "2x5590", "P&P|PU|Spray 150ml|9": "2x5590", "P&P|PU|Spray 150ml|10": "2x5590", "P&P|PU|Spray 150ml|11": "2x5590", "P&P|PU|Spray 150ml|12": "2x5590", "P&P|PU|Barra|1": "2x5790", "P&P|PU|Barra|3": "2x5290", "P&P|PU|Barra|4": "2x5790", "P&P|PU|Barra|8": "2x5790", "P&P|PU|Barra|9": "2x5790", "P&P|PU|Barra|12": "2x5790", "P&P|PU|Roll-on|1": "1x2000", "P&P|PU|Roll-on|3": "1x2500", "P&P|PU|Roll-on|5": "2x4999", "P&P|PU|Roll-on|6": "1x2890", "P&P|PU|Roll-on|7": "2x4990", "P&P|PU|Roll-on|8": "1x2890", "P&P|PU|Roll-on|9": "2x4990", "P&P|PU|Roll-on|10": "1x2890", "P&P|PU|Roll-on|11": "2x4990", "P&P|PU|Roll-on|12": "2x4990", "P&P|PU|Packs|3": "x2 5490", "H&S|JUMBO|Spray 150ml|1": "2x5790", "H&S|JUMBO|Spray 150ml|2": "2x5190", "H&S|JUMBO|Spray 150ml|3": "3X2", "H&S|JUMBO|Spray 150ml|4": "2x5100", "H&S|JUMBO|Spray 150ml|5": "2x5090", "H&S|JUMBO|Spray 150ml|6": "3X2", "H&S|JUMBO|Spray 150ml|7": "2x5290", "H&S|JUMBO|Spray 150ml|8": "2x5590", "H&S|JUMBO|Spray 150ml|9": "2x5590", "H&S|JUMBO|Spray 150ml|10": "2x5590", "H&S|JUMBO|Spray 150ml|11": "2x5590", "H&S|JUMBO|Spray 150ml|12": "2XTBC", "H&S|JUMBO|Barra|1": "1x3000", "H&S|JUMBO|Barra|2": "1x3000", "H&S|JUMBO|Barra|3": "3X2", "H&S|JUMBO|Barra|5": "2X5690", "H&S|JUMBO|Barra|8": "2X5790", "H&S|JUMBO|Barra|11": "2X5790", "H&S|JUMBO|Roll-on|1": "1x3000", "H&S|JUMBO|Roll-on|2": "2x5390", "H&S|JUMBO|Roll-on|3": "3X2", "H&S|JUMBO|Roll-on|4": "2x5390", "H&S|JUMBO|Roll-on|5": "2X5390", "H&S|JUMBO|Roll-on|6": "3X2", "H&S|JUMBO|Roll-on|7": "2X5390", "H&S|JUMBO|Roll-on|10": "2X5490", "H&S|JUMBO|Roll-on|12": "2X5490", "H&S|JUMBO|Packs|2": "x2 5190", "H&S|JUMBO|Packs|3": "x2 5190", "H&S|SISA|Spray 150ml|1": "2x5790", "H&S|SISA|Spray 150ml|2": "2x5190", "H&S|SISA|Spray 150ml|3": "2x5190", "H&S|SISA|Spray 150ml|4": "1X2550", "H&S|SISA|Spray 150ml|5": "1X2650", "H&S|SISA|Spray 150ml|6": "1X2695 (30% OFF)", "H&S|SISA|Spray 150ml|7": "1X2695 (30% OFF)", "H&S|SISA|Spray 150ml|8": "1X2790", "H&S|SISA|Spray 150ml|9": "1x2790", "H&S|SISA|Spray 150ml|10": "1x2790", "H&S|SISA|Spray 150ml|11": "1x2790", "H&S|SISA|Spray 150ml|12": "1xTBC", "H&S|SISA|Barra|1": "1x3000", "H&S|SISA|Barra|2": "1x3000", "H&S|SISA|Barra|3": "2x5790", "H&S|SISA|Barra|5": "1x2850", "H&S|SISA|Barra|8": "1x2890", "H&S|SISA|Barra|11": "1x2890", "H&S|SISA|Roll-on|1": "1x3000", "H&S|SISA|Roll-on|2": "2x5390", "H&S|SISA|Roll-on|3": "2x5490", "H&S|SISA|Roll-on|4": "1X2690", "H&S|SISA|Roll-on|5": "1x2700", "H&S|SISA|Roll-on|6": "1X2700 (30% OFF)", "H&S|SISA|Roll-on|7": "1X2700 (30% OFF)", "H&S|SISA|Roll-on|10": "1x2750", "H&S|SISA|Roll-on|12": "1x2750", "H&S|SISA|Packs|2": "x2 5190", "H&S|SISA|Packs|3": "x2 5190", "H&S|TOTTUS|Spray 150ml|1": "2x5490", "H&S|TOTTUS|Spray 150ml|2": "1x3000", "H&S|TOTTUS|Spray 150ml|3": "2x5490", "H&S|TOTTUS|Spray 150ml|4": "2x5490", "H&S|TOTTUS|Spray 150ml|6": "1X3000", "H&S|TOTTUS|Spray 150ml|7": "1x3000", "H&S|TOTTUS|Spray 150ml|9": "2x5590", "H&S|TOTTUS|Spray 150ml|12": "2x5490", "H&S|TOTTUS|Barra|2": "1X3000", "H&S|TOTTUS|Barra|6": "1X4000", "H&S|TOTTUS|Barra|8": "1X4000", "H&S|TOTTUS|Barra|11": "2X5990", "H&S|TOTTUS|Barra|12": "2X5990", "H&S|TOTTUS|Roll-on|2": "1X3000", "H&S|TOTTUS|Roll-on|3": "2X5490", "H&S|TOTTUS|Roll-on|6": "1X3000", "H&S|TOTTUS|Roll-on|8": "1X3000", "H&S|TOTTUS|Roll-on|11": "2X5780", "H&S|TOTTUS|Roll-on|12": "2X5780", "H&S|TOTTUS|Packs|5": "x2 5290", "H&S|UNIMARC|Spray 150ml|1": "2X6290", "H&S|UNIMARC|Spray 150ml|2": "2X5490", "H&S|UNIMARC|Spray 150ml|3": "2X5490", "H&S|UNIMARC|Spray 150ml|4": "2X5490", "H&S|UNIMARC|Spray 150ml|5": "2X5490", "H&S|UNIMARC|Spray 150ml|6": "2X5390", "H&S|UNIMARC|Spray 150ml|7": "2X5590", "H&S|UNIMARC|Spray 150ml|8": "2X5590", "H&S|UNIMARC|Spray 150ml|9": "2X5590", "H&S|UNIMARC|Spray 150ml|10": "2X5590", "H&S|UNIMARC|Spray 150ml|11": "2X5590", "H&S|UNIMARC|Spray 150ml|12": "2X5590", "H&S|UNIMARC|Barra|1": "2X6290", "H&S|UNIMARC|Barra|2": "1X3500", "H&S|UNIMARC|Barra|3": "1X3500", "H&S|UNIMARC|Barra|4": "1X3500", "H&S|UNIMARC|Barra|5": "1X3500", "H&S|UNIMARC|Barra|6": "2X5990", "H&S|UNIMARC|Barra|10": "2X5990", "H&S|UNIMARC|Roll-on|1": "2X6290", "H&S|UNIMARC|Roll-on|2": "1X3000", "H&S|UNIMARC|Roll-on|3": "1X3000", "H&S|UNIMARC|Roll-on|4": "1X3000", "H&S|UNIMARC|Roll-on|5": "1X3000", "H&S|UNIMARC|Roll-on|7": "2X4000", "H&S|UNIMARC|Roll-on|8": "2X4000", "H&S|UNIMARC|Roll-on|9": "2X4000", "H&S|UNIMARC|Roll-on|11": "2X4000", "H&S|UNIMARC|Roll-on|12": "2X4000", "H&S|LIDER|Spray 150ml|2": "1X2550", "H&S|LIDER|Spray 150ml|3": "1X2550", "H&S|LIDER|Spray 150ml|4": "2X5090", "H&S|LIDER|Spray 150ml|5": "2X5090", "H&S|LIDER|Spray 150ml|6": "2X5090", "H&S|LIDER|Spray 150ml|7": "2X5090", "H&S|LIDER|Spray 150ml|8": "2X5190", "H&S|LIDER|Spray 150ml|9": "2X5190", "H&S|LIDER|Spray 150ml|10": "2X5190", "H&S|LIDER|Spray 150ml|11": "2X5190", "H&S|LIDER|Spray 150ml|12": "2X5190", "H&S|LIDER|Packs|4": "x4 9.990", "H&S|LIDER|Packs|5": "x4 9.990", "H&S|LIDER|Packs|6": "x4 9.990", "H&S|LIDER|Packs|7": "x4 9.990", "H&S|LIDER|Barra|2": "1X3000", "H&S|LIDER|Barra|3": "1X3000", "H&S|LIDER|Barra|6": "1X3000", "H&S|LIDER|Barra|7": "1X3000", "H&S|LIDER|Barra|8": "1X3000", "H&S|LIDER|Barra|10": "2X5490", "H&S|LIDER|Barra|11": "2X5490", "H&S|LIDER|Barra|12": "2X5490", "H&S|LIDER|Roll-on|2": "1X2000", "H&S|LIDER|Roll-on|3": "1X2000", "H&S|LIDER|Roll-on|6": "1X3000", "H&S|LIDER|Roll-on|7": "1X3000", "H&S|LIDER|Roll-on|8": "1X3000", "H&S|LIDER|Roll-on|9": "1X3000", "H&S|LIDER|Roll-on|10": "1X3000", "H&S|LIDER|Roll-on|11": "1X3000", "H&S|LIDER|Roll-on|12": "1X3000"};
+var NAMES = {"SB": "Salcobrand", "CV": "Cruz Verde", "MA": "Maicao", "PU": "Preunic", "FA": "Ahumada", "JUMBO": "Jumbo", "SISA": "Santa Isabel", "LIDER": "Lider", "TOTTUS": "Tottus", "UNIMARC": "Unimarc"};
+var PP_CLIENTS = ["SB", "PU", "CV", "MA", "FA"];
+var HS_CLIENTS = ["LIDER", "JUMBO", "SISA", "TOTTUS", "UNIMARC"];
+var APLS = ["Spray 150ml", "Roll-on", "Barra", "Packs"];
+var MESES_SHORT = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+var MESES_FULL  = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+var MES_ACTUAL  = 7;
+var STATES = {};  // key → 0,1,2
+var CANAL = 'ALL';
+
+function planRaw(canal, cli, apl, mes) {
+  return CAL[canal+'|'+cli+'|'+apl+'|'+mes] || null;
+}
+
+function cleanLabel(raw) {
+  if (!raw) return '';
+  var s = String(raw).replace(/\([^)]+\)/g,'').trim();
+  return s;
+}
+
+function isTac(raw) {
+  return raw && String(raw).toUpperCase().indexOf('TAC') > -1;
+}
+
+function toggleSem(key, dotEl) {
+  STATES[key] = ((STATES[key] || 0) + 1) % 3;
+  var s = STATES[key];
+  dotEl.className = 'sem sem-' + s;
+  updateSummary();
+}
+
+function updateSummary() {
+  var total = 0, green = 0, red = 0;
+  Object.keys(STATES).forEach(function(k){
+    if (STATES[k] > 0) total++;
+    if (STATES[k] === 1) green++;
+    if (STATES[k] === 2) red++;
+  });
+  // Count total cells with plan
+  var withPlan = 0;
+  Object.keys(CAL).forEach(function(k){ if (CAL[k]) withPlan++; });
+  var pct = (green+red) > 0 ? Math.round(green/(green+red)*100) : null;
+  document.getElementById('s-total').textContent = withPlan;
+  document.getElementById('s-green').textContent = green;
+  document.getElementById('s-red').textContent = red;
+  document.getElementById('s-pct').textContent = pct !== null ? pct+'%' : '—';
+}
+
+function setCanal(canal, btn) {
+  CANAL = canal;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  render();
+}
+
+function render() {
+  var tablesEl = document.getElementById('tables');
+  var canals = CANAL === 'ALL' ? ['P&P','H&S'] : [CANAL];
+  var html = '';
+
+  canals.forEach(function(canal) {
+    var clients = canal === 'P&P' ? PP_CLIENTS : HS_CLIENTS;
+
+    APLS.forEach(function(apl) {
+      // Check if any data for this canal+apl
+      var hasData = false;
+      clients.forEach(function(cli){
+        for (var m=1;m<=12;m++) {
+          if (planRaw(canal,cli,apl,m)) { hasData=true; }
+        }
+      });
+      if (!hasData) return;
+
+      html += '<div class="card">';
+      html += '<div class="card-title">' + apl + ' <span class="canal-badge">' + canal + '</span></div>';
+      html += '<div class="tbl-wrap"><table class="pc scroll"><thead><tr>';
+      html += '<th class="th-cli">Cliente</th>';
+      for (var m=1;m<=12;m++) {
+        html += '<th class="' + (m===MES_ACTUAL?'cur':'') + '">' + MESES_SHORT[m-1] + '</th>';
+      }
+      html += '</tr></thead><tbody>';
+
+      clients.forEach(function(cli) {
+        html += '<tr><td class="td-cli">' + (NAMES[cli]||cli) + '</td>';
+        for (var m=1;m<=12;m++) {
+          var raw = planRaw(canal, cli, apl, m);
+          var isCur = m === MES_ACTUAL;
+          var isFuture = m > MES_ACTUAL;
+          var key = canal+'|'+cli+'|'+apl+'|'+m;
+          var state = STATES[key] || 0;
+          var tdClass = isCur ? 'cur-td' : '';
+
+          if (!raw) {
+            html += '<td class="' + tdClass + '"><div class="no-plan">—</div></td>';
+          } else {
+            var label = cleanLabel(raw);
+            var tac = isTac(raw);
+            var dotClass = isFuture ? 'sem sem-0' : 'sem sem-' + state;
+            var clickable = !isFuture;
+            html += '<td class="' + tdClass + '">';
+            html += '<div class="pc-cell"' + (clickable ? ' onclick="toggleSem(\'' + key + '\',this.querySelector(\'.sem\'))"' : '') + '>';
+            html += '<div class="' + dotClass + '"></div>';
+            html += '<div class="pc-plan' + (tac?' tac':'') + '">' + label + '</div>';
+            html += '</div></td>';
+          }
+        }
+        html += '</tr>';
+      });
+
+      html += '</tbody></table></div></div>';
+    });
+  });
+
+  tablesEl.innerHTML = html;
+  updateSummary();
+}
+
+
+// ── LOGIN ──────────────────────────────────────────────────
+(function() {
+  var _K = [115,99,109,50,54]; // scm26
+  function _ok(s) {
+    if (s.length !== _K.length) return false;
+    for (var i = 0; i < _K.length; i++) {
+      if (s.charCodeAt(i) !== _K[i]) return false;
+    }
+    return true;
+  }
+  window.loginSubmit = function() {
+    var inp = document.getElementById('login-input');
+    var err = document.getElementById('login-error');
+    if (_ok(inp.value)) {
+      document.getElementById('login-screen').style.display = 'none';
+    } else {
+      inp.classList.remove('error');
+      void inp.offsetWidth;
+      inp.classList.add('error');
+      inp.value = '';
+      err.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
+      setTimeout(function(){ inp.focus(); }, 100);
+    }
+  };
+  // Focus on load
+  window.addEventListener('load', function() {
+    setTimeout(function(){ document.getElementById('login-input').focus(); }, 200);
+  });
+})();
+// ───────────────────────────────────────────────────────────
+
+// Init
+render();
+</script>
+</body>
+</html>

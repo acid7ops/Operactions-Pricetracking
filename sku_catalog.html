@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Catálogo SKUs · Innovación & Sea Salt — Nivea Chile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --nivea:#0057A8; --nivea-deep:#00294F; --nivea-mid:#0A3D73; --nivea-light:#E6F1FB;
+  --ink:#0B1C2C; --muted:#5B6B7C; --faint:#8698A8;
+  --paper:#FFFFFF; --canvas:#EEF3F9; --line:#DCE6F0; --mist:#E7EFF8;
+  --innov:#8E2A9E; --innov-bg:#F3E6F7;
+  --seasalt:#0B6E7A; --seasalt-bg:#E1F1F3;
+  --msl:#8A5A2E; --msl-bg:#F3E9DE;
+  --gold:#A67C00; --gold-bg:#FBF3DA;
+  --r-sm:6px; --r-md:10px; --r-lg:14px;
+  --sh-sm:0 1px 3px rgba(10,27,46,.07);
+  --sh-md:0 4px 16px rgba(10,27,46,.09);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--canvas);color:var(--ink);font-size:12px}
+.topbar{
+  background:linear-gradient(135deg, var(--nivea-deep) 0%, var(--nivea-mid) 100%);
+  padding:.7rem 1.4rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:100;
+  box-shadow:0 4px 20px rgba(10,27,46,.18);
+}
+.tb-brand{color:white;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700}
+.tb-brand::before{content:'CATÁLOGO DE SKUS';display:block;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;color:#A9CDEF;font-weight:500}
+.tb-right{margin-left:auto}
+.btn{font-family:'Inter',sans-serif;font-size:11px;padding:5px 13px;border-radius:6px;border:none;cursor:pointer;font-weight:600;background:rgba(255,255,255,.15);color:white;text-decoration:none}
+.btn:hover{background:rgba(255,255,255,.28)}
+
+.filterbar{background:white;border-bottom:1px solid var(--line);padding:.6rem 1.4rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center;position:sticky;top:48px;z-index:99}
+.f-btn{font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:6px 15px;border-radius:20px;border:1.5px solid var(--line);background:white;cursor:pointer;color:var(--muted)}
+.f-btn.active{background:var(--nivea-deep);color:white;border-color:var(--nivea-deep)}
+.f-sep{width:1px;height:20px;background:var(--line);margin:0 4px}
+
+.page{max-width:1200px;margin:0 auto;padding:1.5rem 1.4rem 3rem}
+.hero{text-align:center;margin-bottom:1.5rem}
+.hero-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;margin-bottom:.4rem}
+.hero-sub{color:var(--muted);font-size:12.5px;max-width:600px;margin:0 auto}
+.stats-row{display:flex;justify-content:center;gap:10px;margin-top:1rem;flex-wrap:wrap}
+.stat-pill{background:white;border:1px solid var(--line);border-radius:20px;padding:6px 16px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600}
+.stat-pill b{font-family:'Space Grotesk',sans-serif;font-size:14px;margin-right:5px}
+
+.cat-section{margin-bottom:1.8rem}
+.cat-header{
+  font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--nivea-deep);
+  margin-bottom:.7rem;padding-bottom:.4rem;border-bottom:2px solid var(--nivea);
+  display:flex;align-items:center;gap:8px;
+}
+.cat-count{font-family:'IBM Plex Mono',monospace;font-size:9.5px;font-weight:600;color:var(--faint);background:var(--mist);padding:2px 9px;border-radius:20px}
+
+.sku-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.sku-card{background:white;border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem;box-shadow:var(--sh-sm);transition:box-shadow .15s,transform .15s}
+.sku-card:hover{box-shadow:var(--sh-md);transform:translateY(-2px)}
+.sku-img-wrap{width:100%;height:120px;display:flex;align-items:center;justify-content:center;background:var(--canvas);border-radius:var(--r-md);margin-bottom:.7rem;overflow:hidden}
+.sku-img-wrap img{max-width:100%;max-height:100%;object-fit:contain}
+.sku-name{font-size:11.5px;font-weight:600;line-height:1.4;margin-bottom:.5rem;min-height:32px}
+.sku-meta{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--faint);margin-bottom:.6rem}
+.sku-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.6rem}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:8.5px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.02em}
+.b-innov{background:var(--innov-bg);color:var(--innov)}
+.b-gold{background:var(--gold-bg);color:var(--gold)}
+.b-seasalt{background:var(--seasalt-bg);color:var(--seasalt)}
+.b-msl{background:var(--msl-bg);color:var(--msl)}
+.sku-formats{font-size:9.5px;color:var(--muted);line-height:1.6;border-top:1px dashed var(--line);padding-top:.5rem}
+.sku-formats div{display:flex;justify-content:space-between}
+.sku-formats b{color:var(--ink);font-family:'IBM Plex Mono',monospace}
+
+.footer{text-align:center;padding:1.2rem;font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--faint)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="tb-brand">Nivea &middot; Chile</div>
+  <div class="tb-right"><a class="btn" href="backstock_pool_dashboard.html">&larr; Volver al Backstock Tracker</a></div>
+</div>
+
+<div class="filterbar" id="filterbar"></div>
+
+<div class="page">
+  <div class="hero">
+    <div class="hero-title">Catálogo de SKUs &middot; Innovación &amp; Sea Salt</div>
+    <div class="hero-sub">Estos son los productos que sí o sí deben estar en góndola. Úsalo como referencia rápida de imagen, categoría y facings requeridos por formato de tienda.</div>
+    <div class="stats-row" id="stats-row"></div>
+  </div>
+  <div id="catalog-content"></div>
+</div>
+<div class="footer">Catálogo de SKUs · Nivea Chile · Semana 4 Julio 2026</div>
+
+<script>
+var CATALOG = [{"spgr": 84045, "name": "Gel De Ducha Nivea Men Active Clean 250Ml", "cat": "BODY CLEANSING", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1030/Front20200630131812/original", "formats": {"Perfumery Behind the counter": 2, "Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1}}, {"spgr": 80789, "name": "Gel De Ducha Nivea Waterlilly&Oil 250Ml", "cat": "BODY CLEANSING", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/934/Front20200326191127/original", "formats": {"Hypermarket": 2}}, {"spgr": 92818, "name": "Nivea Jabon Milk 3X125Gr", "cat": "BODY CLEANSING", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1448/Front20240430085720/original", "formats": {"Supermarket Big": 2, "Supermarket Small": 1}}, {"spgr": 81287, "name": "Crema Facial Antiarrugas Q10 Power Nivea Dia Fps20 Piel Normal A Seca 50Ml", "cat": "FACE CARE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/845/Front20200326191115/original", "formats": {"Perfumery Behind the counter": 4, "Drugstore Small Self Service": 2, "Hypermarket": 4, "Supermarket Big": 3, "Supermarket Small": 2}}, {"spgr": 94416, "name": "Roses Crema Dia 50 Ml", "cat": "FACE CARE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1270/Front20210128082214/original", "formats": {"Perfumery Behind the counter": 4, "Hypermarket": 4, "Supermarket Big": 2, "Supermarket Small": 2}}, {"spgr": 94429, "name": "Nface Care Serum Cellular Luminous 30Ml", "cat": "FACE CARE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1289/Front20210305055840/original", "formats": {"Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2}}, {"spgr": 98711, "name": "Nface Care Serum Cellular Luminous  Anti-Edad 30Ml", "cat": "FACE CARE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1427/Front20230821104823/original", "formats": {"Drugstore Beauty Self Service": 2}}, {"spgr": 81182, "name": "Desmaquillante De Ojos Bifasico Nivea 125Ml", "cat": "FACE CLEANSING", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/872/Front20210125082404/original", "formats": {"Perfumery Behind the counter": 3, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2}}, {"spgr": 82366, "name": "Micelar Roses 400Ml", "cat": "FACE CLEANSING", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1080/Front20200902085342/original", "formats": {"Hypermarket": 4, "Supermarket Big": 3, "Supermarket Small": 2}}, {"spgr": 98717, "name": "Agua Micelar Iluminadora 400Ml", "cat": "FACE CLEANSING", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1469/Front20240725105602/original", "formats": {"Hypermarket": 4}}, {"spgr": 91751, "name": "Desodorante Barra Clinical Derma Control 96Hrs 50Ml", "cat": "FEMALE UNISEX", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1456/Front20240610093528/original", "formats": {"Perfumery Behind the counter": 3, "Drugstore Beauty Self Service": 3, "Supermarket Big": 4}}, {"spgr": 9798, "name": "Hidrofugal Antitranspirante Roll On 50Ml", "cat": "FEMALE UNISEX", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1113/Front20201001073708/original", "formats": {"Perfumery Behind the counter": 2, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2}}, {"spgr": 82237, "name": "Desodorante Spray Nivea Invisible Black & White Clear 150Ml", "cat": "FEMALE UNISEX", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/907/Front20240807090805/original", "formats": {"Perfumery Behind the counter": 2, "Hypermarket": 5, "Supermarket Big": 4, "Supermarket Small": 3}}, {"spgr": "82237-1", "name": "Pack 4X Desodorante Spray Nivea Black & White Clear 150Ml", "cat": "FEMALE UNISEX", "class": "Gold", "pool": "Sea Salt", "img": "https://services.traxretail.com/images/traxus/beiersdorfchl/Product_Images/982/Front20200326191132/original", "formats": {"Hypermarket": 3, "Supermarket Small": 3}}, {"spgr": 9725, "name": "Hidrofugal Antitranspirante Spray 150Ml", "cat": "FEMALE UNISEX", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1107/Front20201001073708/original", "formats": {"Hypermarket": 3}}, {"spgr": 88156, "name": "Crema Corporal Nivea Reafirmante Q10 1000Ml", "cat": "HAND BODY", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/819/Front20200326191113/original", "formats": {"Perfumery Behind the counter": 3, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 3, "Hypermarket": 4, "Supermarket Big": 3}}, {"spgr": 80104, "name": "Crema Multiproposito Nivea Creme 150Ml", "cat": "HAND BODY", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/858/Front20200326191117/original", "formats": {"Perfumery Behind the counter": 3}}, {"spgr": 80217, "name": "Crema Corporal Nivea Milk Nutritiva Piel Extra Seca 1000Ml", "cat": "HAND BODY", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/815/Front20200326191112/original", "formats": {"Hypermarket": 4, "Supermarket Small": 2}}, {"spgr": 85286, "name": "Protector Labial Nivea Blackberry Shine 5,5Ml", "cat": "LIP", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1243/Front20201116072709/original", "formats": {"Perfumery Behind the counter": 1, "Supermarket Big": 2}}, {"spgr": 85077, "name": "Protector Labial Nivea Cereza Fruity Shine 4,8Gr", "cat": "LIP", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/986/Front20200326191132/original", "formats": {"Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2, "Hypermarket": 1}}, {"spgr": 82241, "name": "Desodorante Spray Nivea Men Invisible Black & White 150 Ml", "cat": "MALE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/914/Front20240807090805/original", "formats": {"Perfumery Behind the counter": 4, "Hypermarket": 5, "Supermarket Big": 4, "Supermarket Small": 3}}, {"spgr": 82980, "name": "Desodorante Spray Nivea Men Sensitive Protect150Ml", "cat": "MALE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/916/Front20200409115647/original", "formats": {"Perfumery Behind the counter": 3}}, {"spgr": "82241-1", "name": "Pack 4X Desodorante Spray Nivea Men Black & White Power 150Ml", "cat": "MALE", "class": "Gold", "pool": "Sea Salt", "img": "https://services.traxretail.com/images/traxus/beiersdorfchl/Product_Images/984/Front20200326191132/original", "formats": {"Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2, "Hypermarket": 3, "Supermarket Big": 3}}, {"spgr": 81306, "name": "Balsamo After Shave Nivea Men Sensitive 100Ml", "cat": "MEN", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/799/Front20200326203251/original", "formats": {"Perfumery Behind the counter": 3, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2, "Hypermarket": 2}}, {"spgr": 81740, "name": "Gel De Afeitar Nivea Men Sensitive 200Ml", "cat": "MEN", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/929/Front20200326191127/original", "formats": {"Supermarket Big": 2, "Supermarket Small": 3}}, {"spgr": 95147, "name": "Nivea Sun Uv Protección Facial Experta Anti Imperfecciones Fps50+", "cat": "SUN", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1818/Front20250109103840/original", "formats": {"Perfumery Behind the counter": 1, "Hypermarket": 1}}, {"spgr": 93696, "name": "Nivea Sun Uv Protector Solar Facial Control De Manchas Fps50+", "cat": "SUN", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1817/Front20250109103840/original", "formats": {"Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1, "Supermarket Big": 1}}, {"spgr": 63369, "name": "Eucerin Aquaphor 55 Ml", "cat": "D BODY", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1693/Front20241121114919/original", "formats": {"Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2}}, {"spgr": 99122, "name": "Eucerin Hyaluron Filler Epigenetic Serum 30Ml", "cat": "D FACE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1712/Front20241121114920/original", "formats": {"Drugstore Beauty Self Service": 3, "Drugstore Small Self Service": 2}}, {"spgr": 66883, "name": "Eucerin Antipigmento Serum  Dual 30 Ml", "cat": "D FACE", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1711/Front20241121114920/original", "formats": {"Drugstore Beauty Self Service": 3, "Drugstore Small Self Service": 2}}, {"spgr": 69767, "name": "Sun Gel Crema Oil Control 50Ml", "cat": "D SUN", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1763/Front20241121114921/original", "formats": {"Drugstore Beauty Self Service": 3, "Drugstore Small Self Service": 3}}, {"spgr": 48574, "name": "Hansaplast Silver Active 150Ml", "cat": "HC FOOT", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1784/Front20241121114922/original", "formats": {"Perfumery Behind the counter": 2, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2, "Hypermarket": 2, "Supermarket Big": 2, "Supermarket Small": 2}}, {"spgr": 45907, "name": "Curitas Transpiel X40", "cat": "HC WOUND", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1805/Front20241121114919/original", "formats": {"Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2, "Hypermarket": 2, "Supermarket Big": 2}}, {"spgr": 48774, "name": "Curitas Marvel X20", "cat": "HC WOUND", "class": "Gold", "pool": "Sea Salt", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1804/Front20241121114919/original", "formats": {"Supermarket Small": 2}}, {"spgr": 99393, "name": "Luminous630 Skin Glow Serum Glow Instantáneo 30Ml", "cat": "FACE CARE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1861/Front20250623095153/original", "formats": {"Perfumery Behind the counter": 2, "Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1, "Hypermarket": 2, "Supermarket Big": 1, "Supermarket Small": 1}}, {"spgr": 95348, "name": "Nivea Face Care Serum Cellular Epigenetics 30Ml", "cat": "FACE CARE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1956/Front20251013083627/original", "formats": {"Perfumery Behind the counter": 1, "Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1, "Hypermarket": 1}}, {"spgr": 98770, "name": "Nivea Face Serum Derma Skin Clear 30Ml", "cat": "FACE CARE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1922/Front20250912103010/original", "formats": {"Perfumery Behind the counter": 1, "Hypermarket": 1, "Supermarket Big": 1}}, {"spgr": 99392, "name": "Luminous630 Skin Glow Tónico Exfoliante Glow Instantáneo 100Ml", "cat": "FACE CARE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1860/Front20250623095153/original", "formats": {"Perfumery Behind the counter": 1, "Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1, "Hypermarket": 1, "Supermarket Big": 1}}, {"spgr": 98771, "name": "Nivea Face Fluid Uv Luminous 630 Skin Glow 40Ml", "cat": "FACE CARE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/2016/Front20260518101647/original", "formats": {"Perfumery Behind the counter": 1, "Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1, "Hypermarket": 2, "Supermarket Big": 1, "Supermarket Small": 1}}, {"spgr": 98722, "name": "Nivea Face Micellar Water Derma Skin Clear 400Ml", "cat": "FACE CLEANSING", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1923/Front20250912103011/original", "formats": {"Perfumery Behind the counter": 2, "Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1, "Hypermarket": 2, "Supermarket Big": 2, "Supermarket Small": 1}}, {"spgr": 94269, "name": "Nivea Face Gel Limpiador Derma Skin Clear 150Ml", "cat": "FACE CLEANSING", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1921/Front20250912103010/original", "formats": {"Perfumery Behind the counter": 1, "Hypermarket": 2}}, {"spgr": 99400, "name": "Nivea Face Wash Gel Skin Glow 150Ml", "cat": "FACE CLEANSING", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/2018/Front20260518101647/original", "formats": {"Perfumery Behind the counter": 1, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 1, "Hypermarket": 2}}, {"spgr": 99403, "name": "Nivea Face Micellar Water Skin Glow 400Ml", "cat": "FACE CLEANSING", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/2017/Front20260518101647/original", "formats": {"Perfumery Behind the counter": 1, "Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1, "Hypermarket": 2}}, {"spgr": 91765, "name": "Desodorante Spray Derma Control Defend 72Hrs 150 Ml", "cat": "FEMALE UNISEX", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1948/Front20251007091303/original", "formats": {"Perfumery Behind the counter": 1, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2, "Hypermarket": 3, "Supermarket Big": 3, "Supermarket Small": 2}}, {"spgr": 91768, "name": "Desodorante Roll On Derma Control Defend 72Hrs 50 Ml", "cat": "FEMALE UNISEX", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1945/Front20251007091302/original", "formats": {"Perfumery Behind the counter": 1, "Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2, "Hypermarket": 3, "Supermarket Big": 3}}, {"spgr": 91771, "name": "Desodorante Stick Derma Control Defend 72Hrs 54 Gr", "cat": "FEMALE UNISEX", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1951/Front20251007091303/original", "formats": {"Perfumery Behind the counter": 1, "Hypermarket": 3}}, {"spgr": 83891, "name": "Nivea Men Crema Corporal 3 En 1 Revitalizante 500Ml", "cat": "HAND BODY", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1971/Front20251030100019/original", "formats": {"Perfumery Behind the counter": 1, "Hypermarket": 2}}, {"spgr": 99184, "name": "Crema Corporal Nivea Regeneración Intensiva Sin Fragancia 400Ml", "cat": "HAND BODY", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1959/Front20251013083628/original", "formats": {"Hypermarket": 2}}, {"spgr": 98953, "name": "Desodorante Nivea Men Spray Derma Control Defend 72Hrs 150 Ml", "cat": "MALE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1950/Front20251007091303/original", "formats": {"Perfumery Behind the counter": 1, "Hypermarket": 3, "Supermarket Big": 3}}, {"spgr": 99125, "name": "Eucerin Hyaluron Filler Firming Serum 30Ml", "cat": "D FACE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1982/Front20251225091548/original", "formats": {"Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 2}}, {"spgr": 99307, "name": "Eucerin Dermopure Clinical Fluido Matificante 40Ml", "cat": "D FACE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1980/Front20251225091548/original", "formats": {"Drugstore Beauty Self Service": 1, "Drugstore Small Self Service": 1}}, {"spgr": 99308, "name": "Eucerin Dermopure Clinical Hydra Repair 40Ml", "cat": "D FACE", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/1981/Front20251225091548/original", "formats": {"Drugstore Beauty Self Service": 1}}, {"spgr": 99554, "name": "Eucerin Serum Uv Oil Control 30Ml", "cat": "D SUN", "class": "Innovación", "pool": "MSL", "img": "https://traxus.s3.amazonaws.com/beiersdorfchl/Product_Images/2006/Front20260504094527/original", "formats": {"Drugstore Beauty Self Service": 2, "Drugstore Small Self Service": 1}}]
+;
+var curClass = 'ALL';
+var curPool = 'ALL';
+
+function classList(){ var s={}; CATALOG.forEach(function(c){s[c['class']]=true;}); return Object.keys(s).sort(); }
+function poolList(){ var s={}; CATALOG.forEach(function(c){s[c.pool]=true;}); return Object.keys(s).sort(); }
+function badgeFor(cls){
+  if(cls==='Innovación') return '<span class="badge b-innov">★ Innovación</span>';
+  if(cls==='Gold') return '<span class="badge b-gold">Gold</span>';
+  return '<span class="badge">'+cls+'</span>';
+}
+function poolBadge(p){
+  if(p==='Sea Salt') return '<span class="badge b-seasalt">Sea Salt</span>';
+  if(p==='MSL') return '<span class="badge b-msl">MSL</span>';
+  return '<span class="badge">'+p+'</span>';
+}
+
+function setClass(c){ curClass=c; render(); }
+function setPool(p){ curPool=p; render(); }
+
+function filtered(){
+  return CATALOG.filter(function(c){
+    return (curClass==='ALL'||c['class']===curClass) && (curPool==='ALL'||c.pool===curPool);
+  });
+}
+
+function render(){
+  document.getElementById('filterbar').innerHTML =
+    classList().map(function(c){ return '<button class="f-btn'+(curClass===c?' active':'')+'" onclick="setClass(\''+c+'\')">'+c+'</button>'; }).join('') +
+    '<button class="f-btn'+(curClass==='ALL'?' active':'')+'" onclick="setClass(\'ALL\')" style="order:-1">Todos los Class</button>' +
+    '<div class="f-sep"></div>' +
+    poolList().map(function(p){ return '<button class="f-btn'+(curPool===p?' active':'')+'" onclick="setPool(\''+p+'\')">'+p+'</button>'; }).join('') +
+    '<button class="f-btn'+(curPool==='ALL'?' active':'')+'" onclick="setPool(\'ALL\')" style="order:-1">Todos los Programa</button>';
+
+  var recs = filtered();
+  var innovCount = CATALOG.filter(function(c){return c['class']==='Innovación';}).length;
+  var seasaltCount = CATALOG.filter(function(c){return c.pool==='Sea Salt';}).length;
+  var mslCount = CATALOG.filter(function(c){return c.pool==='MSL';}).length;
+  document.getElementById('stats-row').innerHTML =
+    '<div class="stat-pill"><b>'+CATALOG.length+'</b>SKUs totales</div>'+
+    '<div class="stat-pill"><b>'+innovCount+'</b>Innovación</div>'+
+    '<div class="stat-pill"><b>'+seasaltCount+'</b>Sea Salt</div>'+
+    '<div class="stat-pill"><b>'+mslCount+'</b>MSL</div>';
+
+  var byCat = {};
+  recs.forEach(function(c){ if(!byCat[c.cat]) byCat[c.cat]=[]; byCat[c.cat].push(c); });
+  var cats = Object.keys(byCat).sort();
+
+  document.getElementById('catalog-content').innerHTML = cats.map(function(cat){
+    var items = byCat[cat];
+    var cardsHtml = items.map(function(sku){
+      var formatsHtml = Object.keys(sku.formats).map(function(f){
+        return '<div><span>'+f+'</span><b>'+sku.formats[f]+' facing(s)</b></div>';
+      }).join('');
+      return '<div class="sku-card">'+
+        '<div class="sku-img-wrap">'+(sku.img?'<img src="'+sku.img+'" onerror="this.parentElement.style.display=\'none\'">':'')+'</div>'+
+        '<div class="sku-name">'+sku.name+'</div>'+
+        '<div class="sku-meta">SPGR '+sku.spgr+'</div>'+
+        '<div class="sku-badges">'+badgeFor(sku['class'])+poolBadge(sku.pool)+'</div>'+
+        '<div class="sku-formats">'+formatsHtml+'</div>'+
+      '</div>';
+    }).join('');
+    return '<div class="cat-section">'+
+      '<div class="cat-header">'+cat+' <span class="cat-count">'+items.length+' SKU'+(items.length>1?'s':'')+'</span></div>'+
+      '<div class="sku-grid">'+cardsHtml+'</div>'+
+    '</div>';
+  }).join('') || '<div style="text-align:center;padding:3rem;color:var(--faint)">Sin SKUs para este filtro.</div>';
+}
+
+render();
+</script>
+</body>
+</html>

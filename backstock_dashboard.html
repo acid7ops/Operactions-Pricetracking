@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+-<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -60,14 +60,6 @@ body{
   content:'POOL INNOVACIÓN & SEA SALT'; font-family:'IBM Plex Mono',monospace;
   font-size:8.5px;letter-spacing:.14em;color:#A9CDEF;font-weight:500;
 }
-.tb-nav{display:flex;gap:4px}
-.tb-nav-btn{
-  font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;padding:6px 14px;
-  border-radius:20px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);
-  color:#BFD4E8;cursor:pointer;transition:all .15s;
-}
-.tb-nav-btn:hover{background:rgba(255,255,255,.22)}
-.tb-nav-btn.active{background:white;color:var(--nivea-deep);border-color:white}
 .tb-right{display:flex;gap:6px;align-items:center;margin-left:auto}
 .btn{
   font-family:'Inter',sans-serif;font-size:11px;padding:5px 13px;border-radius:var(--r-sm);
@@ -101,7 +93,15 @@ body{
   padding:.5rem 1.4rem;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;
   position:sticky;top:96px;z-index:198;
 }
+#more-filters-row{position:static;z-index:auto}
 .f-group{display:flex;flex-direction:column;gap:3px}
+.more-filters-btn{
+  font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;padding:6.5px 12px;
+  border-radius:6px;border:1px dashed var(--line);background:white;color:var(--nivea);cursor:pointer;
+  align-self:flex-end;
+}
+.more-filters-btn:hover{border-color:var(--nivea);background:var(--nivea-light)}
+.more-filters-btn.open{background:var(--nivea-light);border-style:solid}
 .f-label{font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:600;color:var(--faint);text-transform:uppercase;letter-spacing:.06em}
 .f-select{
   font-family:'Inter',sans-serif;font-size:11px;font-weight:600;color:var(--ink);
@@ -274,10 +274,6 @@ table.pt tr:hover td{background:var(--mist)}
 <body>
 <div class="topbar">
   <div class="tb-brand">Nivea &middot; Chile</div>
-  <div class="tb-nav">
-    <button class="tb-nav-btn active" id="nav-home" onclick="goNav('home')">Ranking</button>
-    <button class="tb-nav-btn" id="nav-trend" onclick="goNav('trend')">Tendencias 4 Semanas</button>
-  </div>
   <div class="tb-right">
     <div class="period-pill" id="period-pill"></div>
     <a class="btn" href="sku_catalog.html" target="_blank">&#128203; Catálogo</a>
@@ -297,10 +293,14 @@ table.pt tr:hover td{background:var(--mist)}
   </div>
   <div class="f-group"><div class="f-label">Cadena</div><select class="f-select" id="chain-select" onchange="setChainFilter(this.value)"></select></div>
   <div class="f-group"><div class="f-label">Supervisor</div><select class="f-select" id="sup-select" onchange="setSupFilter(this.value)"></select></div>
-  <div class="f-group"><div class="f-label">Sala</div><select class="f-select" id="store-select" onchange="setStoreFilter(this.value)"></select></div>
-  <div class="f-group"><div class="f-label">Type</div><select class="f-select" id="type-select" onchange="setTypeFilter(this.value)"></select></div>
-  <div class="f-group"><div class="f-label">Programa</div><select class="f-select" id="pool-select" onchange="setPoolFilter(this.value)"></select></div>
+  <button class="more-filters-btn" id="more-filters-btn" onclick="toggleMoreFilters()">+ Más filtros</button>
   <button class="clear-btn" onclick="clearFilters()">&times; Limpiar</button>
+</div>
+<div class="subfilterbar" id="more-filters-row" style="display:none">
+  <div class="f-group"><div class="f-label">Sala</div><select class="f-select" id="store-select" onchange="setStoreFilter(this.value)"></select></div>
+  <div class="f-group"><div class="f-label">Prioridad SKU</div><select class="f-select" id="type-select" onchange="setTypeFilter(this.value)"></select></div>
+  <div class="f-group"><div class="f-label">Programa obligatorio</div><select class="f-select" id="pool-select" onchange="setPoolFilter(this.value)"></select></div>
+  <span style="font-size:9.5px;color:var(--faint);max-width:260px">Prioridad = qué tan importante es el SKU (★ Innovación = lanzamiento nuevo). Programa = por qué está en este pool (Sea Salt = debe estar sí o sí en góndola).</span>
 </div>
 
 <div class="page" id="page"></div>
@@ -325,7 +325,6 @@ var POOL_STYLE = {
   'MSL': {color:'var(--msl)', bg:'var(--msl-bg)'}
 };
 
-var curNav = 'home';
 var curPeriod = LATEST_PERIOD;
 var curCat = 'ALL';
 var curChainFilter = 'ALL';
@@ -382,14 +381,6 @@ function filteredRecords(){
 }
 
 /* ---------------- NAV ---------------- */
-function goNav(n){
-  curNav = n;
-  document.getElementById('nav-home').classList.toggle('active', n==='home');
-  document.getElementById('nav-trend').classList.toggle('active', n==='trend');
-  curView = 'home';
-  if (n === 'home') renderHome();
-  else renderTrendView();
-}
 
 /* ---------------- PERIOD ---------------- */
 function renderPeriodPill(){
@@ -417,8 +408,8 @@ function countsAcrossWeeks(mode, key){
       if (mode==='store' && r.store!==key) return false;
       if (curCat!=='ALL' && r.cat!==curCat) return false;
       if (curChainFilter!=='ALL' && r.chain!==curChainFilter) return false;
-      if (curSupFilter!=='ALL' && r.sup!==curSupFilter) return false;
-      if (curStoreFilter!=='ALL' && r.store!==curStoreFilter) return false;
+      if (mode!=='sup' && curSupFilter!=='ALL' && r.sup!==curSupFilter) return false;
+      if (mode!=='store' && curStoreFilter!=='ALL' && r.store!==curStoreFilter) return false;
       if (curTypeFilter!=='ALL' && r.type!==curTypeFilter) return false;
       if (curPoolFilter!=='ALL' && r.pool!==curPoolFilter) return false;
       return true;
@@ -484,6 +475,13 @@ function refreshFilterBar(justChanged){
   if (justChanged !== 'type'){ var o4=typeOptionsList(); if(curTypeFilter!=='ALL' && o4.indexOf(curTypeFilter)===-1) curTypeFilter='ALL'; }
   if (justChanged !== 'pool'){ var o5=poolOptionsList(); if(curPoolFilter!=='ALL' && o5.indexOf(curPoolFilter)===-1) curPoolFilter='ALL'; }
 
+  if ((curStoreFilter!=='ALL' || curTypeFilter!=='ALL' || curPoolFilter!=='ALL') && !moreFiltersOpen){
+    moreFiltersOpen = true;
+    document.getElementById('more-filters-row').style.display = 'flex';
+    document.getElementById('more-filters-btn').classList.add('open');
+    document.getElementById('more-filters-btn').textContent = '− Menos filtros';
+  }
+
   document.getElementById('chain-select').innerHTML = '<option value="ALL">Todas las cadenas</option>' + chainOptionsList().map(function(c){ return '<option value="'+c+'"'+(curChainFilter===c?' selected':'')+'>'+c+'</option>'; }).join('');
   document.getElementById('sup-select').innerHTML = '<option value="ALL">Todos</option>' + supOptionsList().map(function(s){ return '<option value="'+s+'"'+(curSupFilter===s?' selected':'')+'>'+s+'</option>'; }).join('');
   document.getElementById('store-select').innerHTML = '<option value="ALL">Todas</option>' + storeOptionsList().map(function(s){ return '<option value="'+s+'"'+(curStoreFilter===s?' selected':'')+'>'+s+'</option>'; }).join('');
@@ -491,8 +489,7 @@ function refreshFilterBar(justChanged){
   document.getElementById('pool-select').innerHTML = '<option value="ALL">Todos</option>' + poolOptionsList().map(function(p){ return '<option value="'+p+'"'+(curPoolFilter===p?' selected':'')+'>'+p+'</option>'; }).join('');
 
   renderCatBar();
-  if (curNav === 'home'){ if(curView==='home') renderHome(); else renderDetail(); }
-  else renderTrendView();
+  if(curView==='home') renderHome(); else renderDetail();
 }
 function renderCatBar(){
   var cats = catList();
@@ -504,10 +501,33 @@ function renderCatBar(){
 }
 function setCat(c){ curCat=c; refreshFilterBar(); }
 function setChainFilter(c){ curChainFilter=c; refreshFilterBar('chain'); }
-function setSupFilter(s){ curSupFilter=s; refreshFilterBar('sup'); }
-function setStoreFilter(s){ curStoreFilter=s; refreshFilterBar('store'); }
+function setSupFilter(s){
+  curSupFilter=s;
+  if (curView==='detail' && detailType==='sup' && s!=='ALL' && s!==detailKey){
+    goDetail('sup', s);
+    refreshFilterBar('sup');
+    return;
+  }
+  refreshFilterBar('sup');
+}
+function setStoreFilter(s){
+  curStoreFilter=s;
+  if (curView==='detail' && detailType==='store' && s!=='ALL' && s!==detailKey){
+    goDetail('store', s);
+    refreshFilterBar('store');
+    return;
+  }
+  refreshFilterBar('store');
+}
 function setTypeFilter(t){ curTypeFilter=t; refreshFilterBar('type'); }
 function setPoolFilter(p){ curPoolFilter=p; refreshFilterBar('pool'); }
+var moreFiltersOpen = false;
+function toggleMoreFilters(){
+  moreFiltersOpen = !moreFiltersOpen;
+  document.getElementById('more-filters-row').style.display = moreFiltersOpen ? 'flex' : 'none';
+  document.getElementById('more-filters-btn').classList.toggle('open', moreFiltersOpen);
+  document.getElementById('more-filters-btn').textContent = moreFiltersOpen ? '− Menos filtros' : '+ Más filtros';
+}
 function clearFilters(){
   curCat='ALL'; curChainFilter='ALL'; curSupFilter='ALL'; curStoreFilter='ALL'; curTypeFilter='ALL'; curPoolFilter='ALL';
   refreshFilterBar();
@@ -543,7 +563,7 @@ function onSearchInput(){
 document.addEventListener('click', function(e){ if(!e.target.closest('.search-wrap')) document.getElementById('search-drop').classList.remove('show'); });
 
 function goDetail(type, key){
-  detailType = type; detailKey = key; curView = 'detail'; curNav='home';
+  detailType = type; detailKey = key; curView = 'detail';
   document.getElementById('nav-home').classList.add('active');
   document.getElementById('nav-trend').classList.remove('active');
   document.getElementById('search-input').value='';
@@ -554,6 +574,14 @@ function goHome(){ curView='home'; renderHome(); }
 function setHomeMode(m){ homeMode=m; renderHome(); }
 
 /* ---------------- HOME ---------------- */
+var sortMode = 'volumen'; // 'volumen' | 'tendencia'
+var trendTableOpen = false;
+function setSortMode(m){ sortMode = m; renderHome(); }
+function toggleTrendTable(){
+  trendTableOpen = !trendTableOpen;
+  renderHome();
+}
+
 function renderHome(){
   var recs = filteredRecords();
   var totalCases = recs.length;
@@ -562,8 +590,32 @@ function renderHome(){
   var nSup = Object.keys(groupBy(recs, function(r){return r.sup;})).length;
   var nStore = Object.keys(groupBy(recs, function(r){return r.store;})).length;
 
+  /* trend rows for the SKUs currently in scope (used for exec summary + expandable table + sort-by-tendencia) */
+  var trendRows = Object.keys(skuGroups).map(function(k){
+    var g = skuGroups[k];
+    var counts = countsAcrossWeeks('sku', k);
+    var delta = counts[counts.length-1] - counts[0];
+    return {key:k, name:g[0].prod, ean:g[0].ean, type:g[0].type, pool:g[0].pool, img:g[0].img, cat:g[0].cat, counts:counts, delta:delta};
+  });
+  var worse = trendRows.filter(function(r){return r.delta>0;}).length;
+  var better = trendRows.filter(function(r){return r.delta<0;}).length;
+
+  var periodIdx = PERIODS.indexOf(curPeriod);
+  var prevTotal = periodIdx>0 ? RECORDS.filter(function(r){
+    return r.period===PERIODS[periodIdx-1] && (curCat==='ALL'||r.cat===curCat) && (curChainFilter==='ALL'||r.chain===curChainFilter) && (curSupFilter==='ALL'||r.sup===curSupFilter) && (curStoreFilter==='ALL'||r.store===curStoreFilter) && (curTypeFilter==='ALL'||r.type===curTypeFilter) && (curPoolFilter==='ALL'||r.pool===curPoolFilter);
+  }).length : null;
+  var deltaTotal = prevTotal!=null ? totalCases - prevTotal : null;
+  var deltaHtml = deltaTotal==null ? '<span style="color:var(--faint)">Primera semana con dato</span>'
+    : deltaTotal===0 ? '<span style="color:var(--faint)">Sin cambio vs '+PERIOD_SHORT[PERIODS[periodIdx-1]]+'</span>'
+    : deltaTotal>0 ? '<span style="color:var(--red)">&#8593; +'+deltaTotal+' vs '+PERIOD_SHORT[PERIODS[periodIdx-1]]+'</span>'
+    : '<span style="color:var(--green)">&#8595; '+deltaTotal+' vs '+PERIOD_SHORT[PERIODS[periodIdx-1]]+'</span>';
+
+  var execSummary = periodIdx===0
+    ? 'Primera semana registrada del pool — todavía no hay punto de comparación.'
+    : worse+' SKU(s) vienen empeorando y '+better+' vienen mejorando desde la primera semana con dato. '+(deltaTotal>0?'El total de casos subió':deltaTotal<0?'El total de casos bajó':'El total de casos se mantuvo')+' esta semana.';
+
   var kpisHtml =
-    '<div class="kpi" style="border-left-color:var(--back)"><div class="kpi-lbl">Casos de Backstock</div><div class="kpi-val" style="color:var(--back)">'+totalCases+'</div><div class="kpi-sub">'+PERIOD_SHORT[curPeriod]+' &middot; pool seleccionado</div></div>'+
+    '<div class="kpi" style="border-left-color:var(--back)"><div class="kpi-lbl">Casos de Backstock ('+PERIOD_SHORT[curPeriod]+')</div><div class="kpi-val" style="color:var(--back)">'+totalCases+'</div><div class="kpi-sub">'+deltaHtml+'</div></div>'+
     '<div class="kpi" style="border-left-color:var(--seasalt)"><div class="kpi-lbl">SKUs afectados</div><div class="kpi-val" style="color:var(--seasalt)">'+nSku+'</div><div class="kpi-sub">de 53 en el pool total</div></div>'+
     '<div class="kpi" style="border-left-color:var(--nivea)"><div class="kpi-lbl">Supervisores</div><div class="kpi-val">'+nSup+'</div><div class="kpi-sub">de '+supList().length+' totales</div></div>'+
     '<div class="kpi" style="border-left-color:var(--nivea)"><div class="kpi-lbl">Locales</div><div class="kpi-val">'+nStore+'</div><div class="kpi-sub">de '+storeList().length+' totales</div></div>';
@@ -573,15 +625,23 @@ function renderHome(){
     '<button class="toggle-opt'+(homeMode==='sup'?' active':'')+'" onclick="setHomeMode(\'sup\')">Por Supervisor</button>'+
     '<button class="toggle-opt'+(homeMode==='store'?' active':'')+'" onclick="setHomeMode(\'store\')">Por Local</button>'+
   '</div>';
+  var sortHtml = '<div class="toggle-pill">' +
+    '<button class="toggle-opt'+(sortMode==='volumen'?' active':'')+'" onclick="setSortMode(\'volumen\')">Mayor volumen</button>'+
+    '<button class="toggle-opt'+(sortMode==='tendencia'?' active':'')+'" onclick="setSortMode(\'tendencia\')">Peor tendencia</button>'+
+  '</div>';
 
   var rankHtml = '';
   if (homeMode === 'sku'){
     var ranked = Object.keys(skuGroups).map(function(k){
       var g = skuGroups[k];
       var stores = {}; g.forEach(function(r){stores[r.store]=true;});
-      return {key:k, name:g[0].prod, ean:g[0].ean, type:g[0].type, pool:g[0].pool, img:g[0].img, count:g.length, nStores:Object.keys(stores).length};
-    }).sort(function(a,b){return b.count-a.count;});
-    var maxN = ranked.length ? ranked[0].count : 1;
+      var tr = trendRows.filter(function(t){return t.key===k;})[0];
+      return {key:k, name:g[0].prod, ean:g[0].ean, type:g[0].type, pool:g[0].pool, img:g[0].img, count:g.length, nStores:Object.keys(stores).length, delta: tr?tr.delta:0};
+    });
+    ranked.sort(sortMode==='tendencia'
+      ? function(a,b){ return b.delta-a.delta || b.count-a.count; }
+      : function(a,b){ return b.count-a.count; });
+    var maxN = ranked.length ? Math.max.apply(null, ranked.map(function(r){return r.count;})) : 1;
     rankHtml = ranked.map(function(r,i){
       var ts = TYPE_STYLE[r.type]||{color:'var(--muted)',bg:'var(--mist)'};
       var ps = POOL_STYLE[r.pool]||{color:'var(--muted)',bg:'var(--mist)'};
@@ -602,9 +662,14 @@ function renderHome(){
     var ranked2 = Object.keys(rankGroups).map(function(k){
       var g = rankGroups[k];
       var sub = mode==='sup' ? (supervisorStores(k).length+' locales') : storeChain(k);
-      return {key:k, count:g.length, sub:sub};
-    }).sort(function(a,b){return b.count-a.count;});
-    var maxN2 = ranked2.length ? ranked2[0].count : 1;
+      var tInfo = trendInfo(mode, k);
+      var delta = tInfo && tInfo.delta!=null ? tInfo.delta : 0;
+      return {key:k, count:g.length, sub:sub, delta:delta};
+    });
+    ranked2.sort(sortMode==='tendencia'
+      ? function(a,b){ return b.delta-a.delta || b.count-a.count; }
+      : function(a,b){ return b.count-a.count; });
+    var maxN2 = ranked2.length ? Math.max.apply(null, ranked2.map(function(r){return r.count;})) : 1;
     rankHtml = ranked2.map(function(r,i){
       var w = Math.round(r.count/maxN2*100);
       return '<div class="rank-row" onclick="goDetail(\''+mode+'\',\''+r.key.replace(/'/g,"\\'")+'\')">'+
@@ -625,47 +690,32 @@ function renderHome(){
       '<div class="mini-label" title="'+o.c+'">'+o.c+'</div><div class="mini-bar-wrap"><div class="mini-bar" style="width:'+w+'%"></div></div><div class="mini-val">'+o.n+'</div></div>';
   }).join('');
 
-  var idx = PERIODS.indexOf(curPeriod);
-  var prevNote = idx > 0 ? ('Comparando contra <b>'+PERIOD_SHORT[PERIODS[idx-1]]+'</b>.') : 'Esta es la primera semana registrada, sin punto de comparación previo.';
-
   document.getElementById('page').innerHTML =
-    '<div class="info-banner"><span>&#8505;</span><span>'+prevNote+' Si algo dice <b>"Nuevo"</b> es porque no tenía casos la semana anterior. Usa el botón <b>Tendencias 4 Semanas</b> arriba para ver la evolución completa.</span></div>'+
     '<div class="hero">'+
       '<div class="hero-title">Pool Innovación &amp; Sea Salt &mdash; Backstock</div>'+
-      '<div class="hero-sub">Elige una categoría arriba, revisa qué producto tiene más casos, y baja hasta el supervisor o local responsable para accionar.</div>'+
+      '<div class="hero-sub">'+execSummary+'</div>'+
     '</div>'+
     '<div class="kpis">'+kpisHtml+'</div>'+
     '<div class="main">'+
       '<div class="left-col"><div class="card">'+
         '<div class="sec-lbl"><span>Ranking de mayor oportunidad</span>'+toggleHtml+'</div>'+
+        '<div class="sec-lbl" style="margin-top:-4px"><span style="text-transform:none;font-weight:400">Ordenar por</span>'+sortHtml+'</div>'+
         (rankHtml || '<div class="empty-hint">Sin casos para este filtro.</div>')+
       '</div></div>'+
       '<div class="rcol"><div class="card"><div class="sec-lbl">Casos por cadena</div>'+chainHtml+'</div></div>'+
+    '</div>'+
+    '<div class="card">'+
+      '<div class="sec-lbl"><span>Tabla completa de tendencia &middot; S1 &rarr; S4 &middot; '+trendRows.length+' SKUs</span>'+
+      '<button class="nav-btn" onclick="toggleTrendTable()">'+(trendTableOpen?'Ocultar &uarr;':'Ver tabla completa &darr;')+'</button></div>'+
+      (trendTableOpen ? '<div class="trend-table-wrap">'+buildTrendTableHtml(trendRows)+'</div>' : '')+
     '</div>';
 
   document.getElementById('footer').textContent = 'Backstock Pool · Nivea Chile · '+PERIOD_SHORT[curPeriod]+' · '+totalCases+' casos';
 }
 
-/* ---------------- TENDENCIAS VIEW ---------------- */
-function renderTrendView(){
-  var recs = filteredRecords(); // current period + filters, used to determine WHICH skus are in scope
-  var skuGroups = groupBy(recs, skuKey);
-  var allSkuKeysInScope = Object.keys(skuGroups);
-
-  var rows = allSkuKeysInScope.map(function(k){
-    var g = skuGroups[k];
-    var counts = countsAcrossWeeks('sku', k);
-    var last = counts[counts.length-1];
-    var first = counts[0];
-    var delta = last - first;
-    return {key:k, name:g[0].prod, ean:g[0].ean, type:g[0].type, pool:g[0].pool, img:g[0].img, cat:g[0].cat, counts:counts, delta:delta};
-  }).sort(function(a,b){ return b.delta - a.delta || b.counts[b.counts.length-1]-a.counts[a.counts.length-1]; });
-
-  var worse = rows.filter(function(r){return r.delta>0;}).length;
-  var better = rows.filter(function(r){return r.delta<0;}).length;
-  var flat = rows.filter(function(r){return r.delta===0;}).length;
-
-  var tableRows = rows.map(function(r){
+function buildTrendTableHtml(rows){
+  var sorted = rows.slice().sort(function(a,b){ return b.delta - a.delta || b.counts[b.counts.length-1]-a.counts[a.counts.length-1]; });
+  var tableRows = sorted.map(function(r){
     var ts = TYPE_STYLE[r.type]||{color:'var(--muted)',bg:'var(--mist)'};
     var ps = POOL_STYLE[r.pool]||{color:'var(--muted)',bg:'var(--mist)'};
     var deltaColor = r.delta>0 ? 'var(--red)' : r.delta<0 ? 'var(--green)' : 'var(--faint)';
@@ -673,7 +723,7 @@ function renderTrendView(){
     return '<tr onclick="goDetail(\'sku\',\''+r.key.replace(/'/g,"\\'")+'\')" style="cursor:pointer">'+
       '<td class="prod-name">'+(r.img?'<img class="prod-thumb" src="'+r.img+'" onerror="this.style.display=\'none\'">':'')+
       '<span class="sku-link">'+r.name+'</span></td>'+
-      '<td><span class="cat-pill" style="font-family:\'IBM Plex Mono\',monospace;font-size:9px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--nivea-light);color:var(--nivea-deep)">'+r.cat+'</span></td>'+
+      '<td><span class="cat-pill">'+r.cat+'</span></td>'+
       '<td><span class="type-pill" style="background:'+ts.bg+';color:'+ts.color+'">'+(r.type==='Innovación'?'★ ':'')+r.type+'</span></td>'+
       '<td><span class="type-pill" style="background:'+ps.bg+';color:'+ps.color+'">'+r.pool+'</span></td>'+
       r.counts.map(function(c){ return '<td style="text-align:center;font-weight:600">'+c+'</td>'; }).join('')+
@@ -681,27 +731,9 @@ function renderTrendView(){
       '<td style="text-align:center;font-weight:700;color:'+deltaColor+'">'+deltaSign+r.delta+'</td>'+
       '</tr>';
   }).join('');
-
   var weekHeaders = PERIODS.map(function(p){ return '<th style="text-align:center">'+PERIOD_SHORT[p]+'</th>'; }).join('');
-
-  document.getElementById('page').innerHTML =
-    '<div class="hero">'+
-      '<div class="hero-title">Tendencia de 4 Semanas &mdash; Julio 2026</div>'+
-      '<div class="hero-sub">Evolución semana a semana de cada SKU del pool. Ordenado por los que más empeoraron primero, para que el equipo priorice dónde accionar.</div>'+
-    '</div>'+
-    '<div class="kpis">'+
-      '<div class="kpi" style="border-left-color:var(--red)"><div class="kpi-lbl">SKUs empeorando</div><div class="kpi-val" style="color:var(--red)">'+worse+'</div><div class="kpi-sub">vs primera semana con dato</div></div>'+
-      '<div class="kpi" style="border-left-color:var(--green)"><div class="kpi-lbl">SKUs mejorando</div><div class="kpi-val" style="color:var(--green)">'+better+'</div></div>'+
-      '<div class="kpi" style="border-left-color:var(--faint)"><div class="kpi-lbl">SKUs sin cambio</div><div class="kpi-val">'+flat+'</div></div>'+
-      '<div class="kpi" style="border-left-color:var(--nivea)"><div class="kpi-lbl">SKUs en el pool (filtro actual)</div><div class="kpi-val">'+rows.length+'</div></div>'+
-    '</div>'+
-    '<div class="card trend-table-wrap">'+
-      '<div class="sec-lbl">Evolución por SKU &middot; ordenado de peor a mejor tendencia</div>'+
-      '<table class="pt"><thead><tr><th>Producto</th><th>Categoría</th><th>Type</th><th>Programa</th>'+weekHeaders+'<th>Tendencia</th><th>&Delta; S1&rarr;S4</th></tr></thead>'+
-      '<tbody>'+(tableRows || '<tr><td colspan="10" style="text-align:center;color:var(--faint);padding:2rem">Sin SKUs para este filtro.</td></tr>')+'</tbody></table>'+
-    '</div>';
-
-  document.getElementById('footer').textContent = 'Backstock Pool · Nivea Chile · Tendencia 4 semanas · '+rows.length+' SKUs';
+  return '<table class="pt"><thead><tr><th>Producto</th><th>Categoría</th><th>Prioridad</th><th>Programa</th>'+weekHeaders+'<th>Tendencia</th><th>&Delta; S1&rarr;S4</th></tr></thead>'+
+    '<tbody>'+(tableRows || '<tr><td colspan="10" style="text-align:center;color:var(--faint);padding:2rem">Sin SKUs para este filtro.</td></tr>')+'</tbody></table>';
 }
 
 /* ---------------- SKU DETAIL ---------------- */
@@ -751,12 +783,34 @@ function renderSkuDetail(){
       '<div class="sec-lbl">Evolución 4 semanas'+trendContextLabel()+' &middot; '+counts.join(' &rarr; ')+'</div>'+
       '<div class="ch-wrap"><canvas id="sku-trend-chart"></canvas></div>'+
     '</div>'+
+    '<div class="card" style="margin-bottom:.75rem">'+
+      '<div class="sec-lbl"><span>Por supervisor &middot; a quién le corresponde accionar</span>'+(curSupFilter!=='ALL'?'<button class="nav-btn" onclick="setSupFilter(\'ALL\')">&times; Quitar filtro de '+curSupFilter+'</button>':'')+'</div>'+
+      skuSupervisorRankHtml(recs)+
+    '</div>'+
     '<div class="card">'+
       '<div class="sec-lbl">Dónde está el problema ('+PERIOD_SHORT[curPeriod]+') &middot; '+recs.length+' de '+allForKey.length+'</div>'+
       skuStoreTableHtml(recs)+
     '</div>';
 
   drawSkuTrendChart(counts);
+}
+
+function skuSupervisorRankHtml(recs){
+  if (!recs.length) return '<div class="empty-hint">Sin casos para este filtro.</div>';
+  var groups = groupBy(recs, function(r){return r.sup;});
+  var rows = Object.keys(groups).map(function(k){
+    var g = groups[k];
+    var stores = {}; g.forEach(function(r){stores[r.store]=true;});
+    return {sup:k, count:g.length, nStores:Object.keys(stores).length};
+  }).sort(function(a,b){ return b.count-a.count; });
+  var maxN = Math.max.apply(null, rows.map(function(r){return r.count;}).concat([1]));
+  return rows.map(function(r){
+    var w = Math.round(r.count/maxN*100);
+    return '<div class="mini-row" onclick="setSupFilter(\''+r.sup.replace(/'/g,"\\'")+'\')" title="Filtrar la tabla de abajo a las salas de '+r.sup+'">'+
+      '<div class="mini-label" style="width:150px" title="'+r.sup+'">'+r.sup+'</div>'+
+      '<div class="mini-bar-wrap"><div class="mini-bar" style="width:'+w+'%"></div></div>'+
+      '<div class="mini-val" style="width:auto;padding-left:6px">'+r.count+' &middot; '+r.nStores+' sala'+(r.nStores>1?'s':'')+'</div></div>';
+  }).join('');
 }
 
 function drawSkuTrendChart(counts){
@@ -836,12 +890,34 @@ function renderSupStoreDetail(){
       '<div class="sec-lbl">Evolución 4 semanas &middot; '+counts.join(' &rarr; ')+'</div>'+
       '<div class="ch-wrap"><canvas id="sku-trend-chart"></canvas></div>'+
     '</div>'+
+    (isSup ? (
+    '<div class="card" style="margin-bottom:.75rem">'+
+      '<div class="sec-lbl"><span>Por sala &middot; dónde priorizar</span>'+(curStoreFilter!=='ALL'?'<button class="nav-btn" onclick="setStoreFilter(\'ALL\')">&times; Quitar filtro de '+curStoreFilter+'</button>':'')+'</div>'+
+      supStoreRankHtml(allForKey.filter(function(r){ return (curCat==='ALL'||r.cat===curCat) && (curChainFilter==='ALL'||r.chain===curChainFilter) && (curTypeFilter==='ALL'||r.type===curTypeFilter) && (curPoolFilter==='ALL'||r.pool===curPoolFilter); }))+
+    '</div>') : '')+
     '<div class="card">'+
       '<div class="sec-lbl">Detalle de productos en backstock &middot; '+recs.length+' de '+allForKey.length+'</div>'+
       productTableHtml(recs, isSup)+
     '</div>';
 
   drawSkuTrendChart(counts);
+}
+
+function supStoreRankHtml(recs){
+  if (!recs.length) return '<div class="empty-hint">Sin casos para este filtro.</div>';
+  var groups = groupBy(recs, function(r){return r.store;});
+  var rows = Object.keys(groups).map(function(k){
+    var g = groups[k];
+    return {store:k, chain:g[0].chain, count:g.length};
+  }).sort(function(a,b){ return b.count-a.count; });
+  var maxN = Math.max.apply(null, rows.map(function(r){return r.count;}).concat([1]));
+  return rows.map(function(r){
+    var w = Math.round(r.count/maxN*100);
+    return '<div class="mini-row" onclick="setStoreFilter(\''+r.store+'\')" title="Filtrar la tabla de abajo a '+r.store+'">'+
+      '<div class="mini-label" style="width:150px">'+r.store+' <span style="color:var(--faint);font-weight:400">('+r.chain+')</span></div>'+
+      '<div class="mini-bar-wrap"><div class="mini-bar" style="width:'+w+'%"></div></div>'+
+      '<div class="mini-val" style="width:auto;padding-left:6px">'+r.count+' casos</div></div>';
+  }).join('');
 }
 
 function productTableHtml(recs, isSup){

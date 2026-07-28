@@ -789,7 +789,7 @@ function saveSkuComment(codigo, sku, rowId){
 window.saveSkuComment = saveSkuComment;
 
 // ---- Panel de insights (reemplaza al mapa): resumen de comentarios + rendimiento por SKU ----
-let commentsTally = null; // se llena async al cargar
+let commentsLoaded = false; // false | true | 'error'
 
 function parseCSV(text){
   const rows = [];
@@ -827,14 +827,10 @@ async function loadCommentsSummary(){
     const idxSala = header.findIndex(h=>h==='sala');
     const idxSupervisor = header.findIndex(h=>h==='supervisor');
     const idxSku = header.findIndex(h=>h==='sku');
-    const counts = {}; STANDARD_COMMENTS.forEach(c=>counts[c]=0);
-    let total=0, other=0;
     allCommentRows = [];
     for(let i=1;i<rows.length;i++){
       const val = (rows[i][idxComentario]||'').trim();
       if(!val) continue;
-      total++;
-      if(counts.hasOwnProperty(val)) counts[val]++; else other++;
       allCommentRows.push({
         sala: idxSala>=0 ? (rows[i][idxSala]||'').trim() : '',
         supervisor: idxSupervisor>=0 ? (rows[i][idxSupervisor]||'').trim() : '',
@@ -842,26 +838,62 @@ async function loadCommentsSummary(){
         comentario: val
       });
     }
-    commentsTally = {counts, other, total};
+    commentsLoaded = true;
   } catch(e){
-    commentsTally = {error:true};
+    commentsLoaded = 'error';
   }
   renderCommentsSummaryBlock();
   if(skuDetailOpen) renderSkuPerformanceBlock();
 }
 
+function computeCommentsTally(){
+  let rows = allCommentRows;
+  if(state.responsable){
+    rows = rows.filter(c=>{
+      const rec = RECORDS.find(r=>r.codigo===c.sala);
+      return rec && rec.responsable === state.responsable;
+    });
+  }
+  if(state.supervisor){
+    rows = rows.filter(c=>{
+      const rec = RECORDS.find(r=>r.codigo===c.sala);
+      return rec && rec.supervisor === state.supervisor;
+    });
+  }
+  const counts = {}; STANDARD_COMMENTS.forEach(c=>counts[c]=0);
+  let total=0, other=0;
+  rows.forEach(c=>{
+    total++;
+    if(counts.hasOwnProperty(c.comentario)) counts[c.comentario]++; else other++;
+  });
+  return {counts, other, total};
+}
+
+function commentsScopeLabel(){
+  if(state.supervisor) return `de ${state.supervisor}`;
+  if(state.responsable) return `de ${state.responsable}`;
+  return 'de toda la operación';
+}
+
 function renderCommentsSummaryBlock(){
   const body = document.getElementById('commentsSummaryBody');
+  const titleEl = document.getElementById('commentsSummaryTitle');
   if(!body) return;
-  if(!commentsTally){
+  if(titleEl) titleEl.textContent = `Qué se repite más — ${commentsScopeLabel()}`;
+
+  if(!commentsLoaded){
     body.innerHTML = `<div class="insight-empty">Cargando comentarios…</div>`;
     return;
   }
-  if(commentsTally.error || commentsTally.total===0){
-    body.innerHTML = `<div class="insight-empty">Todavía no hay comentarios registrados en la hoja.</div>`;
+  if(commentsLoaded==='error'){
+    body.innerHTML = `<div class="insight-empty">No se pudo cargar el resumen de comentarios.</div>`;
     return;
   }
-  const {counts, other, total} = commentsTally;
+  const {counts, other, total} = computeCommentsTally();
+  if(total===0){
+    body.innerHTML = `<div class="insight-empty">Sin comentarios registrados ${commentsScopeLabel()}.</div>`;
+    return;
+  }
   const entries = Object.entries(counts);
   if(other>0) entries.push(['Otro / no estandarizado', other]);
   entries.sort((a,b)=>b[1]-a[1]);
@@ -941,8 +973,14 @@ function renderSkuDetailView(body, sku){
   });
   problemStores.sort((a,b)=>a.msl-b.msl);
 
-  // comentarios guardados para este SKU (desde la hoja de Google)
-  const skuComments = allCommentRows.filter(c => c.sku === sku);
+  // comentarios guardados para este SKU (desde la hoja de Google), respetando el alcance actual
+  const skuComments = allCommentRows.filter(c => {
+    if(c.sku !== sku) return false;
+    const rec = RECORDS.find(r=>r.codigo===c.sala);
+    if(state.responsable && (!rec || rec.responsable !== state.responsable)) return false;
+    if(state.supervisor && (!rec || rec.supervisor !== state.supervisor)) return false;
+    return true;
+  });
 
   let html = `<span class="back-link" onclick="closeSkuDetail()">‹ Volver al ranking de SKU</span>`;
   html += `<h4 style="font-family:'Space Grotesk',sans-serif;font-size:13px;margin:4px 0 10px 0;">${sku}</h4>`;
@@ -983,14 +1021,14 @@ function renderInsightsCol(){
       <div id="skuPerfBody"></div>
     </div>
     <div class="insight-block">
-      <h3>Comentarios de supervisores</h3>
-      <p class="sub">Qué se repite más en las salas — todas las semanas y responsables</p>
+      <h3 id="commentsSummaryTitle">Qué se repite más — de toda la operación</h3>
+      <p class="sub">Comentarios estandarizados de los supervisores</p>
       <div id="commentsSummaryBody"></div>
     </div>
   `;
   renderSkuPerformanceBlock();
   renderCommentsSummaryBlock();
-  if(!commentsTally) loadCommentsSummary();
+  if(!commentsLoaded) loadCommentsSummary();
 }
 
 function goNacional(){ state = {level:'nacional', responsable:null, supervisor:null, storeCode:null}; refresh(); }

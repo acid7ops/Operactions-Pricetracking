@@ -997,7 +997,29 @@ function renderSkuDetailView(body, sku){
     html += `<div class="insight-empty">Ninguna sala tiene problema con este SKU en la vista actual.</div>`;
   }
 
-  html += `<p style="font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;color:var(--muted);margin:16px 0 8px 0;">Comentarios registrados para este SKU</p>`;
+  html += `<p style="font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;color:var(--muted);margin:16px 0 8px 0;">Problemas recurrentes con este SKU</p>`;
+  if(skuComments.length){
+    const counts = {}; STANDARD_COMMENTS.forEach(c=>counts[c]=0);
+    let other=0;
+    skuComments.forEach(c=>{
+      if(counts.hasOwnProperty(c.comentario)) counts[c.comentario]++; else other++;
+    });
+    const entries = Object.entries(counts).filter(([,n])=>n>0);
+    if(other>0) entries.push(['Otro / no estandarizado', other]);
+    entries.sort((a,b)=>b[1]-a[1]);
+    const total = skuComments.length;
+    html += entries.map(([label,count])=>{
+      const pct = Math.round(count/total*100);
+      return `<div class="comment-bar-row">
+        <div class="comment-bar-top"><span>${label}</span><span class="cnt">${count} · ${pct}%</span></div>
+        <div class="comment-bar-track"><div class="comment-bar-fill" style="width:${pct}%;"></div></div>
+      </div>`;
+    }).join('');
+  } else {
+    html += `<div class="insight-empty">Este SKU no tiene comentarios registrados — sin novedad.</div>`;
+  }
+
+  html += `<p style="font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;color:var(--muted);margin:16px 0 8px 0;">Detalle por sala</p>`;
   if(skuComments.length){
     html += `<table class="sku-perf"><thead><tr><th>Sala</th><th>Supervisor</th><th>Comentario</th></tr></thead><tbody>`;
     skuComments.forEach(c=>{

@@ -123,9 +123,12 @@ table.pc tr:hover td:not(.td-cli){background:var(--mist)}
   width:9px;height:9px;border-radius:50%;flex-shrink:0;
   transition:transform .15s;
 }
-.sem-0{background:#B0BEC5}
-.sem-1{background:var(--green)}
-.sem-2{background:var(--red)}
+/* 0=sin evaluar, 1=mantiene, 2=profunda, 3=adicional, 4=nuevo cambio */
+.sem-0{background:#CFD8DC;border:1.5px solid #B0BEC5}
+.sem-1{background:#1565C0;border:1.5px solid #0D47A1}
+.sem-2{background:#64B5F6;border:1.5px solid #42A5F5}
+.sem-3{background:#F48FB1;border:1.5px solid #F06292}
+.sem-4{background:#FFFFFF;border:2px solid #90A4AE}
 .pc-plan{
   font-family:'IBM Plex Mono',monospace;font-size:8.5px;
   color:var(--muted);letter-spacing:.02em;line-height:1.3;
@@ -253,20 +256,25 @@ table.pc tr:hover td:not(.td-cli){background:var(--mist)}
   <div class="ph">
     <div>
       <div class="ph-title">Promo Calendar 2026 — Verificación vs Ejecución</div>
-      <div class="ph-sub">Pincha cada semáforo para marcarlo · ⚪ sin evaluar → 🟢 cumple → 🔴 no cumple</div>
+      <div class="ph-sub">Pincha para ciclar · ⚪ Sin evaluar → 🔵 Mantiene → 💙 Profunda → 🩷 Adicional → ⬜ Nuevo Cambio</div>
     </div>
-    <div class="ph-legend">
-      <div class="leg-item"><div class="sem-dot" style="background:#B0BEC5"></div>Sin evaluar</div>
-      <div class="leg-item"><div class="sem-dot" style="background:var(--green)"></div>Cumple plan</div>
-      <div class="leg-item"><div class="sem-dot" style="background:var(--red)"></div>No cumple</div>
+    <div style="display:flex;align-items:center;gap:10px">
+    <button onclick="resetStates()" style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;padding:4px 12px;border-radius:20px;border:1px solid #DCE6F0;background:white;color:#8698A8;cursor:pointer;">↺ Resetear</button>
+  </div>
+  <div class="ph-legend">
+      <div class="leg-item"><div class="sem-dot" style="background:#CFD8DC;border:1.5px solid #B0BEC5"></div>Sin evaluar</div>
+      <div class="leg-item"><div class="sem-dot" style="background:#1565C0"></div>Mantiene</div>
+      <div class="leg-item"><div class="sem-dot" style="background:#64B5F6"></div>Profunda</div>
+      <div class="leg-item"><div class="sem-dot" style="background:#F48FB1"></div>Adicional</div>
+      <div class="leg-item"><div class="sem-dot" style="background:#fff;border:2px solid #90A4AE;box-sizing:border-box"></div>Nuevo Cambio</div>
     </div>
   </div>
 
   <div class="summary" id="summary">
     <div class="sum-card"><div class="sum-val blue" id="s-total">0</div><div class="sum-lbl">Con plan</div></div>
-    <div class="sum-card"><div class="sum-val green" id="s-green">0</div><div class="sum-lbl">Cumplen ✅</div></div>
-    <div class="sum-card"><div class="sum-val red" id="s-red">0</div><div class="sum-lbl">No cumplen ❌</div></div>
-    <div class="sum-card"><div class="sum-val" style="color:var(--faint)" id="s-pct">—</div><div class="sum-lbl">Cumplimiento</div></div>
+    <div class="sum-card"><div class="sum-val green" id="s-green">0</div><div class="sum-lbl">Mantiene 🔵</div></div>
+    <div class="sum-card"><div class="sum-val red" id="s-red">0</div><div class="sum-lbl">Profunda 💙</div></div>
+    <div class="sum-card"><div class="sum-val" style="color:var(--faint)" id="s-pct">—</div><div class="sum-lbl">Adicional / N.Cambio</div></div>
   </div>
 
   <div class="filters">
@@ -289,7 +297,12 @@ var APLS = ["Spray 150ml", "Roll-on", "Barra", "Packs"];
 var MESES_SHORT = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN", "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
 var MESES_FULL  = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 var MES_ACTUAL  = 7;
-var STATES = {};  // key → 0,1,2
+var STATES = (function() {
+  try {
+    var saved = localStorage.getItem('deo_promo_states');
+    return saved ? JSON.parse(saved) : {};
+  } catch(e) { return {}; }
+})();
 var CANAL = 'ALL';
 
 function planRaw(canal, cli, apl, mes) {
@@ -307,27 +320,29 @@ function isTac(raw) {
 }
 
 function toggleSem(key, dotEl) {
-  STATES[key] = ((STATES[key] || 0) + 1) % 3;
+  STATES[key] = ((STATES[key] || 0) + 1) % 5;
   var s = STATES[key];
   dotEl.className = 'sem sem-' + s;
+  try { localStorage.setItem('deo_promo_states', JSON.stringify(STATES)); } catch(e) {}
   updateSummary();
 }
 
 function updateSummary() {
-  var total = 0, green = 0, red = 0;
+  var mantiene=0, profunda=0, adicional=0, nuevo=0;
   Object.keys(STATES).forEach(function(k){
-    if (STATES[k] > 0) total++;
-    if (STATES[k] === 1) green++;
-    if (STATES[k] === 2) red++;
+    var s = STATES[k];
+    if (s === 1) mantiene++;
+    else if (s === 2) profunda++;
+    else if (s === 3) adicional++;
+    else if (s === 4) nuevo++;
   });
-  // Count total cells with plan
   var withPlan = 0;
   Object.keys(CAL).forEach(function(k){ if (CAL[k]) withPlan++; });
-  var pct = (green+red) > 0 ? Math.round(green/(green+red)*100) : null;
+  var evaluated = mantiene+profunda+adicional+nuevo;
   document.getElementById('s-total').textContent = withPlan;
-  document.getElementById('s-green').textContent = green;
-  document.getElementById('s-red').textContent = red;
-  document.getElementById('s-pct').textContent = pct !== null ? pct+'%' : '—';
+  document.getElementById('s-green').textContent = mantiene;
+  document.getElementById('s-red').textContent = profunda;
+  document.getElementById('s-pct').textContent = adicional + ' / ' + nuevo;
 }
 
 function setCanal(canal, btn) {
@@ -430,6 +445,13 @@ function render() {
   });
 })();
 // ───────────────────────────────────────────────────────────
+
+function resetStates() {
+  if (!confirm('¿Resetear todos los semáforos a sin evaluar?')) return;
+  STATES = {};
+  try { localStorage.removeItem('deo_promo_states'); } catch(e) {}
+  render();
+}
 
 // Init
 render();

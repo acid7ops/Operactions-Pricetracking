@@ -276,6 +276,7 @@
 
   <div class="controlbar">
     <div class="week-tabs" id="weekTabsEl"></div>
+    <div class="sku-filter" id="clientFilterWrap"></div>
     <div class="sku-filter" id="skuFilterWrap"></div>
     <div class="metric-toggle" id="metricToggle"></div>
   </div>
@@ -321,6 +322,7 @@ const comments = {};
 let currentWeek = 'Week 4';
 let currentMetric = 'msl';
 let currentSku = ''; // '' = todos los SKU (vista general de la sala)
+let currentChain = ''; // '' = todos los clientes/cadenas
 let state = { level:'nacional', responsable:null, supervisor:null, storeCode:null };
 
 const SKU_LIST = [...new Set(RECORDS.flatMap(r => Object.values(r.skus_by_week||{}).flat().map(s=>s.sku)))].sort();
@@ -427,6 +429,7 @@ function visibleRecords(){
   return weekRecords().filter(r=>{
     if(state.responsable && r.responsable !== state.responsable) return false;
     if(state.supervisor && r.supervisor !== state.supervisor) return false;
+    if(currentChain && getRetailer(r) !== currentChain) return false;
     return true;
   });
 }
@@ -514,6 +517,11 @@ function renderControls(){
   const tt = document.getElementById('metricToggle');
   tt.innerHTML = `<button class="mtbtn ${currentMetric==='msl'?'active':''}" onclick="setMetric('msl')">MSL</button><button class="mtbtn ${currentMetric==='backstock'?'active':''}" onclick="setMetric('backstock')">Backstock</button>`;
 
+  const cf = document.getElementById('clientFilterWrap');
+  const chainOptions = ['<option value="">Todos los clientes</option>']
+    .concat(['Cruz Verde','Ahumada','SalcoBrand'].map(c=>`<option value="${c}" ${currentChain===c?'selected':''}>${c}</option>`));
+  cf.innerHTML = `<select id="clientSelect" onchange="setChain(this.value)">${chainOptions.join('')}</select>`;
+
   const sf = document.getElementById('skuFilterWrap');
   const disabled = currentMetric!=='msl';
   const options = ['<option value="">Todos los SKU (vista general)</option>']
@@ -524,9 +532,12 @@ function renderControls(){
   const note = document.getElementById('partialNote');
   const m = WEEKS.find(x=>x.key===currentWeek);
   let extra = '';
+  if(currentChain) extra += `<div class="partial-note" style="margin:0 24px 8px 24px;">Viendo solo el cliente: <b>${currentChain}</b></div>`;
   if(currentMetric==='msl' && currentSku) extra += `<div class="partial-note" style="margin:0 24px 8px 24px;">Viendo solo el SKU: <b>${currentSku}</b> — el Backstock mostrado en el detalle sigue siendo el de la sala completa.</div>`;
   note.innerHTML = extra;
 }
+function setChain(c){ currentChain = c; refresh(); }
+window.setChain = setChain;
 function renderViewTabs(){
   const el = document.getElementById('viewTabs');
   el.innerHTML = `

@@ -690,7 +690,7 @@ function renderSideStore(){
 }
 
 function renderTop10(){
-  const recs = weekRecords().filter(r=>r.responsable!=='Sin Atención').slice().sort(sortByOpportunity).slice(0,10);
+  const recs = weekRecords().filter(r=>r.responsable!=='Plan Backstock 2.0').slice().sort(sortByOpportunity).slice(0,10);
   let html = `<h2>Top 10 peores salas — ${metricLabel()}, ${WEEKS.find(m=>m.key===currentWeek).label}</h2><p class="sub">Solo salas con responsable asignado (Fernando o Cecilia) — la mayor oportunidad de mejora, primero.</p>`;
   html += `<table class="top10"><thead><tr><th>#</th><th>Código</th><th>Dirección</th><th>Responsable</th><th>Supervisor</th><th style="text-align:right;">${metricLabel()}</th></tr></thead><tbody>`;
   recs.forEach((r,i)=>{
@@ -718,7 +718,7 @@ function goToStoreFromTop10(codigo){
 window.goToStoreFromTop10 = goToStoreFromTop10;
 
 function buildWeeklyChartSVG(){
-  const colors = {'Cecilia Sepulveda':'#0057A8','Fernando Cardenas':'#D89A1F','Sin Atención':'#C0392B'};
+  const colors = {'Cecilia Sepulveda':'#0057A8','Fernando Cardenas':'#D89A1F','Plan Backstock 2.0':'#C0392B'};
   const allLabels = [...new Set(Object.values(WEEKLY_BY_RESPONSABLE).flat().map(p=>p.label))];
   const W = 760, H = 260, padL = 40, padR = 20, padT = 20, padB = 30;
   const plotW = W - padL - padR, plotH = H - padT - padB;

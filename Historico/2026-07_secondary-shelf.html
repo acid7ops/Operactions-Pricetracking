@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
   --nivea:#0057A8; --nivea-deep:#00294F; --nivea-mid:#0A3D73;
@@ -141,6 +142,8 @@ body{font-family:'Inter',sans-serif;background:var(--canvas);color:var(--ink);-w
   background:var(--nivea-deep);color:#fff;padding:3px 9px;border-radius:6px;
 }
 .chev{font-size:12px;color:var(--muted);transition:transform .15s;}
+.download-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:20px;background:var(--green);color:#fff;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;border:none;cursor:pointer;transition:background .15s;}
+.download-btn:hover{background:#0F6E3C;}
 .chev.open{transform:rotate(180deg);}
 
 #detailPanel{display:none;background:var(--paper);}
@@ -294,7 +297,13 @@ footer{text-align:center;padding:16px;font-size:11px;color:var(--faint);font-fam
       Ver detalle de registros
       <span class="detail-count mono" id="detailCount">0</span>
     </div>
-    <span class="chev" id="chevIcon">▾</span>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="download-btn" id="downloadBtn" onclick="event.stopPropagation();downloadExcel()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Descargar Excel
+      </button>
+      <span class="chev" id="chevIcon">▾</span>
+    </div>
   </div>
   <div id="detailPanel">
     <div class="table-scroll">
@@ -356,6 +365,35 @@ function driveThumb(url, size){
 }
 
 /* ---------- Load ---------- */
+/* ---------- Download Excel ---------- */
+function downloadExcel(){
+  const rows = filteredRows();
+  if(!rows.length){ alert("No hay registros para descargar."); return; }
+  const exportData = rows.map(r => ({
+    "Fecha": r.fecha,
+    "Cliente": r.cliente,
+    "Código Local": r.codigo,
+    "Exhibición": r.exhibicion,
+    "Categoría": r.categoria,
+    "Estado": r.estado,
+    "Motivo": r.motivo,
+    "Detalle": r.detalle,
+    "Supervisor": r.supervisor,
+    "Foto": r.foto
+  }));
+  const ws = XLSX.utils.json_to_sheet(exportData);
+  ws["!cols"] = [{wch:12},{wch:14},{wch:14},{wch:24},{wch:14},{wch:18},{wch:22},{wch:30},{wch:18},{wch:50}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Secondary Shelf");
+  const parts = ["SecondaryShelf_Julio2026"];
+  if(state.cliente !== "Todos") parts.push(state.cliente);
+  if(state.categoria !== "Todos") parts.push(state.categoria);
+  if(state.supervisor !== "Todos") parts.push(state.supervisor.split(" ")[0]);
+  if(state.estado !== "Todos") parts.push(state.estado === "Implementado" ? "Impl" : "NoImpl");
+  if(state.drill) parts.push(state.drill);
+  XLSX.writeFile(wb, parts.join("_") + ".xlsx");
+}
+
 function loadData(){
   document.getElementById("statusMsg").style.display="none";
   document.getElementById("appBody").style.display="block";

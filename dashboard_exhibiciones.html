@@ -573,62 +573,208 @@ footer{
 
 <script>
 /* ---------- Configuración ---------- */
-const SHEET_ID="1Ny4_WjIAf57mhpgdwhAvgauYpH-1EuPD-x_v5JQ7qFM";
-const SHEETS={
-  PP:"Exhibiciones P&P",HS:"Exhibiciones H&S",ESTADO:"Estado Actual"
-}
-;
-const MAX_BARS=12;
-let RAW=[];
-let state={
-  cliente:"Todos",estado:"Todos",categoria:"Todos",supervisor:"Todos",search:"",drill:null,barShowAll:false
-}
-;
-let coverageDonutChart=null,implementationDonutChart=null,barChart=null;
+
+const CSV_URLS = {
+  PP: "https://docs.google.com/spreadsheets/d/e/2PACX-1vREWGkYKB6TAWn7ErJM1IeRBh0cU2UDUC_YxDlYUpFtce8PA_kbocgsp81cnplC-NOw4gCyrLKNHQ_Y/pub?gid=758263598&single=true&output=csv",
+  HS: "https://docs.google.com/spreadsheets/d/e/2PACX-1vREWGkYKB6TAWn7ErJM1IeRBh0cU2UDUC_YxDlYUpFtce8PA_kbocgsp81cnplC-NOw4gCyrLKNHQ_Y/pub?gid=0&single=true&output=csv",
+  ESTADO: "https://docs.google.com/spreadsheets/d/e/2PACX-1vREWGkYKB6TAWn7ErJM1IeRBh0cU2UDUC_YxDlYUpFtce8PA_kbocgsp81cnplC-NOw4gCyrLKNHQ_Y/pub?gid=657682790&single=true&output=csv"
+};
+
+const MAX_BARS = 12;
+const FETCH_TIMEOUT_MS = 15000;
+
+let RAW = [];
+
+let state = {
+  cliente: "Todos",
+  estado: "Todos",
+  categoria: "Todos",
+  supervisor: "Todos",
+  search: "",
+  drill: null,
+  barShowAll: false
+};
+
+let coverageDonutChart = null;
+let implementationDonutChart = null;
+let barChart = null;
+
 
 /* ---------- Lectura Google Sheets ---------- */
-function sheetCsvUrl(sheetName){
-  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${Date.now()}`
-}
-async function fetchSheet(sheetName){
-  const response=await fetch(sheetCsvUrl(sheetName),{
-    cache:"no-store"
-  }
+
+async function fetchSheet(url, label, forceRefresh = false) {
+
+  const controller = new AbortController();
+
+  const timeoutId = setTimeout(
+    () => controller.abort(),
+    FETCH_TIMEOUT_MS
   );
-  if(!response.ok) throw new Error(`No fue posible leer ${sheetName}`);
-  const text=await response.text();
-  return Papa.parse(text,{
-    header:true,skipEmptyLines:true,transformHeader:h=>String(h||"").trim()
+
+  try {
+
+    const finalUrl =
+      forceRefresh
+        ? url + "&_=" + Date.now()
+        : url;
+
+    const response = await fetch(
+      finalUrl,
+      {
+        cache: forceRefresh ? "no-store" : "default",
+        signal: controller.signal
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `${label}: HTTP ${response.status}`
+      );
+    }
+
+    const text = await response.text();
+
+    const parsed = Papa.parse(
+      text,
+      {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: header =>
+          String(header || "").trim()
+      }
+    );
+
+    if (parsed.errors && parsed.errors.length) {
+      console.warn(
+        `Advertencias al leer ${label}:`,
+        parsed.errors
+      );
+    }
+
+    return parsed.data || [];
+
+  } catch (error) {
+
+    if (error.name === "AbortError") {
+      throw new Error(
+        `${label} tardó más de ${FETCH_TIMEOUT_MS / 1000} segundos en responder`
+      );
+    }
+
+    throw error;
+
+  } finally {
+
+    clearTimeout(timeoutId);
+
   }
-  ).data||[];
 }
-async function loadData(){
-  const btn=document.getElementById("refreshBtn"),msg=document.getElementById("statusMsg"),body=document.getElementById("appBody");
-  btn.disabled=true;
-  btn.textContent="Actualizando…";
-  msg.style.display="block";
+
+
+async function loadData(forceRefresh = false) {
+
+  const btn =
+    document.getElementById("refreshBtn");
+
+  const msg =
+    document.getElementById("statusMsg");
+
+  const body =
+    document.getElementById("appBody");
+
+  btn.disabled = true;
+  btn.textContent = "Actualizando…";
+
+  msg.style.display = "block";
   msg.classList.remove("error");
-  msg.textContent="Cargando planificación y estado actual…";
-  body.style.display="none";
-  try{
-    const [pp,hs,estado]=await Promise.all([fetchSheet(SHEETS.PP),fetchSheet(SHEETS.HS),fetchSheet(SHEETS.ESTADO)]);
-    RAW=buildUniverse(pp,hs,estado);
+  msg.textContent =
+    "Cargando planificación y estado actual…";
+
+  body.style.display = "none";
+
+  try {
+
+    const [pp, hs, estado] =
+      await Promise.all([
+        fetchSheet(
+          CSV_URLS.PP,
+          "Exhibiciones P&P",
+          forceRefresh
+        ),
+        fetchSheet(
+          CSV_URLS.HS,
+          "Exhibiciones H&S",
+          forceRefresh
+        ),
+        fetchSheet(
+          CSV_URLS.ESTADO,
+          "Estado Actual",
+          forceRefresh
+        )
+      ]);
+
+    RAW =
+      buildUniverse(
+        pp,
+        hs,
+        estado
+      );
+
     resetInvalidFilters();
     buildAllFilters();
     render();
-    msg.style.display="none";
-    body.style.display="block";
-    document.getElementById("lastUpdated").textContent="Actualizado · "+new Intl.DateTimeFormat("es-CL",{
-      dateStyle:"short",timeStyle:"short"
-    }
-    ).format(new Date());
-  } catch(e){
-    console.error(e);
+
+    msg.style.display = "none";
+    body.style.display = "block";
+
+    document
+      .getElementById("lastUpdated")
+      .textContent =
+        "Actualizado · " +
+        new Intl.DateTimeFormat(
+          "es-CL",
+          {
+            dateStyle: "short",
+            timeStyle: "short"
+          }
+        ).format(new Date());
+
+  } catch (error) {
+
+    console.error(error);
+
     msg.classList.add("error");
-    msg.textContent="No fue posible leer Google Sheets. Revisa que el archivo esté compartido como “Cualquier persona con el enlace · Lector” y vuelve a intentar."
-  } finally{
-    btn.disabled=false;
-    btn.textContent="↻ Actualizar datos"
+
+    msg.innerHTML = `
+      <div style="font-weight:600;margin-bottom:8px;">
+        No fue posible cargar el dashboard.
+      </div>
+      <div style="font-size:12px;margin-bottom:14px;">
+        ${String(error.message || error)}
+      </div>
+      <button
+        type="button"
+        onclick="loadData(true)"
+        style="
+          border:none;
+          background:#0057A8;
+          color:#fff;
+          padding:7px 14px;
+          border-radius:20px;
+          cursor:pointer;
+          font-weight:600;
+        "
+      >
+        Reintentar
+      </button>
+    `;
+
+  } finally {
+
+    btn.disabled = false;
+    btn.textContent =
+      "↻ Actualizar datos";
+
   }
 }
 
@@ -855,7 +1001,14 @@ document.getElementById("searchInput").addEventListener("input",e=>{
 }
 );
 document.getElementById("backToAll").addEventListener("click",()=>setCliente("Todos"));
-document.getElementById("refreshBtn").addEventListener("click",loadData);
+document
+  .getElementById("refreshBtn")
+  .addEventListener(
+    "click",
+    function() {
+      loadData(true);
+    }
+  );
 function filteredRows(){
   return RAW.filter(r=>{
     if(state.cliente!=="Todos"&&r.cliente!==state.cliente)return false;

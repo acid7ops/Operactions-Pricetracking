@@ -7,7 +7,7 @@
 <title>Secondary Shelf · Visibility</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 :root{--nivea:#0057A8;--nivea-deep:#00294F;--nivea-mid:#0A3D73;--ink:#0B1C2C;--muted:#5B6B7C;--faint:#8698A8;--paper:#fff;--canvas:#EEF3F9;--line:#DCE6F0;--mist:#E7EFF8;--green:#158A4A;--green-soft:#E6F5EC;--red:#C0392B;--red-soft:#FBEDEA;--amber:#D89A1F;--amber-soft:#FBF0E2;--r-sm:8px;--r-md:12px;--shadow-md:0 6px 20px rgba(10,27,46,.09)}
@@ -16,11 +16,11 @@
 #refreshBtn{margin-top:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 12px Inter;padding:6px 14px;border-radius:20px;cursor:pointer}.controlbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 26px;background:var(--paper);border-bottom:1px solid var(--line)}.filter-group{display:flex;align-items:center;gap:8px}.filter-label{font:600 10px 'IBM Plex Mono';text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.pills{display:flex;gap:5px;flex-wrap:wrap}.pill{padding:6px 13px;border:1px solid var(--line);border-radius:20px;font:500 12.5px Inter;background:var(--paper);color:var(--ink);cursor:pointer}.pill.active{background:var(--nivea-deep);color:#fff;border-color:var(--nivea-deep)}.pill.active.pos{background:var(--green);border-color:var(--green)}.pill.active.neg{background:var(--red);border-color:var(--red)}.pill.active.neu{background:var(--amber);border-color:var(--amber)}.divider{width:1px;height:28px;background:var(--line)}.sup-select,.merch-select,.search-input{padding:7px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:#fff;font:12.5px Inter;color:var(--ink)}.sup-select{min-width:180px}.merch-select{min-width:205px}.merch-select:disabled{background:#F4F7FA;color:var(--faint);cursor:not-allowed}.search-input{min-width:210px;flex:1;max-width:320px}
 .kpirow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));background:#fff;border-bottom:1px solid var(--line)}.kpi{padding:14px 18px;border-right:1px solid var(--line)}.kpi:last-child{border-right:none}.kpi-label{font:600 9.5px 'IBM Plex Mono';text-transform:uppercase;letter-spacing:.055em;color:var(--muted)}.kpi-value{font:700 25px 'Space Grotesk';margin:2px 0}.kpi-value.green{color:var(--green)}.kpi-value.red{color:var(--red)}.kpi-value.amber{color:var(--amber)}.kpi-value.blue{color:var(--nivea)}.kpi-sub{font-size:10.5px;color:var(--muted);line-height:1.35}
 .charts-row{display:grid;grid-template-columns:270px 270px minmax(430px,1fr);background:#fff;border-bottom:1px solid var(--line)}
-.merch-panel{background:#fff;border-bottom:1px solid var(--line);padding:18px 26px}.merch-panel.hidden{display:none}.merch-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}.merch-panel h2{font:600 15px 'Space Grotesk';margin-bottom:3px}.merch-panel-sub{font-size:11.5px;color:var(--muted)}.merch-clear{border:none;background:none;color:var(--nivea);font:600 11.5px Inter;cursor:pointer;text-decoration:underline;white-space:nowrap}.merch-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}.merch-table{min-width:720px}.merch-row{cursor:pointer;transition:.12s ease}.merch-row:hover{background:#F7FAFD}.merch-row.active{background:#EDF5FC}.merch-name{font-weight:700;color:var(--nivea-deep)}.metric-cell{min-width:135px}.metric-main{font:700 13px 'IBM Plex Mono';color:var(--ink)}.metric-sub{font-size:10px;color:var(--muted);margin-top:2px}.mini-track{height:5px;background:var(--mist);border-radius:999px;overflow:hidden;margin-top:5px;min-width:92px}.mini-fill{height:100%;background:var(--nivea);border-radius:999px}.mini-fill.green{background:var(--green)}.merch-empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}.chart-panel{padding:18px 20px;border-right:1px solid var(--line);min-width:0}.chart-panel:last-child{border-right:none}.chart-panel h2{font:600 14px 'Space Grotesk';margin-bottom:2px}.chart-sub{font-size:11.5px;color:var(--muted);margin-bottom:12px;min-height:30px}.donut-wrap{height:215px}.bar-scroll{height:225px;overflow-x:auto}.bar-inner{height:220px;min-width:100%}#backToAll,#barShowAllToggle{border:none;background:none;color:var(--nivea);font:600 12px Inter;cursor:pointer;text-decoration:underline}#backToAll{display:none;margin-bottom:6px}#barShowAllToggle{margin-top:8px}
+.merch-panel{background:#fff;border-bottom:1px solid var(--line)}.merch-panel.hidden{display:none}.merch-toggle{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:15px 26px;cursor:pointer;user-select:none}.merch-toggle:hover{background:#FAFCFE}.merch-toggle-right{display:flex;align-items:center;gap:10px}.merch-count{font:600 11px 'IBM Plex Mono';background:var(--mist);color:var(--nivea-deep);padding:3px 9px;border-radius:6px}.merch-chev{font-size:12px;color:var(--muted);transition:.15s}.merch-chev.open{transform:rotate(180deg)}.merch-panel-body{display:none;padding:0 26px 18px}.merch-panel-body.open{display:block}.merch-panel-head{display:flex;align-items:flex-start;justify-content:flex-end;gap:14px;margin-bottom:10px}.merch-panel h2{font:600 15px 'Space Grotesk';margin-bottom:3px}.merch-panel-sub{font-size:11.5px;color:var(--muted)}.merch-clear{border:none;background:none;color:var(--nivea);font:600 11.5px Inter;cursor:pointer;text-decoration:underline;white-space:nowrap}.merch-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}.merch-table{min-width:720px}.merch-row{cursor:pointer;transition:.12s ease}.merch-row:hover{background:#F7FAFD}.merch-row.active{background:#EDF5FC}.merch-name{font-weight:700;color:var(--nivea-deep)}.metric-cell{min-width:135px}.metric-main{font:700 13px 'IBM Plex Mono';color:var(--ink)}.metric-sub{font-size:10px;color:var(--muted);margin-top:2px}.mini-track{height:5px;background:var(--mist);border-radius:999px;overflow:hidden;margin-top:5px;min-width:92px}.mini-fill{height:100%;background:var(--nivea);border-radius:999px}.mini-fill.green{background:var(--green)}.merch-empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}.chart-panel{padding:18px 20px;border-right:1px solid var(--line);min-width:0}.chart-panel:last-child{border-right:none}.chart-panel h2{font:600 14px 'Space Grotesk';margin-bottom:2px}.chart-sub{font-size:11.5px;color:var(--muted);margin-bottom:12px;min-height:30px}.donut-wrap{height:215px}.bar-scroll{height:225px;overflow-x:auto}.bar-inner{height:220px;min-width:100%}#backToAll,#barShowAllToggle{border:none;background:none;color:var(--nivea);font:600 12px Inter;cursor:pointer;text-decoration:underline}#backToAll{display:none;margin-bottom:6px}#barShowAllToggle{margin-top:8px}
 .detail-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 26px;background:#fff;border-bottom:1px solid var(--line);cursor:pointer}.detail-bar-left{display:flex;align-items:center;gap:10px;font:600 14px 'Space Grotesk'}.detail-count{font:600 11px 'IBM Plex Mono';background:var(--nivea-deep);color:#fff;padding:3px 9px;border-radius:6px}.chev{font-size:12px;color:var(--muted);transition:.15s}.chev.open{transform:rotate(180deg)}#detailPanel{display:none;background:#fff}#detailPanel.open{display:block}.table-scroll{max-height:500px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{position:sticky;top:0;background:var(--mist);text-align:left;padding:9px 12px;font:600 10px 'IBM Plex Mono';text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);z-index:2}tbody td{padding:9px 12px;border-bottom:1px solid var(--mist);vertical-align:middle}.status-chip{display:inline-block;font:700 10.5px 'IBM Plex Mono';padding:3px 9px;border-radius:5px;white-space:nowrap}.status-chip.pos{background:var(--green-soft);color:var(--green)}.status-chip.neg{background:var(--red-soft);color:var(--red)}.status-chip.neu{background:var(--amber-soft);color:var(--amber)}.cat-chip{display:inline-block;font:700 10px 'IBM Plex Mono';padding:2px 8px;border-radius:4px;background:var(--mist);color:var(--nivea-deep)}.extra-chip{display:inline-block;margin-left:6px;font:700 9px 'IBM Plex Mono';padding:2px 6px;border-radius:4px;background:var(--amber-soft);color:#75530B}.mono{font-family:'IBM Plex Mono'}.thumb{width:38px;height:38px;border-radius:6px;object-fit:cover;border:1px solid var(--line);cursor:pointer}.no-photo{width:38px;height:38px;border-radius:6px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted)}
 #statusMsg{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;background:#fff}#statusMsg.error{color:var(--red)}.download-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.download-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:var(--green);color:#fff;font:600 12px Inter;border:none;cursor:pointer}.download-btn.summary{background:var(--nivea)}.download-btn:hover{filter:brightness(.96)}.download-btn svg{width:13px;height:13px}footer{text-align:center;padding:16px;font:11px 'IBM Plex Mono';color:var(--faint);border-top:1px solid var(--line)}
 #lightbox{display:none;position:fixed;inset:0;background:rgba(0,20,46,.82);z-index:50;align-items:center;justify-content:center;padding:30px}#lightbox.open{display:flex}#lightbox img{max-width:min(560px,90vw);max-height:80vh;border-radius:12px;box-shadow:var(--shadow-md)}#lightbox .lb-close{position:absolute;top:22px;right:26px;color:#fff;font-size:26px;cursor:pointer}#lightbox a{display:block;text-align:center;margin-top:10px;color:#A9CDEF;font-size:12.5px}.empty-state{padding:40px;text-align:center;color:var(--muted)}
-@media(max-width:1180px){.kpirow{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr 1fr}.chart-panel.bar-panel{grid-column:1/-1;border-top:1px solid var(--line)}}@media(max-width:760px){.topbar{padding:14px 16px}.topbar-right{text-align:left;width:100%;padding-left:48px}.controlbar{padding:11px 14px}.divider{display:none}.filter-group{width:100%;align-items:flex-start;flex-direction:column}.sup-select,.merch-select,.search-input{width:100%;max-width:none}.merch-panel{padding:16px 14px}.merch-panel-head{flex-direction:column}.kpirow{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.chart-panel.bar-panel{grid-column:auto}.detail-bar{padding:12px 14px;align-items:flex-start;gap:10px}.download-actions{width:100%;justify-content:flex-start}.detail-bar>div:last-child{flex-wrap:wrap;justify-content:flex-end}}
+@media(max-width:1180px){.kpirow{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr 1fr}.chart-panel.bar-panel{grid-column:1/-1;border-top:1px solid var(--line)}}@media(max-width:760px){.topbar{padding:14px 16px}.topbar-right{text-align:left;width:100%;padding-left:48px}.controlbar{padding:11px 14px}.divider{display:none}.filter-group{width:100%;align-items:flex-start;flex-direction:column}.sup-select,.merch-select,.search-input{width:100%;max-width:none}.merch-toggle{padding:14px}.merch-panel-body{padding:0 14px 16px}.merch-panel-head{flex-direction:column;align-items:flex-start}.kpirow{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.chart-panel.bar-panel{grid-column:auto}.detail-bar{padding:12px 14px;align-items:flex-start;gap:10px}.download-actions{width:100%;justify-content:flex-start}.detail-bar>div:last-child{flex-wrap:wrap;justify-content:flex-end}}
 </style>
 </head>
 <body translate="no">
@@ -59,16 +59,19 @@
   </div>
 
   <section class="merch-panel hidden" id="merchPanel">
-    <div class="merch-panel-head">
+    <div class="merch-toggle" id="merchToggle">
       <div><h2>Seguimiento por mercaderista</h2><div class="merch-panel-sub" id="merchPanelSub">Selecciona un supervisor para revisar el avance de su equipo.</div></div>
-      <button class="merch-clear" id="clearMerchFilter" type="button" style="display:none">Ver todos los mercaderistas</button>
+      <div class="merch-toggle-right"><span class="merch-count" id="merchCount">0</span><span class="merch-chev" id="merchChev">▾</span></div>
     </div>
-    <div class="merch-table-wrap">
-      <table class="merch-table">
-        <thead><tr><th>Mercaderista</th><th>Locales</th><th>Planificadas</th><th>Información levantada</th><th>Implementación</th><th>Sin información</th></tr></thead>
-        <tbody id="merchTableBody"></tbody>
-      </table>
-      <div class="merch-empty" id="merchEmpty" style="display:none">No hay exhibiciones planificadas asociadas a mercaderistas para esta selección.</div>
+    <div class="merch-panel-body" id="merchPanelBody">
+      <div class="merch-panel-head"><button class="merch-clear" id="clearMerchFilter" type="button" style="display:none">Ver todos los mercaderistas</button></div>
+      <div class="merch-table-wrap">
+        <table class="merch-table">
+          <thead><tr><th>Mercaderista</th><th>Locales</th><th>Planificadas</th><th>Información levantada</th><th>Implementación</th><th>Sin información</th></tr></thead>
+          <tbody id="merchTableBody"></tbody>
+        </table>
+        <div class="merch-empty" id="merchEmpty" style="display:none">No hay exhibiciones planificadas asociadas a mercaderistas para esta selección.</div>
+      </div>
     </div>
   </section>
 
@@ -483,7 +486,7 @@ function setEstado(e){state.estado=e;buildEstadoPills();render()}
 function setTipoExhibicion(t){state.tipoExhibicion=t;buildTypePills();render()}
 function setCategoria(c){state.categoria=c;buildCatPills();render()}
 
-document.getElementById("supervisorSelect").addEventListener("change",e=>{state.supervisor=e.target.value;state.mercaderista="Todos";state.drill=null;buildMercaderistaSelect();render()});
+document.getElementById("supervisorSelect").addEventListener("change",e=>{state.supervisor=e.target.value;state.mercaderista="Todos";state.drill=null;openMerchDetail(false);buildMercaderistaSelect();render()});
 document.getElementById("mercaderistaSelect").addEventListener("change",e=>{state.mercaderista=e.target.value;state.drill=null;render()});
 document.getElementById("clearMerchFilter").addEventListener("click",()=>{state.mercaderista="Todos";buildMercaderistaSelect();render()});
 document.getElementById("searchInput").addEventListener("input",e=>{state.search=e.target.value.toLowerCase();render()});
@@ -696,15 +699,18 @@ function renderMercaderistas(rows){
   const empty=document.getElementById("merchEmpty");
   const sub=document.getElementById("merchPanelSub");
   const clear=document.getElementById("clearMerchFilter");
+  const count=document.getElementById("merchCount");
 
   if(state.supervisor==="Todos"){
     panel.classList.add("hidden");
     body.innerHTML="";
+    count.textContent="0";
+    openMerchDetail(false);
     return;
   }
 
   panel.classList.remove("hidden");
-  sub.textContent=`Avance de los mercaderistas asignados a ${state.supervisor}. Haz clic en una fila para filtrar el dashboard.`;
+  sub.textContent=`Avance de los mercaderistas asignados a ${state.supervisor}. Despliega para revisar el detalle.`;
   clear.style.display=state.mercaderista!=="Todos"?"inline-block":"none";
 
   const groups=new Map();
@@ -724,6 +730,7 @@ function renderMercaderistas(rows){
     return{name,items,planned,answered,implemented,noInfo,coverage,implementation,stores:new Set(items.map(r=>r.codigo)).size};
   }).sort((a,b)=>a.coverage-b.coverage||a.implementation-b.implementation||a.name.localeCompare(b.name,"es"));
 
+  count.textContent=data.length;
   body.innerHTML="";
   empty.style.display=data.length?"none":"block";
 
@@ -746,6 +753,19 @@ function renderMercaderistas(rows){
     body.appendChild(tr);
   });
 }
+
+function openMerchDetail(open){
+  const body=document.getElementById("merchPanelBody");
+  const chev=document.getElementById("merchChev");
+  if(!body||!chev)return;
+  body.classList.toggle("open",!!open);
+  chev.classList.toggle("open",!!open);
+}
+
+document.getElementById("merchToggle").addEventListener("click",()=>{
+  const body=document.getElementById("merchPanelBody");
+  openMerchDetail(!body.classList.contains("open"));
+});
 
 function renderTable(rows){
   const tb=document.getElementById("tableBody");
@@ -855,18 +875,183 @@ function buildMercaderistaSummary(rows){
   );
 }
 
-function stylePercentColumn(ws,headerName){
-  const range=XLSX.utils.decode_range(ws["!ref"]||"A1:A1");
-  let col=-1;
-  for(let c=range.s.c;c<=range.e.c;c++){
-    const cell=ws[XLSX.utils.encode_cell({r:0,c})];
-    if(cell&&cell.v===headerName){col=c;break;}
+const XLSX_COLORS={
+  navy:"00294F",
+  blue:"0057A8",
+  blueMid:"0A3D73",
+  lightBlue:"E7EFF8",
+  canvas:"EEF3F9",
+  green:"158A4A",
+  greenSoft:"E6F5EC",
+  red:"C0392B",
+  redSoft:"FBEDEA",
+  amber:"D89A1F",
+  amberSoft:"FBF0E2",
+  ink:"0B1C2C",
+  muted:"5B6B7C",
+  line:"DCE6F0",
+  white:"FFFFFF"
+};
+
+function xlsxBorder(){
+  return{
+    top:{style:"thin",color:{rgb:XLSX_COLORS.line}},
+    bottom:{style:"thin",color:{rgb:XLSX_COLORS.line}},
+    left:{style:"thin",color:{rgb:XLSX_COLORS.line}},
+    right:{style:"thin",color:{rgb:XLSX_COLORS.line}}
+  };
+}
+
+function xlsxTitleStyle(){
+  return{
+    fill:{fgColor:{rgb:XLSX_COLORS.navy}},
+    font:{name:"Aptos Display",sz:16,bold:true,color:{rgb:XLSX_COLORS.white}},
+    alignment:{vertical:"center",horizontal:"left"}
+  };
+}
+
+function xlsxSectionStyle(){
+  return{
+    fill:{fgColor:{rgb:XLSX_COLORS.blue}},
+    font:{name:"Aptos",sz:10,bold:true,color:{rgb:XLSX_COLORS.white}},
+    alignment:{vertical:"center",horizontal:"left"},
+    border:xlsxBorder()
+  };
+}
+
+function xlsxHeaderStyle(){
+  return{
+    fill:{fgColor:{rgb:XLSX_COLORS.lightBlue}},
+    font:{name:"Aptos",sz:10,bold:true,color:{rgb:XLSX_COLORS.navy}},
+    alignment:{vertical:"center",horizontal:"left",wrapText:true},
+    border:xlsxBorder()
+  };
+}
+
+function xlsxBodyStyle(alt){
+  return{
+    fill:{fgColor:{rgb:alt?"F8FAFC":XLSX_COLORS.white}},
+    font:{name:"Aptos",sz:10,color:{rgb:XLSX_COLORS.ink}},
+    alignment:{vertical:"top",wrapText:true},
+    border:xlsxBorder()
+  };
+}
+
+function styleCell(ws,r,c,style){
+  const ref=XLSX.utils.encode_cell({r,c});
+  if(ws[ref])ws[ref].s=style;
+}
+
+function styleRange(ws,r1,c1,r2,c2,styleFactory){
+  for(let r=r1;r<=r2;r++){
+    for(let c=c1;c<=c2;c++){
+      const style=typeof styleFactory==="function"?styleFactory(r,c):styleFactory;
+      styleCell(ws,r,c,style);
+    }
   }
-  if(col<0)return;
-  for(let r=1;r<=range.e.r;r++){
-    const ref=XLSX.utils.encode_cell({r,c:col});
-    if(ws[ref]&&typeof ws[ref].v==="number")ws[ref].z="0.0%";
+}
+
+function setHyperlinkCell(ws,ref,url,label){
+  if(!url||!ws[ref])return;
+  ws[ref].v=label||"Abrir foto";
+  ws[ref].t="s";
+  ws[ref].l={Target:url,Tooltip:"Abrir fotografía en Google Drive"};
+  ws[ref].s={
+    ...ws[ref].s,
+    font:{name:"Aptos",sz:10,color:{rgb:XLSX_COLORS.blue},underline:true},
+    alignment:{vertical:"top"}
+  };
+}
+
+function statusExcelStyle(status,alt){
+  const base=xlsxBodyStyle(alt);
+  if(status==="Implementado")return{...base,fill:{fgColor:{rgb:XLSX_COLORS.greenSoft}},font:{name:"Aptos",sz:10,bold:true,color:{rgb:XLSX_COLORS.green}}};
+  if(status==="No implementado")return{...base,fill:{fgColor:{rgb:XLSX_COLORS.redSoft}},font:{name:"Aptos",sz:10,bold:true,color:{rgb:XLSX_COLORS.red}}};
+  return{...base,fill:{fgColor:{rgb:XLSX_COLORS.amberSoft}},font:{name:"Aptos",sz:10,bold:true,color:{rgb:"75530B"}}};
+}
+
+function percentExcelStyle(value,alt){
+  const base=xlsxBodyStyle(alt);
+  let fill=XLSX_COLORS.amberSoft,font="75530B";
+  if(value>=0.9){fill=XLSX_COLORS.greenSoft;font=XLSX_COLORS.green;}
+  else if(value<0.75){fill=XLSX_COLORS.redSoft;font=XLSX_COLORS.red;}
+  return{...base,fill:{fgColor:{rgb:fill}},font:{name:"Aptos",sz:10,bold:true,color:{rgb:font}},numFmt:"0.0%",alignment:{vertical:"center",horizontal:"center"}};
+}
+
+function styleSummarySheet(ws,summaryRows){
+  ws["!merges"]=[XLSX.utils.decode_range("A1:B1")];
+  ws["!cols"]=[{wch:31},{wch:38}];
+  ws["!rows"]=[{hpt:28},{hpt:20}];
+  styleRange(ws,0,0,0,1,xlsxTitleStyle());
+
+  const last=summaryRows.length-1;
+  for(let r=1;r<=last;r++){
+    styleRange(ws,r,0,r,1,()=>xlsxBodyStyle(r%2===0));
   }
+
+  // Secciones: Filtros y Métricas.
+  for(let r=0;r<summaryRows.length;r++){
+    const label=String(summaryRows[r]?.[0]||"");
+    if(label==="Filtro"||label==="Métrica"){
+      styleRange(ws,r,0,r,1,xlsxSectionStyle());
+      ws["!rows"][r]={hpt:22};
+    }
+  }
+
+  // Valores KPI con énfasis y formatos.
+  const kpiStyles={
+    "Información levantada":XLSX_COLORS.blue,
+    "Implementación":XLSX_COLORS.green,
+    "No implementadas":XLSX_COLORS.red,
+    "Sin información":XLSX_COLORS.amber
+  };
+  for(let r=0;r<summaryRows.length;r++){
+    const label=String(summaryRows[r]?.[0]||"");
+    const ref="B"+(r+1);
+    if(label==="Información levantada"||label==="Implementación"){
+      if(ws[ref])ws[ref].z="0.0%";
+    }
+    if(kpiStyles[label]){
+      const fill=kpiStyles[label];
+      styleCell(ws,r,1,{
+        ...xlsxBodyStyle(false),
+        fill:{fgColor:{rgb:fill}},
+        font:{name:"Aptos",sz:11,bold:true,color:{rgb:XLSX_COLORS.white}},
+        alignment:{horizontal:"center",vertical:"center"}
+      });
+      if((label==="Información levantada"||label==="Implementación")&&ws[ref])ws[ref].z="0.0%";
+    }
+  }
+}
+
+function styleMercaderistaSheet(ws,data){
+  if(!data.length)return;
+  const headers=Object.keys(data[0]);
+  const cols=headers.length;
+  const lastRow=data.length+3;
+
+  // Insertamos título y fecha sobre la tabla.
+  XLSX.utils.sheet_add_aoa(ws,[["SEGUIMIENTO POR MERCADERISTA"],["Generado",reportDate()],[]],{origin:"A1"});
+  XLSX.utils.sheet_add_json(ws,data,{origin:"A4",skipHeader:false});
+  ws["!merges"]=[XLSX.utils.decode_range(`A1:${XLSX.utils.encode_col(cols-1)}1`)];
+  styleRange(ws,0,0,0,cols-1,xlsxTitleStyle());
+  styleRange(ws,3,0,3,cols-1,xlsxHeaderStyle());
+  ws["!rows"]=[{hpt:28},{hpt:20},{hpt:8},{hpt:30}];
+  ws["!autofilter"]={ref:`A4:${XLSX.utils.encode_col(cols-1)}${lastRow}`};
+
+  for(let r=4;r<4+data.length;r++){
+    const alt=(r%2===0);
+    styleRange(ws,r,0,r,cols-1,()=>xlsxBodyStyle(alt));
+    const coverage=headers.indexOf("Información levantada");
+    const implementation=headers.indexOf("Implementación");
+    if(coverage>=0)styleCell(ws,r,coverage,percentExcelStyle(Number(data[r-4]["Información levantada"]||0),alt));
+    if(implementation>=0)styleCell(ws,r,implementation,percentExcelStyle(Number(data[r-4]["Implementación"]||0),alt));
+  }
+
+  ws["!cols"]=[
+    {wch:24},{wch:30},{wch:10},{wch:13},{wch:12},
+    {wch:22},{wch:14},{wch:18},{wch:17},{wch:16}
+  ];
 }
 
 function downloadSummary(){
@@ -899,27 +1084,24 @@ function downloadSummary(){
 
   const wb=XLSX.utils.book_new();
   const wsSummary=XLSX.utils.aoa_to_sheet(summaryRows);
-  wsSummary["!cols"]=[{wch:31},{wch:34}];
-  // Porcentajes de las dos métricas del resumen.
-  [16,18].forEach(rowNumber=>{
-    const ref="B"+rowNumber;
-    if(wsSummary[ref])wsSummary[ref].z="0.0%";
-  });
+  styleSummarySheet(wsSummary,summaryRows);
   XLSX.utils.book_append_sheet(wb,wsSummary,"Resumen");
 
   const merchData=buildMercaderistaSummary(metrics);
   if(merchData.length){
-    const wsMerch=XLSX.utils.json_to_sheet(merchData);
-    wsMerch["!cols"]=[
-      {wch:24},{wch:30},{wch:10},{wch:13},{wch:12},
-      {wch:22},{wch:14},{wch:18},{wch:17},{wch:16}
-    ];
-    stylePercentColumn(wsMerch,"Información levantada");
-    stylePercentColumn(wsMerch,"Implementación");
+    const wsMerch=XLSX.utils.aoa_to_sheet([]);
+    styleMercaderistaSheet(wsMerch,merchData);
     XLSX.utils.book_append_sheet(wb,wsMerch,"Mercaderistas");
   }
 
-  XLSX.writeFile(wb,buildFileName("SecondaryShelf_Resumen"));
+  XLSX.writeFile(wb,buildFileName("SecondaryShelf_Resumen"),{cellStyles:true});
+}
+
+function exhibitionExportName(r){
+  const base=String(r.exhibicion||"").trim();
+  const form=String(r.nombreFormulario||"").trim();
+  if(!form||form.toLowerCase()===base.toLowerCase())return base;
+  return `${base} / ${form}`;
 }
 
 function detailExportRows(rows){
@@ -929,14 +1111,12 @@ function detailExportRows(rows){
     "Código Local":r.codigo,
     "Nombre Local":r.nombreLocal,
     "Mercaderista":r.mercaderista,
-    "Exhibición":r.exhibicion,
-    "Nombre Formulario":r.nombreFormulario,
+    "Exhibición":exhibitionExportName(r),
     "Categoría":r.categoria,
     "Estado":r.estado,
     "Razón":r.razon,
     "Comentario":r.comentario,
     "Supervisor":r.supervisor,
-    "BU":r.tipo,
     "Tipo de exhibición":r.origen,
     "Foto":r.foto
   }));
@@ -944,13 +1124,67 @@ function detailExportRows(rows){
 
 function addDetailSheet(wb,name,rows){
   if(!rows.length)return;
-  const ws=XLSX.utils.json_to_sheet(detailExportRows(rows));
-  ws["!cols"]=[
-    {wch:12},{wch:15},{wch:14},{wch:38},{wch:24},
-    {wch:30},{wch:24},{wch:17},{wch:19},{wch:22},
-    {wch:34},{wch:22},{wch:10},{wch:18},{wch:50}
+
+  const data=detailExportRows(rows);
+  const headers=Object.keys(data[0]);
+  const cols=headers.length;
+  const lastCol=XLSX.utils.encode_col(cols-1);
+  const aoa=[
+    [`DETALLE DE EXHIBICIONES · ${name.toUpperCase()}`],
+    ["Generado",reportDate()],
+    [],
+    headers,
+    ...data.map(x=>headers.map(h=>x[h]))
   ];
+
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws["!merges"]=[XLSX.utils.decode_range(`A1:${lastCol}1`)];
+  ws["!autofilter"]={ref:`A4:${lastCol}${data.length+4}`};
+  ws["!rows"]=[{hpt:28},{hpt:20},{hpt:8},{hpt:30}];
+  styleRange(ws,0,0,0,cols-1,xlsxTitleStyle());
+  styleRange(ws,3,0,3,cols-1,xlsxHeaderStyle());
+
+  const estadoCol=headers.indexOf("Estado");
+  const fotoCol=headers.indexOf("Foto");
+  for(let i=0;i<data.length;i++){
+    const r=i+4;
+    const alt=i%2===1;
+    styleRange(ws,r,0,r,cols-1,()=>xlsxBodyStyle(alt));
+    if(estadoCol>=0)styleCell(ws,r,estadoCol,statusExcelStyle(data[i].Estado,alt));
+    if(fotoCol>=0&&data[i].Foto){
+      const ref=XLSX.utils.encode_cell({r,c:fotoCol});
+      setHyperlinkCell(ws,ref,data[i].Foto,"Abrir foto ↗");
+    }
+  }
+
+  ws["!cols"]=[
+    {wch:13}, // Fecha
+    {wch:16}, // Cliente
+    {wch:14}, // Código
+    {wch:42}, // Nombre Local
+    {wch:28}, // Mercaderista
+    {wch:46}, // Exhibición + Nombre Formulario
+    {wch:18}, // Categoría
+    {wch:19}, // Estado
+    {wch:23}, // Razón
+    {wch:38}, // Comentario
+    {wch:24}, // Supervisor
+    {wch:20}, // Tipo de exhibición
+    {wch:15}  // Foto
+  ];
+
   XLSX.utils.book_append_sheet(wb,ws,name);
+}
+
+function styleFiltersSheet(ws,rows){
+  ws["!merges"]=[XLSX.utils.decode_range("A1:B1")];
+  ws["!cols"]=[{wch:26},{wch:42}];
+  ws["!rows"]=[{hpt:28},{hpt:20}];
+  styleRange(ws,0,0,0,1,xlsxTitleStyle());
+  for(let r=1;r<rows.length;r++){
+    styleRange(ws,r,0,r,1,()=>xlsxBodyStyle(r%2===0));
+    if(String(rows[r]?.[0]||"")==="Filtro")styleRange(ws,r,0,r,1,xlsxSectionStyle());
+  }
 }
 
 function downloadDetail(){
@@ -961,13 +1195,14 @@ function downloadDetail(){
   }
 
   const wb=XLSX.utils.book_new();
-  const filterWs=XLSX.utils.aoa_to_sheet([
+  const filterRows=[
     ["CENTRO DE REPORTES · DETALLE DE EXHIBICIONES",""],
     ["Generado",reportDate()],
     ["",""],
     ...getFilterSummary()
-  ]);
-  filterWs["!cols"]=[{wch:24},{wch:38}];
+  ];
+  const filterWs=XLSX.utils.aoa_to_sheet(filterRows);
+  styleFiltersSheet(filterWs,filterRows);
   XLSX.utils.book_append_sheet(wb,filterWs,"Filtros");
 
   const planned=rows.filter(r=>r.planificada);
@@ -976,7 +1211,7 @@ function downloadDetail(){
   addDetailSheet(wb,"Planificadas",planned);
   addDetailSheet(wb,"Extras",extras);
 
-  XLSX.writeFile(wb,buildFileName("SecondaryShelf_Detalle"));
+  XLSX.writeFile(wb,buildFileName("SecondaryShelf_Detalle"),{cellStyles:true});
 }
 
 function driveThumb(url,size){

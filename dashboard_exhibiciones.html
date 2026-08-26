@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-CL" translate="no">
 <head>
 <meta charset="UTF-8">
+<meta name="google" content="notranslate">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Secondary Shelf · Visibility</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -12,16 +13,17 @@
 :root{--nivea:#0057A8;--nivea-deep:#00294F;--nivea-mid:#0A3D73;--ink:#0B1C2C;--muted:#5B6B7C;--faint:#8698A8;--paper:#fff;--canvas:#EEF3F9;--line:#DCE6F0;--mist:#E7EFF8;--green:#158A4A;--green-soft:#E6F5EC;--red:#C0392B;--red-soft:#FBEDEA;--amber:#D89A1F;--amber-soft:#FBF0E2;--r-sm:8px;--r-md:12px;--shadow-md:0 6px 20px rgba(10,27,46,.09)}
 *{box-sizing:border-box;margin:0;padding:0}body{font-family:'Inter',sans-serif;background:var(--canvas);color:var(--ink);min-height:100vh}.shelf-ticks{height:5px;background:linear-gradient(90deg,var(--nivea-mid),var(--nivea),var(--nivea-mid))}
 .topbar{background:linear-gradient(135deg,var(--nivea-deep),var(--nivea-mid));color:#fff;padding:16px 26px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:var(--shadow-md)}.topbar-left{display:flex;align-items:center;gap:12px}.brand-mark{width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font:600 12px 'IBM Plex Mono';letter-spacing:.04em}.topbar-eyebrow{font:10.5px 'IBM Plex Mono';letter-spacing:.14em;text-transform:uppercase;color:#A9CDEF}.topbar h1{font:600 19px 'Space Grotesk';margin-top:2px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.live-badge{display:inline-flex;align-items:center;gap:6px;font:600 10px 'IBM Plex Mono';background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.18);padding:3px 8px;border-radius:4px;letter-spacing:.06em}.live-dot{width:6px;height:6px;border-radius:50%;background:#6EE7A0}.topbar-right{text-align:right}.topbar-date{font:11px 'IBM Plex Mono';color:#A9CDEF}
-#refreshBtn{margin-top:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 12px Inter;padding:6px 14px;border-radius:20px;cursor:pointer}.controlbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 26px;background:var(--paper);border-bottom:1px solid var(--line)}.filter-group{display:flex;align-items:center;gap:8px}.filter-label{font:600 10px 'IBM Plex Mono';text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.pills{display:flex;gap:5px;flex-wrap:wrap}.pill{padding:6px 13px;border:1px solid var(--line);border-radius:20px;font:500 12.5px Inter;background:var(--paper);color:var(--ink);cursor:pointer}.pill.active{background:var(--nivea-deep);color:#fff;border-color:var(--nivea-deep)}.pill.active.pos{background:var(--green);border-color:var(--green)}.pill.active.neg{background:var(--red);border-color:var(--red)}.pill.active.neu{background:var(--amber);border-color:var(--amber)}.divider{width:1px;height:28px;background:var(--line)}.sup-select,.search-input{padding:7px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:#fff;font:12.5px Inter;color:var(--ink)}.sup-select{min-width:180px}.search-input{min-width:210px;flex:1;max-width:320px}
+#refreshBtn{margin-top:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font:600 12px Inter;padding:6px 14px;border-radius:20px;cursor:pointer}.controlbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 26px;background:var(--paper);border-bottom:1px solid var(--line)}.filter-group{display:flex;align-items:center;gap:8px}.filter-label{font:600 10px 'IBM Plex Mono';text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.pills{display:flex;gap:5px;flex-wrap:wrap}.pill{padding:6px 13px;border:1px solid var(--line);border-radius:20px;font:500 12.5px Inter;background:var(--paper);color:var(--ink);cursor:pointer}.pill.active{background:var(--nivea-deep);color:#fff;border-color:var(--nivea-deep)}.pill.active.pos{background:var(--green);border-color:var(--green)}.pill.active.neg{background:var(--red);border-color:var(--red)}.pill.active.neu{background:var(--amber);border-color:var(--amber)}.divider{width:1px;height:28px;background:var(--line)}.sup-select,.merch-select,.search-input{padding:7px 12px;border:1px solid var(--line);border-radius:var(--r-sm);background:#fff;font:12.5px Inter;color:var(--ink)}.sup-select{min-width:180px}.merch-select{min-width:205px}.merch-select:disabled{background:#F4F7FA;color:var(--faint);cursor:not-allowed}.search-input{min-width:210px;flex:1;max-width:320px}
 .kpirow{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));background:#fff;border-bottom:1px solid var(--line)}.kpi{padding:14px 18px;border-right:1px solid var(--line)}.kpi:last-child{border-right:none}.kpi-label{font:600 9.5px 'IBM Plex Mono';text-transform:uppercase;letter-spacing:.055em;color:var(--muted)}.kpi-value{font:700 25px 'Space Grotesk';margin:2px 0}.kpi-value.green{color:var(--green)}.kpi-value.red{color:var(--red)}.kpi-value.amber{color:var(--amber)}.kpi-value.blue{color:var(--nivea)}.kpi-sub{font-size:10.5px;color:var(--muted);line-height:1.35}
-.charts-row{display:grid;grid-template-columns:270px 270px minmax(430px,1fr);background:#fff;border-bottom:1px solid var(--line)}.chart-panel{padding:18px 20px;border-right:1px solid var(--line);min-width:0}.chart-panel:last-child{border-right:none}.chart-panel h2{font:600 14px 'Space Grotesk';margin-bottom:2px}.chart-sub{font-size:11.5px;color:var(--muted);margin-bottom:12px;min-height:30px}.donut-wrap{height:215px}.bar-scroll{height:225px;overflow-x:auto}.bar-inner{height:220px;min-width:100%}#backToAll,#barShowAllToggle{border:none;background:none;color:var(--nivea);font:600 12px Inter;cursor:pointer;text-decoration:underline}#backToAll{display:none;margin-bottom:6px}#barShowAllToggle{margin-top:8px}
+.charts-row{display:grid;grid-template-columns:270px 270px minmax(430px,1fr);background:#fff;border-bottom:1px solid var(--line)}
+.merch-panel{background:#fff;border-bottom:1px solid var(--line);padding:18px 26px}.merch-panel.hidden{display:none}.merch-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:12px}.merch-panel h2{font:600 15px 'Space Grotesk';margin-bottom:3px}.merch-panel-sub{font-size:11.5px;color:var(--muted)}.merch-clear{border:none;background:none;color:var(--nivea);font:600 11.5px Inter;cursor:pointer;text-decoration:underline;white-space:nowrap}.merch-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}.merch-table{min-width:720px}.merch-row{cursor:pointer;transition:.12s ease}.merch-row:hover{background:#F7FAFD}.merch-row.active{background:#EDF5FC}.merch-name{font-weight:700;color:var(--nivea-deep)}.metric-cell{min-width:135px}.metric-main{font:700 13px 'IBM Plex Mono';color:var(--ink)}.metric-sub{font-size:10px;color:var(--muted);margin-top:2px}.mini-track{height:5px;background:var(--mist);border-radius:999px;overflow:hidden;margin-top:5px;min-width:92px}.mini-fill{height:100%;background:var(--nivea);border-radius:999px}.mini-fill.green{background:var(--green)}.merch-empty{padding:22px;text-align:center;color:var(--muted);font-size:12px}.chart-panel{padding:18px 20px;border-right:1px solid var(--line);min-width:0}.chart-panel:last-child{border-right:none}.chart-panel h2{font:600 14px 'Space Grotesk';margin-bottom:2px}.chart-sub{font-size:11.5px;color:var(--muted);margin-bottom:12px;min-height:30px}.donut-wrap{height:215px}.bar-scroll{height:225px;overflow-x:auto}.bar-inner{height:220px;min-width:100%}#backToAll,#barShowAllToggle{border:none;background:none;color:var(--nivea);font:600 12px Inter;cursor:pointer;text-decoration:underline}#backToAll{display:none;margin-bottom:6px}#barShowAllToggle{margin-top:8px}
 .detail-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 26px;background:#fff;border-bottom:1px solid var(--line);cursor:pointer}.detail-bar-left{display:flex;align-items:center;gap:10px;font:600 14px 'Space Grotesk'}.detail-count{font:600 11px 'IBM Plex Mono';background:var(--nivea-deep);color:#fff;padding:3px 9px;border-radius:6px}.chev{font-size:12px;color:var(--muted);transition:.15s}.chev.open{transform:rotate(180deg)}#detailPanel{display:none;background:#fff}#detailPanel.open{display:block}.table-scroll{max-height:500px;overflow:auto}table{width:100%;border-collapse:collapse;font-size:12.5px}thead th{position:sticky;top:0;background:var(--mist);text-align:left;padding:9px 12px;font:600 10px 'IBM Plex Mono';text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);z-index:2}tbody td{padding:9px 12px;border-bottom:1px solid var(--mist);vertical-align:middle}.status-chip{display:inline-block;font:700 10.5px 'IBM Plex Mono';padding:3px 9px;border-radius:5px;white-space:nowrap}.status-chip.pos{background:var(--green-soft);color:var(--green)}.status-chip.neg{background:var(--red-soft);color:var(--red)}.status-chip.neu{background:var(--amber-soft);color:var(--amber)}.cat-chip{display:inline-block;font:700 10px 'IBM Plex Mono';padding:2px 8px;border-radius:4px;background:var(--mist);color:var(--nivea-deep)}.extra-chip{display:inline-block;margin-left:6px;font:700 9px 'IBM Plex Mono';padding:2px 6px;border-radius:4px;background:var(--amber-soft);color:#75530B}.mono{font-family:'IBM Plex Mono'}.thumb{width:38px;height:38px;border-radius:6px;object-fit:cover;border:1px solid var(--line);cursor:pointer}.no-photo{width:38px;height:38px;border-radius:6px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--muted)}
-#statusMsg{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;background:#fff}#statusMsg.error{color:var(--red)}.download-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:var(--green);color:#fff;font:600 12px Inter;border:none;cursor:pointer}.download-btn svg{width:13px;height:13px}footer{text-align:center;padding:16px;font:11px 'IBM Plex Mono';color:var(--faint);border-top:1px solid var(--line)}
+#statusMsg{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px;background:#fff}#statusMsg.error{color:var(--red)}.download-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.download-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;background:var(--green);color:#fff;font:600 12px Inter;border:none;cursor:pointer}.download-btn.summary{background:var(--nivea)}.download-btn:hover{filter:brightness(.96)}.download-btn svg{width:13px;height:13px}footer{text-align:center;padding:16px;font:11px 'IBM Plex Mono';color:var(--faint);border-top:1px solid var(--line)}
 #lightbox{display:none;position:fixed;inset:0;background:rgba(0,20,46,.82);z-index:50;align-items:center;justify-content:center;padding:30px}#lightbox.open{display:flex}#lightbox img{max-width:min(560px,90vw);max-height:80vh;border-radius:12px;box-shadow:var(--shadow-md)}#lightbox .lb-close{position:absolute;top:22px;right:26px;color:#fff;font-size:26px;cursor:pointer}#lightbox a{display:block;text-align:center;margin-top:10px;color:#A9CDEF;font-size:12.5px}.empty-state{padding:40px;text-align:center;color:var(--muted)}
-@media(max-width:1180px){.kpirow{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr 1fr}.chart-panel.bar-panel{grid-column:1/-1;border-top:1px solid var(--line)}}@media(max-width:760px){.topbar{padding:14px 16px}.topbar-right{text-align:left;width:100%;padding-left:48px}.controlbar{padding:11px 14px}.divider{display:none}.filter-group{width:100%;align-items:flex-start;flex-direction:column}.sup-select,.search-input{width:100%;max-width:none}.kpirow{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.chart-panel.bar-panel{grid-column:auto}.detail-bar{padding:12px 14px}}
+@media(max-width:1180px){.kpirow{grid-template-columns:repeat(3,1fr)}.charts-row{grid-template-columns:1fr 1fr}.chart-panel.bar-panel{grid-column:1/-1;border-top:1px solid var(--line)}}@media(max-width:760px){.topbar{padding:14px 16px}.topbar-right{text-align:left;width:100%;padding-left:48px}.controlbar{padding:11px 14px}.divider{display:none}.filter-group{width:100%;align-items:flex-start;flex-direction:column}.sup-select,.merch-select,.search-input{width:100%;max-width:none}.merch-panel{padding:16px 14px}.merch-panel-head{flex-direction:column}.kpirow{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.chart-panel.bar-panel{grid-column:auto}.detail-bar{padding:12px 14px;align-items:flex-start;gap:10px}.download-actions{width:100%;justify-content:flex-start}.detail-bar>div:last-child{flex-wrap:wrap;justify-content:flex-end}}
 </style>
 </head>
-<body>
+<body translate="no">
 <div class="shelf-ticks"></div>
 <header class="topbar">
   <div class="topbar-left"><div class="brand-mark">OPS</div><div><div class="topbar-eyebrow">SC&M · Beiersdorf · Sales Operations</div><h1>Secondary Shelf · Visibility <span class="live-badge"><span class="live-dot"></span>LIVE</span></h1></div></div>
@@ -31,12 +33,14 @@
 <div class="controlbar">
   <div class="filter-group"><span class="filter-label">Cliente</span><div class="pills" id="clientPills"></div></div><div class="divider"></div>
   <div class="filter-group"><span class="filter-label">Estado</span><div class="pills" id="estadoPills"></div></div><div class="divider"></div>
+  <div class="filter-group"><span class="filter-label">Tipo</span><div class="pills" id="typePills"></div></div><div class="divider"></div>
   <div class="filter-group"><span class="filter-label">Categoría</span><div class="pills" id="catPills"></div></div><div class="divider"></div>
   <div class="filter-group"><span class="filter-label">Supervisor</span><select class="sup-select" id="supervisorSelect"><option value="Todos">Todos los supervisores</option></select></div><div class="divider"></div>
-  <input class="search-input" id="searchInput" type="text" placeholder="Código, exhibición, razón…">
+  <div class="filter-group"><span class="filter-label">Mercaderista</span><select class="merch-select" id="mercaderistaSelect" disabled><option value="Todos">Selecciona un supervisor</option></select></div><div class="divider"></div>
+  <input class="search-input" id="searchInput" type="text" placeholder="Código, exhibición, mercaderista, razón…">
 </div>
 
-<div id="statusMsg">Cargando planificación y estado actual…</div>
+<div id="statusMsg">Cargando planificación, mapping y estado actual…</div>
 
 <div id="appBody" style="display:none">
   <div class="kpirow">
@@ -54,12 +58,30 @@
     <section class="chart-panel bar-panel"><h2 id="barTitle">Por cliente</h2><button id="backToAll" type="button">← Volver a todos los clientes</button><div class="chart-sub" id="barSub">Cada barra suma 100%: implementado + no implementado + sin información</div><div class="bar-scroll"><div class="bar-inner" id="barInner"><canvas id="barChart"></canvas></div></div><button id="barShowAllToggle" style="display:none" type="button"></button></section>
   </div>
 
+  <section class="merch-panel hidden" id="merchPanel">
+    <div class="merch-panel-head">
+      <div><h2>Seguimiento por mercaderista</h2><div class="merch-panel-sub" id="merchPanelSub">Selecciona un supervisor para revisar el avance de su equipo.</div></div>
+      <button class="merch-clear" id="clearMerchFilter" type="button" style="display:none">Ver todos los mercaderistas</button>
+    </div>
+    <div class="merch-table-wrap">
+      <table class="merch-table">
+        <thead><tr><th>Mercaderista</th><th>Locales</th><th>Planificadas</th><th>Información levantada</th><th>Implementación</th><th>Sin información</th></tr></thead>
+        <tbody id="merchTableBody"></tbody>
+      </table>
+      <div class="merch-empty" id="merchEmpty" style="display:none">No hay exhibiciones planificadas asociadas a mercaderistas para esta selección.</div>
+    </div>
+  </section>
+
   <div class="detail-bar" id="detailToggle">
     <div class="detail-bar-left">Ver detalle de exhibiciones <span class="detail-count mono" id="detailCount">0</span></div>
-    <div style="display:flex;align-items:center;gap:12px"><button class="download-btn" id="downloadBtn" type="button" onclick="event.stopPropagation();downloadExcel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar Excel</button><span class="chev" id="chevIcon">▾</span></div>
+    <div class="download-actions">
+      <button class="download-btn summary" id="downloadSummaryBtn" type="button" onclick="event.stopPropagation();downloadSummary()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar resumen</button>
+      <button class="download-btn" id="downloadDetailBtn" type="button" onclick="event.stopPropagation();downloadDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar detalle</button>
+      <span class="chev" id="chevIcon">▾</span>
+    </div>
   </div>
 
-  <div id="detailPanel"><div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Categoría</th><th>Estado</th><th>Razón / Comentario</th><th>Supervisor</th><th>Foto</th></tr></thead><tbody id="tableBody"></tbody></table><div class="empty-state" id="emptyState" style="display:none">No hay exhibiciones que coincidan con los filtros.</div></div></div>
+  <div id="detailPanel"><div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Categoría</th><th>Estado</th><th>Razón / Comentario</th><th>Mercaderista</th><th>Supervisor</th><th>Foto</th></tr></thead><tbody id="tableBody"></tbody></table><div class="empty-state" id="emptyState" style="display:none">No hay exhibiciones que coincidan con los filtros.</div></div></div>
   <footer>SECONDARY SHELF · VISIBILITY · BEIERSDORF SALES OPERATIONS · DATOS EN VIVO DESDE GOOGLE SHEETS</footer>
 </div>
 
@@ -67,114 +89,912 @@
 
 <script>
 const SHEET_ID="1Ny4_WjIAf57mhpgdwhAvgauYpH-1EuPD-x_v5JQ7qFM";
-const SHEETS={PP:"Exhibiciones P&P",HS:"Exhibiciones H&S",ESTADO:"Estado Actual"};
+const SHEETS={
+  PP:"Exhibiciones P&P",
+  HS:"Exhibiciones H&S",
+  ESTADO:"Estado Actual",
+  EXTRAS:"Exhibiciones Extra",
+  MAPPING:"Mapping"
+};
 const MAX_BARS=12;
 let RAW=[];
-let state={cliente:"Todos",estado:"Todos",categoria:"Todos",supervisor:"Todos",search:"",drill:null,barShowAll:false};
+let state={
+  cliente:"Todos",
+  estado:"Todos",
+  tipoExhibicion:"Todas",
+  categoria:"Todos",
+  supervisor:"Todos",
+  mercaderista:"Todos",
+  search:"",
+  drill:null,
+  barShowAll:false
+};
 let coverageDonutChart=null,implementationDonutChart=null,barChart=null;
 
-function sheetCsvUrl(sheetName){return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${Date.now()}`}
+function sheetCsvUrl(sheetName){
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${Date.now()}`;
+}
+
 async function fetchSheet(sheetName){
   const response=await fetch(sheetCsvUrl(sheetName),{cache:"no-store"});
-  if(!response.ok) throw new Error(`No fue posible leer ${sheetName}`);
+  if(!response.ok)throw new Error(`No fue posible leer ${sheetName}`);
   const text=await response.text();
   return Papa.parse(text,{header:true,skipEmptyLines:true,transformHeader:h=>String(h||"").trim()}).data||[];
 }
+
 async function loadData(){
   const btn=document.getElementById("refreshBtn"),msg=document.getElementById("statusMsg"),body=document.getElementById("appBody");
-  btn.disabled=true;btn.textContent="Actualizando…";msg.style.display="block";msg.classList.remove("error");msg.textContent="Cargando planificación y estado actual…";body.style.display="none";
+  btn.disabled=true;
+  btn.textContent="Actualizando…";
+  msg.style.display="block";
+  msg.classList.remove("error");
+  msg.textContent="Cargando planificación, mapping y estado actual…";
+  body.style.display="none";
+
   try{
-    const [pp,hs,estado]=await Promise.all([fetchSheet(SHEETS.PP),fetchSheet(SHEETS.HS),fetchSheet(SHEETS.ESTADO)]);
-    RAW=buildUniverse(pp,hs,estado);resetInvalidFilters();buildAllFilters();render();msg.style.display="none";body.style.display="block";
+    const [pp,hs,estado,extras,mapping]=await Promise.all([
+      fetchSheet(SHEETS.PP),
+      fetchSheet(SHEETS.HS),
+      fetchSheet(SHEETS.ESTADO),
+      fetchSheet(SHEETS.EXTRAS),
+      fetchSheet(SHEETS.MAPPING)
+    ]);
+
+    RAW=buildUniverse(pp,hs,estado,extras,mapping);
+    resetInvalidFilters();
+    buildAllFilters();
+    render();
+
+    msg.style.display="none";
+    body.style.display="block";
     document.getElementById("lastUpdated").textContent="Actualizado · "+new Intl.DateTimeFormat("es-CL",{dateStyle:"short",timeStyle:"short"}).format(new Date());
-  }catch(e){console.error(e);msg.classList.add("error");msg.textContent="No fue posible leer Google Sheets. Revisa que el archivo esté compartido como “Cualquier persona con el enlace · Lector” y vuelve a intentar."}
-  finally{btn.disabled=false;btn.textContent="↻ Actualizar datos"}
+  }catch(e){
+    console.error(e);
+    msg.classList.add("error");
+    msg.textContent="No fue posible leer Google Sheets. Revisa que el archivo esté compartido como “Cualquier persona con el enlace · Lector” y vuelve a intentar.";
+  }finally{
+    btn.disabled=false;
+    btn.textContent="↻ Actualizar datos";
+  }
 }
 
-function buildUniverse(ppRows,hsRows,estadoRows){
+function buildUniverse(ppRows,hsRows,estadoRows,extraRows,mappingRows){
+  const mapping=new Map();
+
+  mappingRows.forEach(r=>{
+    const codigo=normalizeCode(getField(r,["Local","Código Local","Codigo Local"]));
+    if(!codigo)return;
+    mapping.set(codigo,{
+      cliente:canonicalClient(getField(r,["Cadena","Retailer","Cliente"])),
+      nombreLocal:clean(getField(r,["Nombre de Local","Nombre Local","Nombre local"])),
+      supervisor:clean(getField(r,["Nombre supervisor","Nombre Supervisor","Supervisor"])),
+      mercaderista:clean(getField(r,["Nombre mercaderista","Nombre Mercaderista","Mercaderista"]))
+    });
+  });
+
   const current=new Map();
+
   estadoRows.forEach(r=>{
-    const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),exhibicion=clean(getField(r,["Exhibición","Exhibicion"]));
+    const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"]));
+    const exhibicion=clean(getField(r,["Exhibición","Exhibicion"]));
     if(!codigo||!exhibicion)return;
-    current.set(makeKey(codigo,exhibicion),{fecha:formatSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"])),cliente:canonicalClient(getField(r,["Retailer","Cliente"])),codigo,supervisor:clean(getField(r,["Supervisor"])),tipo:clean(getField(r,["Tipo"])),origen:canonicalOrigin(getField(r,["Origen"])),exhibicion,nombreFormulario:clean(getField(r,["Nombre Formulario"])),estado:canonicalStatus(getField(r,["Estado"])),razon:clean(getField(r,["Razón","Razon","Motivo"])),comentario:clean(getField(r,["Comentario","Detalle"])),foto:clean(getField(r,["Foto URL","Foto"]))});
+
+    current.set(makeKey(codigo,exhibicion),{
+      fecha:formatSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"])),
+      cliente:canonicalClient(getField(r,["Retailer","Cliente"])),
+      codigo,
+      supervisor:clean(getField(r,["Supervisor"])),
+      tipo:clean(getField(r,["Tipo"])),
+      categoria:canonicalCategory(getField(r,["Categoría","Categoria"])),
+      exhibicion,
+      estado:canonicalStatus(getField(r,["Estado"])),
+      razon:clean(getField(r,["Razón","Razon","Motivo"])),
+      comentario:clean(getField(r,["Comentario","Detalle"])),
+      foto:clean(getField(r,["Foto URL","Foto"]))
+    });
   });
-  const planned=[],keys=new Set();
+
+  const planned=[];
+  const keys=new Set();
+
   ppRows.forEach(r=>{
-    const cliente=canonicalClient(getField(r,["Retailer"])),codigo=normalizeCode(getField(r,["Sala"])),supervisor=clean(getField(r,["Supervisor"])),exhibicion=clean(getField(r,["Nombre Mueble"])),nombreFormulario=clean(getField(r,["Nombre Formulario"]));
-    if(!cliente||!codigo||!exhibicion)return;const key=makeKey(codigo,exhibicion);if(keys.has(key))return;keys.add(key);const c=current.get(key);
-    planned.push({fecha:c?.fecha||"",cliente,codigo,exhibicion,nombreFormulario,categoria:inferCategoria(exhibicion+" "+nombreFormulario),estado:c?.estado||"Sin información",razon:c?.razon||"",comentario:c?.comentario||"",supervisor:supervisor||c?.supervisor||"",foto:c?.foto||"",tipo:"P&P",origen:"Planificada",planificada:true});
+    const cliente=canonicalClient(getField(r,["Retailer"]));
+    const codigo=normalizeCode(getField(r,["Sala"]));
+    const supervisor=clean(getField(r,["Supervisor"]));
+    const exhibicion=clean(getField(r,["Nombre Mueble"]));
+    const nombreFormulario=clean(getField(r,["Nombre Formulario"]));
+    const categoria=canonicalCategory(getField(r,["Categoría","Categoria"]));
+    const m=mapping.get(codigo)||{};
+
+    if(!cliente||!codigo||!exhibicion)return;
+
+    const key=makeKey(codigo,exhibicion);
+    if(keys.has(key))return;
+    keys.add(key);
+
+    const c=current.get(key);
+
+    planned.push({
+      fecha:c?.fecha||"",
+      cliente:m.cliente||cliente,
+      codigo,
+      nombreLocal:m.nombreLocal||"",
+      mercaderista:m.mercaderista||"",
+      exhibicion,
+      nombreFormulario,
+      categoria,
+      estado:c?.estado||"Sin información",
+      razon:c?.razon||"",
+      comentario:c?.comentario||"",
+      supervisor:m.supervisor||supervisor||c?.supervisor||"",
+      foto:c?.foto||"",
+      tipo:"P&P",
+      origen:"Planificada",
+      planificada:true
+    });
   });
+
   hsRows.forEach(r=>{
-    const cliente=canonicalClient(getField(r,["Cadena","Retailer"])),codigo=normalizeCode(getField(r,["Local","Sala"])),supervisor=clean(getField(r,["Supervisor"])),exhibicion=clean(getField(r,["Exhibición","Exhibicion"]));
-    if(!cliente||!codigo||!exhibicion)return;const key=makeKey(codigo,exhibicion);if(keys.has(key))return;keys.add(key);const c=current.get(key);
-    planned.push({fecha:c?.fecha||"",cliente,codigo,exhibicion,nombreFormulario:"",categoria:inferCategoria(exhibicion),estado:c?.estado||"Sin información",razon:c?.razon||"",comentario:c?.comentario||"",supervisor:supervisor||c?.supervisor||"",foto:c?.foto||"",tipo:"H&S",origen:"Planificada",planificada:true});
+    const cliente=canonicalClient(getField(r,["Cadena","Retailer"]));
+    const codigo=normalizeCode(getField(r,["Local","Sala"]));
+    const supervisor=clean(getField(r,["Supervisor"]));
+    const exhibicion=clean(getField(r,["Exhibición","Exhibicion"]));
+    const categoria=canonicalCategory(getField(r,["Categoría","Categoria"]));
+    const m=mapping.get(codigo)||{};
+
+    if(!cliente||!codigo||!exhibicion)return;
+
+    const key=makeKey(codigo,exhibicion);
+    if(keys.has(key))return;
+    keys.add(key);
+
+    const c=current.get(key);
+
+    planned.push({
+      fecha:c?.fecha||"",
+      cliente:m.cliente||cliente,
+      codigo,
+      nombreLocal:m.nombreLocal||"",
+      mercaderista:m.mercaderista||"",
+      exhibicion,
+      nombreFormulario:"",
+      categoria,
+      estado:c?.estado||"Sin información",
+      razon:c?.razon||"",
+      comentario:c?.comentario||"",
+      supervisor:m.supervisor||supervisor||c?.supervisor||"",
+      foto:c?.foto||"",
+      tipo:"H&S",
+      origen:"Planificada",
+      planificada:true
+    });
   });
+
   const extras=[];
-  current.forEach((c,key)=>{if(keys.has(key)||c.origen!=="Extra")return;extras.push({fecha:c.fecha,cliente:c.cliente||inferClientFromCode(c.codigo),codigo:c.codigo,exhibicion:c.exhibicion,nombreFormulario:c.nombreFormulario||"",categoria:inferCategoria(c.exhibicion+" "+(c.nombreFormulario||"")),estado:c.estado,razon:c.razon,comentario:c.comentario,supervisor:c.supervisor||"",foto:c.foto||"",tipo:c.tipo||"",origen:"Extra",planificada:false})});
-  return [...planned,...extras].sort((a,b)=>a.cliente.localeCompare(b.cliente,"es")||a.codigo.localeCompare(b.codigo,"es",{numeric:true})||a.exhibicion.localeCompare(b.exhibicion,"es"));
+  const extraKeys=new Set();
+
+  extraRows.forEach(r=>{
+    const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"]));
+    const exhibicion=clean(getField(r,["Exhibición","Exhibicion"]));
+    if(!codigo||!exhibicion)return;
+    const m=mapping.get(codigo)||{};
+
+    const key=makeKey(codigo,exhibicion);
+    if(extraKeys.has(key))return;
+    extraKeys.add(key);
+
+    extras.push({
+      fecha:formatSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"])),
+      cliente:m.cliente||canonicalClient(getField(r,["Retailer","Cliente"]))||inferClientFromCode(codigo),
+      codigo,
+      nombreLocal:m.nombreLocal||"",
+      mercaderista:m.mercaderista||"",
+      exhibicion,
+      nombreFormulario:"",
+      categoria:canonicalCategory(getField(r,["Categoría","Categoria"])),
+      estado:canonicalStatus(getField(r,["Estado"])),
+      razon:"",
+      comentario:"",
+      supervisor:m.supervisor||clean(getField(r,["Supervisor"])),
+      foto:clean(getField(r,["Foto URL","Foto"])),
+      tipo:clean(getField(r,["Tipo"])),
+      origen:"Extra",
+      planificada:false
+    });
+  });
+
+  return [...planned,...extras].sort((a,b)=>
+    a.cliente.localeCompare(b.cliente,"es")||
+    a.codigo.localeCompare(b.codigo,"es",{numeric:true})||
+    a.exhibicion.localeCompare(b.exhibicion,"es")
+  );
 }
 
-function getField(row,candidates){const m=new Map(Object.keys(row||{}).map(k=>[normalizeText(k),k]));for(const c of candidates){const k=m.get(normalizeText(c));if(k!==undefined)return row[k]}return""}
+function getField(row,candidates){
+  const m=new Map(Object.keys(row||{}).map(k=>[normalizeText(k),k]));
+  for(const c of candidates){
+    const k=m.get(normalizeText(c));
+    if(k!==undefined)return row[k];
+  }
+  return"";
+}
 function clean(v){return v==null?"":String(v).trim()}
 function normalizeText(v){return clean(v).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ")}
 function normalizeCode(v){return clean(v).toUpperCase().replace(/\s+/g,"")}
 function makeKey(c,e){return normalizeCode(c)+"||"+normalizeText(e)}
-function canonicalClient(v){const raw=clean(v),n=normalizeText(raw).replace(/\s+/g,"");return({fasa:"Fasa",salcobrand:"SalcoBrand",cruzverde:"Cruz Verde",preunic:"PreUnic",jumbo:"Jumbo",lider:"Lider"})[n]||raw}
-function canonicalOrigin(v){return normalizeText(v)==="extra"?"Extra":"Planificada"}
-function canonicalStatus(v){const n=normalizeText(v);if(n==="implementada"||n==="implementado")return"Implementado";if(n==="no implementada"||n==="no implementado")return"No implementado";return"Sin información"}
+function canonicalClient(v){
+  const raw=clean(v),n=normalizeText(raw).replace(/\s+/g,"");
+  return({fasa:"Fasa",salcobrand:"SalcoBrand",cruzverde:"Cruz Verde",preunic:"PreUnic",jumbo:"Jumbo",lider:"Lider"})[n]||raw;
+}
+function canonicalStatus(v){
+  const n=normalizeText(v);
+  if(n==="implementada"||n==="implementado")return"Implementado";
+  if(n==="no implementada"||n==="no implementado")return"No implementado";
+  return"Sin información";
+}
+function canonicalCategory(v){
+  const raw=clean(v);
+  const n=normalizeText(raw).replace(/\s+/g,"");
+  const map={
+    face:"Face",
+    body:"Body",
+    deo:"Deo",
+    deodorant:"Deo",
+    multicategoria:"Multicategoría",
+    eucerin:"Eucerin"
+  };
+  return map[n]||raw||"Sin categoría";
+}
 function classify(s){return s==="Implementado"?"pos":s==="No implementado"?"neg":"neu"}
-function inferClientFromCode(c){c=normalizeCode(c);if(c.startsWith("FA"))return"Fasa";if(c.startsWith("SB"))return"SalcoBrand";if(c.startsWith("CV"))return"Cruz Verde";if(c.startsWith("PU"))return"PreUnic";if(c.startsWith("LD"))return"Lider";if(c.startsWith("J"))return"Jumbo";return""}
-function inferCategoria(e){e=normalizeText(e);if(e.includes("eucerin")||e.includes("dermopure")||e.includes("aquaphor"))return"Eucerin";if(e.includes("multicategor")||e.includes("bajo meson")||e.includes("bajomeson")||e.includes("sobre meson"))return"Multicategoría";if(e.includes("c18")||e.includes("deo")||e.includes("desodor"))return"DEO";if(e.includes("c14")||e.includes("face")||e.includes("facial")||e.includes("cleansing"))return"Face";if(e.includes("body")||e.includes("corporal")||e.includes("crema")||e.includes("skin")||e.includes("paylod")||e.includes("always"))return"Body";return"Otros"}
-function formatSheetDate(v){const r=clean(v);if(!r)return"";let m=r.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return`${m[1].padStart(2,"0")}/${m[2].padStart(2,"0")}/${m[3]}`;m=r.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);if(m)return`${m[3].padStart(2,"0")}/${m[2].padStart(2,"0")}/${m[1]}`;return r}
+function inferClientFromCode(c){
+  c=normalizeCode(c);
+  if(c.startsWith("FA"))return"Fasa";
+  if(c.startsWith("SB"))return"SalcoBrand";
+  if(c.startsWith("CV"))return"Cruz Verde";
+  if(c.startsWith("PU"))return"PreUnic";
+  if(c.startsWith("LD"))return"Lider";
+  if(c.startsWith("J"))return"Jumbo";
+  return"";
+}
+function formatSheetDate(v){
+  const r=clean(v);
+  if(!r)return"";
+  let m=r.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m)return`${m[1].padStart(2,"0")}/${m[2].padStart(2,"0")}/${m[3]}`;
+  m=r.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m)return`${m[3].padStart(2,"0")}/${m[2].padStart(2,"0")}/${m[1]}`;
+  return r;
+}
 
-function makePill(label,active,onClick,cls=""){const b=document.createElement("button");b.type="button";b.className="pill"+(active?` active ${cls}`:"");b.textContent=label;b.onclick=onClick;return b}
-function buildAllFilters(){buildClientPills();buildEstadoPills();buildCatPills();buildSupervisorSelect()}
-function buildClientPills(){const a=[...new Set(RAW.map(r=>r.cliente).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es")),w=document.getElementById("clientPills");w.innerHTML="";w.appendChild(makePill("Todos",state.cliente==="Todos",()=>setCliente("Todos")));a.forEach(c=>w.appendChild(makePill(c,state.cliente===c,()=>setCliente(c))))}
-function buildEstadoPills(){const w=document.getElementById("estadoPills");w.innerHTML="";w.appendChild(makePill("Todos",state.estado==="Todos",()=>setEstado("Todos")));w.appendChild(makePill("Implementado",state.estado==="Implementado",()=>setEstado("Implementado"),"pos"));w.appendChild(makePill("No implementado",state.estado==="No implementado",()=>setEstado("No implementado"),"neg"));w.appendChild(makePill("Sin información",state.estado==="Sin información",()=>setEstado("Sin información"),"neu"))}
-function buildCatPills(){const existing=new Set(RAW.map(r=>r.categoria)),cats=["Todos","DEO","Face","Body","Eucerin","Multicategoría","Otros"].filter(c=>c==="Todos"||existing.has(c)),w=document.getElementById("catPills");w.innerHTML="";cats.forEach(c=>w.appendChild(makePill(c,state.categoria===c,()=>setCategoria(c))))}
-function buildSupervisorSelect(){const sups=["Todos",...[...new Set(RAW.map(r=>r.supervisor).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"))],s=document.getElementById("supervisorSelect");s.innerHTML="";sups.forEach(x=>{const o=document.createElement("option");o.value=x;o.textContent=x==="Todos"?"Todos los supervisores":x;s.appendChild(o)});s.value=sups.includes(state.supervisor)?state.supervisor:"Todos";state.supervisor=s.value}
-function resetInvalidFilters(){state.drill=null;state.barShowAll=false}
-function setCliente(c){state.cliente=c;state.drill=null;state.barShowAll=false;buildClientPills();render()}
+function makePill(label,active,onClick,cls=""){
+  const b=document.createElement("button");
+  b.type="button";
+  b.className="pill"+(active?` active ${cls}`:"");
+  b.textContent=label;
+  b.onclick=onClick;
+  return b;
+}
+
+function buildAllFilters(){
+  buildClientPills();
+  buildEstadoPills();
+  buildTypePills();
+  buildCatPills();
+  buildSupervisorSelect();
+  buildMercaderistaSelect();
+}
+
+function buildClientPills(){
+  const a=[...new Set(RAW.map(r=>r.cliente).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"));
+  const w=document.getElementById("clientPills");
+  w.innerHTML="";
+  w.appendChild(makePill("Todos",state.cliente==="Todos",()=>setCliente("Todos")));
+  a.forEach(c=>w.appendChild(makePill(c,state.cliente===c,()=>setCliente(c))));
+}
+
+function buildEstadoPills(){
+  const w=document.getElementById("estadoPills");
+  w.innerHTML="";
+  w.appendChild(makePill("Todos",state.estado==="Todos",()=>setEstado("Todos")));
+  w.appendChild(makePill("Implementado",state.estado==="Implementado",()=>setEstado("Implementado"),"pos"));
+  w.appendChild(makePill("No implementado",state.estado==="No implementado",()=>setEstado("No implementado"),"neg"));
+  w.appendChild(makePill("Sin información",state.estado==="Sin información",()=>setEstado("Sin información"),"neu"));
+}
+
+function buildTypePills(){
+  const w=document.getElementById("typePills");
+  w.innerHTML="";
+  w.appendChild(makePill("Todas",state.tipoExhibicion==="Todas",()=>setTipoExhibicion("Todas")));
+  w.appendChild(makePill("Planificadas",state.tipoExhibicion==="Planificadas",()=>setTipoExhibicion("Planificadas")));
+  w.appendChild(makePill("Extras",state.tipoExhibicion==="Extras",()=>setTipoExhibicion("Extras")));
+}
+
+function buildCatPills(){
+  const existing=[...new Set(RAW.map(r=>r.categoria).filter(Boolean))];
+  const preferred=["Face","Body","Deo","Multicategoría","Eucerin","Sin categoría"];
+  const ordered=[...preferred.filter(c=>existing.includes(c)),...existing.filter(c=>!preferred.includes(c)).sort((a,b)=>a.localeCompare(b,"es"))];
+  const cats=["Todos",...ordered];
+  const w=document.getElementById("catPills");
+  w.innerHTML="";
+  cats.forEach(c=>w.appendChild(makePill(c,state.categoria===c,()=>setCategoria(c))));
+}
+
+function buildSupervisorSelect(){
+  const sups=["Todos",...[...new Set(RAW.map(r=>r.supervisor).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es"))];
+  const s=document.getElementById("supervisorSelect");
+  s.innerHTML="";
+  sups.forEach(x=>{
+    const o=document.createElement("option");
+    o.value=x;
+    o.textContent=x==="Todos"?"Todos los supervisores":x;
+    s.appendChild(o);
+  });
+  s.value=sups.includes(state.supervisor)?state.supervisor:"Todos";
+  state.supervisor=s.value;
+}
+
+function buildMercaderistaSelect(){
+  const s=document.getElementById("mercaderistaSelect");
+  s.innerHTML="";
+
+  if(state.supervisor==="Todos"){
+    const o=document.createElement("option");
+    o.value="Todos";
+    o.textContent="Selecciona un supervisor";
+    s.appendChild(o);
+    s.value="Todos";
+    s.disabled=true;
+    state.mercaderista="Todos";
+    return;
+  }
+
+  const disponibles=[...new Set(RAW.filter(r=>
+    r.supervisor===state.supervisor&&
+    (state.cliente==="Todos"||r.cliente===state.cliente)&&
+    r.mercaderista
+  ).map(r=>r.mercaderista))].sort((a,b)=>a.localeCompare(b,"es"));
+
+  const all=document.createElement("option");
+  all.value="Todos";
+  all.textContent="Todos los mercaderistas";
+  s.appendChild(all);
+
+  disponibles.forEach(x=>{
+    const o=document.createElement("option");
+    o.value=x;
+    o.textContent=x;
+    s.appendChild(o);
+  });
+
+  if(state.mercaderista!=="Todos"&&!disponibles.includes(state.mercaderista)){
+    state.mercaderista="Todos";
+  }
+
+  s.value=state.mercaderista;
+  s.disabled=false;
+}
+
+function resetInvalidFilters(){
+  state.drill=null;
+  state.barShowAll=false;
+}
+function setCliente(c){state.cliente=c;state.drill=null;state.barShowAll=false;buildClientPills();buildMercaderistaSelect();render()}
 function setEstado(e){state.estado=e;buildEstadoPills();render()}
+function setTipoExhibicion(t){state.tipoExhibicion=t;buildTypePills();render()}
 function setCategoria(c){state.categoria=c;buildCatPills();render()}
-document.getElementById("supervisorSelect").addEventListener("change",e=>{state.supervisor=e.target.value;state.drill=null;render()});
+
+document.getElementById("supervisorSelect").addEventListener("change",e=>{state.supervisor=e.target.value;state.mercaderista="Todos";state.drill=null;buildMercaderistaSelect();render()});
+document.getElementById("mercaderistaSelect").addEventListener("change",e=>{state.mercaderista=e.target.value;state.drill=null;render()});
+document.getElementById("clearMerchFilter").addEventListener("click",()=>{state.mercaderista="Todos";buildMercaderistaSelect();render()});
 document.getElementById("searchInput").addEventListener("input",e=>{state.search=e.target.value.toLowerCase();render()});
 document.getElementById("backToAll").addEventListener("click",()=>setCliente("Todos"));
 document.getElementById("refreshBtn").addEventListener("click",loadData);
-function filteredRows(){return RAW.filter(r=>{if(state.cliente!=="Todos"&&r.cliente!==state.cliente)return false;if(state.estado!=="Todos"&&r.estado!==state.estado)return false;if(state.categoria!=="Todos"&&r.categoria!==state.categoria)return false;if(state.supervisor!=="Todos"&&r.supervisor!==state.supervisor)return false;if(state.drill&&r.codigo!==state.drill)return false;if(state.search&&!([r.codigo,r.cliente,r.exhibicion,r.nombreFormulario,r.razon,r.comentario,r.supervisor,r.categoria].join(" ").toLowerCase().includes(state.search)))return false;return true})}
 
-function render(){const rows=filteredRows();renderKpis(rows);renderCoverageDonut(rows);renderImplementationDonut(rows);renderBar(rows);renderTable(rows);document.getElementById("detailCount").textContent=rows.length}
+function rowMatchesCommonFilters(r){
+  if(state.cliente!=="Todos"&&r.cliente!==state.cliente)return false;
+  if(state.estado!=="Todos"&&r.estado!==state.estado)return false;
+  if(state.categoria!=="Todos"&&r.categoria!==state.categoria)return false;
+  if(state.supervisor!=="Todos"&&r.supervisor!==state.supervisor)return false;
+  if(state.mercaderista!=="Todos"&&r.mercaderista!==state.mercaderista)return false;
+  if(state.drill&&r.codigo!==state.drill)return false;
+  if(state.search&&!([r.codigo,r.nombreLocal,r.cliente,r.exhibicion,r.nombreFormulario,r.razon,r.comentario,r.supervisor,r.mercaderista,r.categoria,r.origen].join(" ").toLowerCase().includes(state.search)))return false;
+  return true;
+}
+
+function filteredRows(){
+  return RAW.filter(r=>{
+    if(!rowMatchesCommonFilters(r))return false;
+    if(state.tipoExhibicion==="Planificadas"&&!r.planificada)return false;
+    if(state.tipoExhibicion==="Extras"&&r.planificada)return false;
+    return true;
+  });
+}
+
+function metricRows(){
+  return RAW.filter(r=>r.planificada&&rowMatchesCommonFilters(r));
+}
+
+function mercaderistaPerformanceRows(){
+  return RAW.filter(r=>{
+    if(!r.planificada)return false;
+    if(state.supervisor==="Todos")return false;
+    if(r.supervisor!==state.supervisor)return false;
+    if(state.cliente!=="Todos"&&r.cliente!==state.cliente)return false;
+    if(state.categoria!=="Todos"&&r.categoria!==state.categoria)return false;
+    if(state.drill&&r.codigo!==state.drill)return false;
+    return true;
+  });
+}
+
+function render(){
+  const detailRows=filteredRows();
+  const metrics=metricRows();
+  renderKpis(metrics);
+  renderCoverageDonut(metrics);
+  renderImplementationDonut(metrics);
+  renderBar(metrics);
+  renderMercaderistas(mercaderistaPerformanceRows());
+  renderTable(detailRows);
+  document.getElementById("detailCount").textContent=detailRows.length;
+}
+
 function renderKpis(rows){
-  const planned=rows.filter(r=>r.planificada),answeredPlanned=planned.filter(r=>r.estado!=="Sin información"),noInfo=planned.filter(r=>r.estado==="Sin información"),answered=rows.filter(r=>r.estado!=="Sin información"),implemented=answered.filter(r=>r.estado==="Implementado"),notImp=answered.filter(r=>r.estado==="No implementado");
+  const planned=rows;
+  const answered=planned.filter(r=>r.estado!=="Sin información");
+  const noInfo=planned.filter(r=>r.estado==="Sin información");
+  const implemented=answered.filter(r=>r.estado==="Implementado");
+  const notImp=answered.filter(r=>r.estado==="No implementado");
+
   document.getElementById("kpiPlanned").textContent=planned.length;
-  document.getElementById("kpiCoveragePct").textContent=(planned.length?Math.round(answeredPlanned.length/planned.length*100):0)+"%";
-  document.getElementById("kpiCoverageCount").textContent=`${answeredPlanned.length} de ${planned.length} planificadas`;
+  document.getElementById("kpiCoveragePct").textContent=(planned.length?Math.round(answered.length/planned.length*100):0)+"%";
+  document.getElementById("kpiCoverageCount").textContent=`${answered.length} de ${planned.length} planificadas`;
   document.getElementById("kpiNoInfo").textContent=noInfo.length;
   document.getElementById("kpiImplementationPct").textContent=(answered.length?Math.round(implemented.length/answered.length*100):0)+"%";
   document.getElementById("kpiImplementationCount").textContent=`${implemented.length} de ${answered.length} respondidas`;
   document.getElementById("kpiNotImplemented").textContent=notImp.length;
-  document.getElementById("kpiStores").textContent=new Set(rows.map(r=>r.codigo)).size;
+  document.getElementById("kpiStores").textContent=new Set(planned.map(r=>r.codigo)).size;
 }
-function centerPlugin(id,main,label,color){return{id,afterDraw(chart){const a=chart.chartArea;if(!a)return;const x=a.left+a.width/2,y=a.top+a.height/2,c=chart.ctx;c.save();c.textAlign="center";c.textBaseline="middle";c.font="700 27px 'Space Grotesk'";c.fillStyle=color;c.fillText(main,x,y-9);c.font="600 9.5px 'IBM Plex Mono'";c.fillStyle="#5B6B7C";c.fillText(label,x,y+14);c.restore()}}}
-function renderCoverageDonut(rows){if(coverageDonutChart)coverageDonutChart.destroy();const p=rows.filter(r=>r.planificada),a=p.filter(r=>r.estado!=="Sin información").length,n=p.length-a,t=p.length,pct=t?Math.round(a/t*100):0;coverageDonutChart=new Chart(document.getElementById("coverageDonut"),{type:"doughnut",data:{labels:["Respondido","Sin información"],datasets:[{data:[a,n],backgroundColor:["#0057A8","#D89A1F"],borderWidth:0}]},options:{maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{font:{family:"Inter",size:11},color:"#5B6B7C",boxWidth:10}},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw||0} · ${t?Math.round((c.raw||0)/t*100):0}%`}}}},plugins:[centerPlugin("cov",pct+"%","LEVANTADO","#0057A8")]})}
-function renderImplementationDonut(rows){if(implementationDonutChart)implementationDonutChart.destroy();const a=rows.filter(r=>r.estado!=="Sin información"),i=a.filter(r=>r.estado==="Implementado").length,n=a.filter(r=>r.estado==="No implementado").length,t=a.length,pct=t?Math.round(i/t*100):0;implementationDonutChart=new Chart(document.getElementById("implementationDonut"),{type:"doughnut",data:{labels:["Implementado","No implementado"],datasets:[{data:[i,n],backgroundColor:["#158A4A","#C0392B"],borderWidth:0}]},options:{maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{font:{family:"Inter",size:11},color:"#5B6B7C",boxWidth:10}},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw||0} · ${t?Math.round((c.raw||0)/t*100):0}%`}}}},plugins:[centerPlugin("imp",pct+"%","IMPLEMENTADO","#158A4A")]})}
+
+function centerPlugin(id,main,label,color){
+  return{
+    id,
+    afterDraw(chart){
+      const a=chart.chartArea;
+      if(!a)return;
+      const x=a.left+a.width/2,y=a.top+a.height/2,c=chart.ctx;
+      c.save();
+      c.textAlign="center";
+      c.textBaseline="middle";
+      c.font="700 27px 'Space Grotesk'";
+      c.fillStyle=color;
+      c.fillText(main,x,y-9);
+      c.font="600 9.5px 'IBM Plex Mono'";
+      c.fillStyle="#5B6B7C";
+      c.fillText(label,x,y+14);
+      c.restore();
+    }
+  };
+}
+
+function renderCoverageDonut(rows){
+  if(coverageDonutChart)coverageDonutChart.destroy();
+  const a=rows.filter(r=>r.estado!=="Sin información").length;
+  const n=rows.length-a;
+  const t=rows.length;
+  const pct=t?Math.round(a/t*100):0;
+
+  coverageDonutChart=new Chart(document.getElementById("coverageDonut"),{
+    type:"doughnut",
+    data:{labels:["Respondido","Sin información"],datasets:[{data:[a,n],backgroundColor:["#0057A8","#D89A1F"],borderWidth:0}]},
+    options:{maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{font:{family:"Inter",size:11},color:"#5B6B7C",boxWidth:10}},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw||0} · ${t?Math.round((c.raw||0)/t*100):0}%`}}}},
+    plugins:[centerPlugin("cov",pct+"%","LEVANTADO","#0057A8")]
+  });
+}
+
+function renderImplementationDonut(rows){
+  if(implementationDonutChart)implementationDonutChart.destroy();
+  const a=rows.filter(r=>r.estado!=="Sin información");
+  const i=a.filter(r=>r.estado==="Implementado").length;
+  const n=a.filter(r=>r.estado==="No implementado").length;
+  const t=a.length;
+  const pct=t?Math.round(i/t*100):0;
+
+  implementationDonutChart=new Chart(document.getElementById("implementationDonut"),{
+    type:"doughnut",
+    data:{labels:["Implementado","No implementado"],datasets:[{data:[i,n],backgroundColor:["#158A4A","#C0392B"],borderWidth:0}]},
+    options:{maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom",labels:{font:{family:"Inter",size:11},color:"#5B6B7C",boxWidth:10}},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw||0} · ${t?Math.round((c.raw||0)/t*100):0}%`}}}},
+    plugins:[centerPlugin("imp",pct+"%","IMPLEMENTADO","#158A4A")]
+  });
+}
+
 function renderBar(rows){
-  if(barChart)barChart.destroy();const drilled=state.cliente!=="Todos",groupFn=drilled?(r=>r.codigo):(r=>r.cliente),groups={};document.getElementById("barTitle").textContent=drilled?`Locales de ${state.cliente}`:"Por cliente";document.getElementById("barSub").textContent=drilled?"Cada barra suma 100%. Clic en un local para abrir su detalle.":"Cada barra suma 100%. Clic en un cliente para revisar sus locales.";document.getElementById("backToAll").style.display=drilled?"inline-block":"none";
-  rows.forEach(r=>{const k=groupFn(r);if(!k)return;if(!groups[k])groups[k]={implemented:0,notImplemented:0,noInfo:0,total:0};groups[k].total++;if(r.estado==="Implementado")groups[k].implemented++;else if(r.estado==="No implementado")groups[k].notImplemented++;else groups[k].noInfo++});
-  let all=Object.keys(groups).sort((a,b)=>((groups[b].notImplemented+groups[b].noInfo)/(groups[b].total||1))-((groups[a].notImplemented+groups[a].noInfo)/(groups[a].total||1))||a.localeCompare(b,"es",{numeric:true}));
-  const many=all.length>MAX_BARS,labels=many&&!state.barShowAll?all.slice(0,MAX_BARS):all,t=document.getElementById("barShowAllToggle");if(many){t.style.display="inline-block";t.textContent=state.barShowAll?`← Mostrar solo los ${MAX_BARS} con mayor pendiente`:`Ver las ${all.length} barras →`;t.onclick=()=>{state.barShowAll=!state.barShowAll;render()}}else t.style.display="none";
-  const pct=labels.map(l=>({implemented:groups[l].implemented/groups[l].total*100,notImplemented:groups[l].notImplemented/groups[l].total*100,noInfo:groups[l].noInfo/groups[l].total*100}));document.getElementById("barInner").style.width=labels.length*72>document.querySelector(".bar-scroll").clientWidth?labels.length*72+"px":"100%";
-  barChart=new Chart(document.getElementById("barChart"),{type:"bar",data:{labels,datasets:[{label:"Implementado",data:pct.map(x=>x.implemented),backgroundColor:"#158A4A",stack:"estado"},{label:"No implementado",data:pct.map(x=>x.notImplemented),backgroundColor:"#C0392B",stack:"estado"},{label:"Sin información",data:pct.map(x=>x.noInfo),backgroundColor:"#D89A1F",stack:"estado"}]},options:{maintainAspectRatio:false,scales:{x:{stacked:true,ticks:{font:{family:"IBM Plex Mono",size:10},color:"#5B6B7C",autoSkip:false,maxRotation:45},grid:{display:false}},y:{stacked:true,beginAtZero:true,max:100,ticks:{stepSize:25,callback:v=>v+"%",font:{family:"Inter",size:10.5},color:"#5B6B7C"},grid:{color:"#DCE6F0"}}},plugins:{legend:{position:"bottom",labels:{font:{family:"Inter",size:11},color:"#5B6B7C",boxWidth:10}},tooltip:{callbacks:{label:c=>{const g=groups[labels[c.dataIndex]],lab=c.dataset.label,count=lab==="Implementado"?g.implemented:lab==="No implementado"?g.notImplemented:g.noInfo;return` ${lab}: ${count} · ${c.raw.toFixed(1)}%`},footer:items=>items.length?`Total: ${groups[labels[items[0].dataIndex]].total}`:""}}},onClick:(e,els)=>{if(!els.length)return;const l=labels[els[0].index];if(!drilled)setCliente(l);else{state.drill=l;openDetail(true);render()}},onHover:(e,els)=>e.native.target.style.cursor=els.length?"pointer":"default"}})
+  if(barChart)barChart.destroy();
+  const drilled=state.cliente!=="Todos";
+  const groupFn=drilled?(r=>r.codigo):(r=>r.cliente);
+  const groups={};
+
+  document.getElementById("barTitle").textContent=drilled?`Locales de ${state.cliente}`:"Por cliente";
+  document.getElementById("barSub").textContent=drilled?"Cada barra suma 100%. Clic en un local para abrir su detalle.":"Cada barra suma 100%. Clic en un cliente para revisar sus locales.";
+  document.getElementById("backToAll").style.display=drilled?"inline-block":"none";
+
+  rows.forEach(r=>{
+    const k=groupFn(r);
+    if(!k)return;
+    if(!groups[k])groups[k]={implemented:0,notImplemented:0,noInfo:0,total:0};
+    groups[k].total++;
+    if(r.estado==="Implementado")groups[k].implemented++;
+    else if(r.estado==="No implementado")groups[k].notImplemented++;
+    else groups[k].noInfo++;
+  });
+
+  let all=Object.keys(groups).sort((a,b)=>
+    ((groups[b].notImplemented+groups[b].noInfo)/(groups[b].total||1))-
+    ((groups[a].notImplemented+groups[a].noInfo)/(groups[a].total||1))||
+    a.localeCompare(b,"es",{numeric:true})
+  );
+
+  const many=all.length>MAX_BARS;
+  const labels=many&&!state.barShowAll?all.slice(0,MAX_BARS):all;
+  const t=document.getElementById("barShowAllToggle");
+
+  if(many){
+    t.style.display="inline-block";
+    t.textContent=state.barShowAll?`← Mostrar solo los ${MAX_BARS} con mayor pendiente`:`Ver las ${all.length} barras →`;
+    t.onclick=()=>{state.barShowAll=!state.barShowAll;render()};
+  }else{
+    t.style.display="none";
+  }
+
+  const pct=labels.map(l=>({
+    implemented:groups[l].implemented/groups[l].total*100,
+    notImplemented:groups[l].notImplemented/groups[l].total*100,
+    noInfo:groups[l].noInfo/groups[l].total*100
+  }));
+
+  document.getElementById("barInner").style.width=labels.length*72>document.querySelector(".bar-scroll").clientWidth?labels.length*72+"px":"100%";
+
+  barChart=new Chart(document.getElementById("barChart"),{
+    type:"bar",
+    data:{
+      labels,
+      datasets:[
+        {label:"Implementado",data:pct.map(x=>x.implemented),backgroundColor:"#158A4A",stack:"estado"},
+        {label:"No implementado",data:pct.map(x=>x.notImplemented),backgroundColor:"#C0392B",stack:"estado"},
+        {label:"Sin información",data:pct.map(x=>x.noInfo),backgroundColor:"#D89A1F",stack:"estado"}
+      ]
+    },
+    options:{
+      maintainAspectRatio:false,
+      scales:{
+        x:{stacked:true,ticks:{font:{family:"IBM Plex Mono",size:10},color:"#5B6B7C",autoSkip:false,maxRotation:45},grid:{display:false}},
+        y:{stacked:true,beginAtZero:true,max:100,ticks:{stepSize:25,callback:v=>v+"%",font:{family:"Inter",size:10.5},color:"#5B6B7C"},grid:{color:"#DCE6F0"}}
+      },
+      plugins:{
+        legend:{position:"bottom",labels:{font:{family:"Inter",size:11},color:"#5B6B7C",boxWidth:10}},
+        tooltip:{callbacks:{
+          label:c=>{
+            const g=groups[labels[c.dataIndex]],lab=c.dataset.label,count=lab==="Implementado"?g.implemented:lab==="No implementado"?g.notImplemented:g.noInfo;
+            return` ${lab}: ${count} · ${c.raw.toFixed(1)}%`;
+          },
+          footer:items=>items.length?`Total: ${groups[labels[items[0].dataIndex]].total}`:""
+        }}
+      },
+      onClick:(e,els)=>{
+        if(!els.length)return;
+        const l=labels[els[0].index];
+        if(!drilled)setCliente(l);
+        else{state.drill=l;openDetail(true);render()}
+      },
+      onHover:(e,els)=>e.native.target.style.cursor=els.length?"pointer":"default"
+    }
+  });
 }
 
-function renderTable(rows){const tb=document.getElementById("tableBody");tb.innerHTML="";document.getElementById("emptyState").style.display=rows.length?"none":"block";rows.forEach(r=>{const tr=document.createElement("tr"),thumb=driveThumb(r.foto,100),extra=r.origen==="Extra"?'<span class="extra-chip">EXTRA</span>':"",sub=r.nombreFormulario&&r.nombreFormulario!==r.exhibicion?`<div style="font-size:10.5px;color:#8698A8;margin-top:3px">${esc(r.nombreFormulario)}</div>`:"";tr.innerHTML=`<td class="mono" style="font-size:11px">${esc(r.fecha||"—")}</td><td>${esc(r.cliente||"—")}</td><td class="mono" style="color:var(--nivea-deep);font-weight:600">${esc(r.codigo||"—")}</td><td>${esc(r.exhibicion)}${extra}${sub}</td><td><span class="cat-chip">${esc(r.categoria)}</span></td><td><span class="status-chip ${classify(r.estado)}">${esc(r.estado)}</span></td><td style="font-size:12px;color:#5B6B7C">${esc([r.razon,r.comentario].filter(Boolean).join(" — ")||"—")}</td><td>${esc(r.supervisor||"—")}</td><td>${thumb?`<img class="thumb" src="${esc(thumb)}" data-full="${esc(driveThumb(r.foto,900)||thumb)}" data-link="${esc(r.foto)}">`:'<div class="no-photo">s/f</div>'}</td>`;tb.appendChild(tr)});tb.querySelectorAll("img.thumb").forEach(i=>i.addEventListener("click",()=>openLightbox(i.dataset.full,i.dataset.link)))}
+function renderMercaderistas(rows){
+  const panel=document.getElementById("merchPanel");
+  const body=document.getElementById("merchTableBody");
+  const empty=document.getElementById("merchEmpty");
+  const sub=document.getElementById("merchPanelSub");
+  const clear=document.getElementById("clearMerchFilter");
 
-function downloadExcel(){const rows=filteredRows();if(!rows.length){alert("No hay exhibiciones para descargar.");return}const data=rows.map(r=>({"Fecha":r.fecha,"Cliente":r.cliente,"Código Local":r.codigo,"Exhibición":r.exhibicion,"Nombre Formulario":r.nombreFormulario,"Categoría":r.categoria,"Estado":r.estado,"Razón":r.razon,"Comentario":r.comentario,"Supervisor":r.supervisor,"Tipo":r.tipo,"Origen":r.origen,"Planificada":r.planificada?"Sí":"No","Foto":r.foto})),ws=XLSX.utils.json_to_sheet(data),wb=XLSX.utils.book_new();ws["!cols"]=[{wch:12},{wch:15},{wch:14},{wch:30},{wch:24},{wch:17},{wch:19},{wch:22},{wch:34},{wch:22},{wch:10},{wch:12},{wch:12},{wch:50}];XLSX.utils.book_append_sheet(wb,ws,"Exhibiciones");const parts=["SecondaryShelf"];if(state.cliente!=="Todos")parts.push(state.cliente);if(state.estado!=="Todos")parts.push(state.estado.replace(/ /g,""));parts.push(new Intl.DateTimeFormat("en-CA",{timeZone:"America/Santiago"}).format(new Date()));XLSX.writeFile(wb,parts.join("_")+".xlsx")}
+  if(state.supervisor==="Todos"){
+    panel.classList.add("hidden");
+    body.innerHTML="";
+    return;
+  }
 
-function driveThumb(url,size){if(!url)return null;const m=url.match(/\/d\/([a-zA-Z0-9_-]+)/)||url.match(/[?&]id=([a-zA-Z0-9_-]+)/);return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w${size||300}`:null}
-function openDetail(open){document.getElementById("detailPanel").classList.toggle("open",open);document.getElementById("chevIcon").classList.toggle("open",open)}
+  panel.classList.remove("hidden");
+  sub.textContent=`Avance de los mercaderistas asignados a ${state.supervisor}. Haz clic en una fila para filtrar el dashboard.`;
+  clear.style.display=state.mercaderista!=="Todos"?"inline-block":"none";
+
+  const groups=new Map();
+  rows.forEach(r=>{
+    const name=r.mercaderista||"Sin asignar";
+    if(!groups.has(name))groups.set(name,[]);
+    groups.get(name).push(r);
+  });
+
+  const data=[...groups.entries()].map(([name,items])=>{
+    const planned=items.length;
+    const answered=items.filter(r=>r.estado!=="Sin información").length;
+    const implemented=items.filter(r=>r.estado==="Implementado").length;
+    const noInfo=planned-answered;
+    const coverage=planned?Math.round(answered/planned*100):0;
+    const implementation=answered?Math.round(implemented/answered*100):0;
+    return{name,items,planned,answered,implemented,noInfo,coverage,implementation,stores:new Set(items.map(r=>r.codigo)).size};
+  }).sort((a,b)=>a.coverage-b.coverage||a.implementation-b.implementation||a.name.localeCompare(b.name,"es"));
+
+  body.innerHTML="";
+  empty.style.display=data.length?"none":"block";
+
+  data.forEach(d=>{
+    const tr=document.createElement("tr");
+    tr.className="merch-row"+(state.mercaderista===d.name?" active":"");
+    tr.innerHTML=`
+      <td><div class="merch-name">${esc(d.name)}</div></td>
+      <td class="mono">${d.stores}</td>
+      <td class="mono">${d.planned}</td>
+      <td class="metric-cell"><div class="metric-main">${d.coverage}%</div><div class="metric-sub">${d.answered} de ${d.planned}</div><div class="mini-track"><div class="mini-fill" style="width:${d.coverage}%"></div></div></td>
+      <td class="metric-cell"><div class="metric-main">${d.implementation}%</div><div class="metric-sub">${d.implemented} de ${d.answered} respondidas</div><div class="mini-track"><div class="mini-fill green" style="width:${d.implementation}%"></div></div></td>
+      <td class="mono">${d.noInfo}</td>`;
+    tr.addEventListener("click",()=>{
+      if(d.name==="Sin asignar")return;
+      state.mercaderista=state.mercaderista===d.name?"Todos":d.name;
+      buildMercaderistaSelect();
+      render();
+    });
+    body.appendChild(tr);
+  });
+}
+
+function renderTable(rows){
+  const tb=document.getElementById("tableBody");
+  tb.innerHTML="";
+  document.getElementById("emptyState").style.display=rows.length?"none":"block";
+
+  rows.forEach(r=>{
+    const tr=document.createElement("tr");
+    const thumb=driveThumb(r.foto,100);
+    const extra=r.origen==="Extra"?'<span class="extra-chip">EXTRA</span>':"";
+    const sub=r.nombreFormulario&&r.nombreFormulario!==r.exhibicion?`<div style="font-size:10.5px;color:#8698A8;margin-top:3px">${esc(r.nombreFormulario)}</div>`:"";
+
+    tr.innerHTML=`<td class="mono" style="font-size:11px">${esc(r.fecha||"—")}</td><td>${esc(r.cliente||"—")}</td><td class="mono" style="color:var(--nivea-deep);font-weight:600">${esc(r.codigo||"—")}</td><td>${esc(r.exhibicion)}${extra}${sub}</td><td><span class="cat-chip">${esc(r.categoria)}</span></td><td><span class="status-chip ${classify(r.estado)}">${esc(r.estado)}</span></td><td style="font-size:12px;color:#5B6B7C">${esc([r.razon,r.comentario].filter(Boolean).join(" — ")||"—")}</td><td>${esc(r.mercaderista||"—")}</td><td>${esc(r.supervisor||"—")}</td><td>${thumb?`<img class="thumb" src="${esc(thumb)}" data-full="${esc(driveThumb(r.foto,900)||thumb)}" data-link="${esc(r.foto)}">`:'<div class="no-photo">s/f</div>'}</td>`;
+
+    tb.appendChild(tr);
+  });
+
+  tb.querySelectorAll("img.thumb").forEach(i=>i.addEventListener("click",()=>openLightbox(i.dataset.full,i.dataset.link)));
+}
+
+function getFilterSummary(){
+  return [
+    ["Filtro","Selección"],
+    ["Cliente",state.cliente],
+    ["Estado",state.estado],
+    ["Tipo",state.tipoExhibicion],
+    ["Categoría",state.categoria],
+    ["Supervisor",state.supervisor],
+    ["Mercaderista",state.mercaderista],
+    ["Búsqueda",state.search||"—"],
+    ["Local abierto",state.drill||"—"]
+  ];
+}
+
+function reportDate(){
+  return new Intl.DateTimeFormat("es-CL",{
+    timeZone:"America/Santiago",
+    dateStyle:"short",
+    timeStyle:"short"
+  }).format(new Date());
+}
+
+function reportFileDate(){
+  return new Intl.DateTimeFormat("en-CA",{
+    timeZone:"America/Santiago"
+  }).format(new Date());
+}
+
+function safeFilePart(v){
+  return String(v||"")
+    .trim()
+    .replace(/[\\/:*?"<>|]+/g,"")
+    .replace(/\s+/g,"_")
+    .substring(0,60);
+}
+
+function buildFileName(prefix){
+  const parts=[prefix];
+  if(state.cliente!=="Todos")parts.push(safeFilePart(state.cliente));
+  if(state.supervisor!=="Todos")parts.push(safeFilePart(state.supervisor));
+  if(state.mercaderista!=="Todos")parts.push(safeFilePart(state.mercaderista));
+  if(state.categoria!=="Todos")parts.push(safeFilePart(state.categoria));
+  parts.push(reportFileDate());
+  return parts.filter(Boolean).join("_")+".xlsx";
+}
+
+function metricSummary(rows){
+  const planned=rows.length;
+  const answered=rows.filter(r=>r.estado!=="Sin información").length;
+  const implemented=rows.filter(r=>r.estado==="Implementado").length;
+  const notImplemented=rows.filter(r=>r.estado==="No implementado").length;
+  const noInfo=rows.filter(r=>r.estado==="Sin información").length;
+  const coverage=planned?answered/planned:0;
+  const implementation=answered?implemented/answered:0;
+  const stores=new Set(rows.map(r=>r.codigo).filter(Boolean)).size;
+  return{planned,answered,implemented,notImplemented,noInfo,coverage,implementation,stores};
+}
+
+function buildMercaderistaSummary(rows){
+  const groups=new Map();
+
+  rows.forEach(r=>{
+    const supervisor=r.supervisor||"Sin supervisor";
+    const mercaderista=r.mercaderista||"Sin asignar";
+    const key=supervisor+"||"+mercaderista;
+    if(!groups.has(key))groups.set(key,{supervisor,mercaderista,rows:[]});
+    groups.get(key).rows.push(r);
+  });
+
+  return [...groups.values()].map(g=>{
+    const m=metricSummary(g.rows);
+    return{
+      "Supervisor":g.supervisor,
+      "Mercaderista":g.mercaderista,
+      "Locales":m.stores,
+      "Planificadas":m.planned,
+      "Respondidas":m.answered,
+      "Información levantada":m.coverage,
+      "Implementadas":m.implemented,
+      "No implementadas":m.notImplemented,
+      "Implementación":m.implementation,
+      "Sin información":m.noInfo
+    };
+  }).sort((a,b)=>
+    a.Supervisor.localeCompare(b.Supervisor,"es")||
+    a.Mercaderista.localeCompare(b.Mercaderista,"es")
+  );
+}
+
+function stylePercentColumn(ws,headerName){
+  const range=XLSX.utils.decode_range(ws["!ref"]||"A1:A1");
+  let col=-1;
+  for(let c=range.s.c;c<=range.e.c;c++){
+    const cell=ws[XLSX.utils.encode_cell({r:0,c})];
+    if(cell&&cell.v===headerName){col=c;break;}
+  }
+  if(col<0)return;
+  for(let r=1;r<=range.e.r;r++){
+    const ref=XLSX.utils.encode_cell({r,c:col});
+    if(ws[ref]&&typeof ws[ref].v==="number")ws[ref].z="0.0%";
+  }
+}
+
+function downloadSummary(){
+  const metrics=metricRows();
+  if(!metrics.length){
+    alert("No hay exhibiciones planificadas para generar el resumen con los filtros seleccionados.");
+    return;
+  }
+
+  const m=metricSummary(metrics);
+  const visibleExtras=filteredRows().filter(r=>!r.planificada).length;
+
+  const summaryRows=[
+    ["CENTRO DE REPORTES · EXHIBICIONES SECUNDARIAS",""],
+    ["Generado",reportDate()],
+    ["",""],
+    ...getFilterSummary(),
+    ["",""],
+    ["Métrica","Resultado"],
+    ["Planificadas",m.planned],
+    ["Información levantada",m.coverage],
+    ["Respondidas",m.answered],
+    ["Implementación",m.implementation],
+    ["Implementadas",m.implemented],
+    ["No implementadas",m.notImplemented],
+    ["Sin información",m.noInfo],
+    ["Locales",m.stores],
+    ["Extras visibles en la selección",visibleExtras]
+  ];
+
+  const wb=XLSX.utils.book_new();
+  const wsSummary=XLSX.utils.aoa_to_sheet(summaryRows);
+  wsSummary["!cols"]=[{wch:31},{wch:34}];
+  // Porcentajes de las dos métricas del resumen.
+  [16,18].forEach(rowNumber=>{
+    const ref="B"+rowNumber;
+    if(wsSummary[ref])wsSummary[ref].z="0.0%";
+  });
+  XLSX.utils.book_append_sheet(wb,wsSummary,"Resumen");
+
+  const merchData=buildMercaderistaSummary(metrics);
+  if(merchData.length){
+    const wsMerch=XLSX.utils.json_to_sheet(merchData);
+    wsMerch["!cols"]=[
+      {wch:24},{wch:30},{wch:10},{wch:13},{wch:12},
+      {wch:22},{wch:14},{wch:18},{wch:17},{wch:16}
+    ];
+    stylePercentColumn(wsMerch,"Información levantada");
+    stylePercentColumn(wsMerch,"Implementación");
+    XLSX.utils.book_append_sheet(wb,wsMerch,"Mercaderistas");
+  }
+
+  XLSX.writeFile(wb,buildFileName("SecondaryShelf_Resumen"));
+}
+
+function detailExportRows(rows){
+  return rows.map(r=>({
+    "Fecha":r.fecha,
+    "Cliente":r.cliente,
+    "Código Local":r.codigo,
+    "Nombre Local":r.nombreLocal,
+    "Mercaderista":r.mercaderista,
+    "Exhibición":r.exhibicion,
+    "Nombre Formulario":r.nombreFormulario,
+    "Categoría":r.categoria,
+    "Estado":r.estado,
+    "Razón":r.razon,
+    "Comentario":r.comentario,
+    "Supervisor":r.supervisor,
+    "BU":r.tipo,
+    "Tipo de exhibición":r.origen,
+    "Foto":r.foto
+  }));
+}
+
+function addDetailSheet(wb,name,rows){
+  if(!rows.length)return;
+  const ws=XLSX.utils.json_to_sheet(detailExportRows(rows));
+  ws["!cols"]=[
+    {wch:12},{wch:15},{wch:14},{wch:38},{wch:24},
+    {wch:30},{wch:24},{wch:17},{wch:19},{wch:22},
+    {wch:34},{wch:22},{wch:10},{wch:18},{wch:50}
+  ];
+  XLSX.utils.book_append_sheet(wb,ws,name);
+}
+
+function downloadDetail(){
+  const rows=filteredRows();
+  if(!rows.length){
+    alert("No hay exhibiciones para descargar.");
+    return;
+  }
+
+  const wb=XLSX.utils.book_new();
+  const filterWs=XLSX.utils.aoa_to_sheet([
+    ["CENTRO DE REPORTES · DETALLE DE EXHIBICIONES",""],
+    ["Generado",reportDate()],
+    ["",""],
+    ...getFilterSummary()
+  ]);
+  filterWs["!cols"]=[{wch:24},{wch:38}];
+  XLSX.utils.book_append_sheet(wb,filterWs,"Filtros");
+
+  const planned=rows.filter(r=>r.planificada);
+  const extras=rows.filter(r=>!r.planificada);
+
+  addDetailSheet(wb,"Planificadas",planned);
+  addDetailSheet(wb,"Extras",extras);
+
+  XLSX.writeFile(wb,buildFileName("SecondaryShelf_Detalle"));
+}
+
+function driveThumb(url,size){
+  if(!url)return null;
+  const m=url.match(/\/d\/([a-zA-Z0-9_-]+)/)||url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w${size||300}`:null;
+}
+function openDetail(open){
+  document.getElementById("detailPanel").classList.toggle("open",open);
+  document.getElementById("chevIcon").classList.toggle("open",open);
+}
 document.getElementById("detailToggle").addEventListener("click",()=>openDetail(!document.getElementById("detailPanel").classList.contains("open")));
-function openLightbox(src,link){if(!src)return;document.getElementById("lbImg").src=src;document.getElementById("lbLink").href=link||src;document.getElementById("lightbox").classList.add("open")}
+function openLightbox(src,link){
+  if(!src)return;
+  document.getElementById("lbImg").src=src;
+  document.getElementById("lbLink").href=link||src;
+  document.getElementById("lightbox").classList.add("open");
+}
 document.getElementById("lbClose").addEventListener("click",()=>document.getElementById("lightbox").classList.remove("open"));
 document.getElementById("lightbox").addEventListener("click",e=>{if(e.target===document.getElementById("lightbox"))document.getElementById("lightbox").classList.remove("open")});
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}

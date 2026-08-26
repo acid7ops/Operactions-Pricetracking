@@ -434,6 +434,7 @@ STORES.forEach((s, i)=>{
         <span>Hasta</span>
         <select id="evo-to-${s.key}" style="font-family:'Montserrat',sans-serif;font-size:11.5px;padding:.35rem .5rem;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)"></select>
       </div>
+      <div id="evo-legend-${s.key}" style="display:flex;gap:18px;font-size:11.5px;color:var(--muted);margin-bottom:.5rem;font-family:'Montserrat',sans-serif"></div>
       <div class="chart-wrap" style="height:260px"><canvas id="evo-chart-${s.key}"></canvas></div>
       <div style="display:flex;gap:16px;margin-top:.5rem;font-size:11px;color:var(--muted)">
         <span><span class="dot-legend promo"></span> Eucerin en promo</span>
@@ -578,6 +579,11 @@ STORES.forEach((s, i)=>{
     if(evoCharts[s.key]) evoCharts[s.key].destroy();
     const ptColorsE = points.map(p=> p.in_promo_e ? '#1E8A4C' : '#8698A8');
     const competitorName = points.length ? (points.find(p=>p.competitor_brand)?.competitor_brand || 'Competidor') : 'Competidor';
+    const legendEl = panel.querySelector(`#evo-legend-${s.key}`);
+    legendEl.innerHTML = `
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:#A70532;display:inline-block"></span>Eucerin</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:#1B2A3D;display:inline-block"></span>${competitorName}</span>
+    `;
     evoCharts[s.key] = new Chart(ctxEvo, {
       type:'line',
       data:{
@@ -610,9 +616,9 @@ STORES.forEach((s, i)=>{
       },
       options:{
         responsive:true, maintainAspectRatio:false,
-        layout:{ padding:{ top:50 } },
+        layout:{ padding:{ top:22 } },
         plugins:{
-          legend:{display:true, position:'top', align:'center', labels:{usePointStyle:true, pointStyle:'circle', boxWidth:8, padding:14, font:{size:10.5, family:"'Montserrat',sans-serif"}}},
+          legend:{display:false},
           tooltip:{callbacks:{label:(c)=>{
             const p = points[c.dataIndex];
             if(c.datasetIndex===0){
@@ -678,6 +684,7 @@ STORES.forEach((s, i)=>{
         <span>Hasta</span>
         <select id="evo-to-AVG" style="font-family:'Montserrat',sans-serif;font-size:11.5px;padding:.35rem .5rem;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink)"></select>
       </div>
+      <div id="evo-legend-AVG" style="display:flex;gap:18px;font-size:11.5px;color:var(--muted);margin-bottom:.5rem;font-family:'Montserrat',sans-serif"></div>
       <div class="chart-wrap" style="height:280px"><canvas id="evo-chart-AVG"></canvas></div>
       <div style="font-size:11px;color:var(--muted);margin-top:.6rem">
         Precio final promedio de las tiendas donde el SKU está disponible en cada corte.
@@ -745,6 +752,11 @@ STORES.forEach((s, i)=>{
     const ctx = panel.querySelector('#evo-chart-AVG').getContext('2d');
     if(evoCharts['AVG']) evoCharts['AVG'].destroy();
     const competitorName = points.find(p=>p.competitor_brand)?.competitor_brand || 'Competidor';
+    const legendElAvg = panel.querySelector('#evo-legend-AVG');
+    legendElAvg.innerHTML = `
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:#A70532;display:inline-block"></span>Eucerin (promedio tiendas)</span>
+      <span style="display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:#1B2A3D;display:inline-block"></span>${competitorName} (promedio tiendas)</span>
+    `;
     evoCharts['AVG'] = new Chart(ctx, {
       type:'line',
       data:{
@@ -777,9 +789,9 @@ STORES.forEach((s, i)=>{
       },
       options:{
         responsive:true, maintainAspectRatio:false,
-        layout:{ padding:{ top:50 } },
+        layout:{ padding:{ top:22 } },
         plugins:{
-          legend:{display:true, position:'top', align:'center', labels:{usePointStyle:true, pointStyle:'circle', boxWidth:8, padding:14, font:{size:10.5, family:"'Montserrat',sans-serif"}}},
+          legend:{display:false},
           tooltip:{callbacks:{label:(c)=>{
             const p = points[c.dataIndex];
             const idx = (p.final_e && p.final_c) ? (p.final_e/p.final_c*100).toFixed(1)+'%' : '—';

@@ -1,0 +1,3312 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Reportes desde PDV · Beiersdorf</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  >
+
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+  <style>
+
+    :root {
+      --nivea: #0057A8;
+      --nivea-deep: #00294F;
+      --nivea-mid: #0A3D73;
+
+      --ink: #0B1C2C;
+      --steel: #3E5064;
+
+      --canvas: #EEF3F9;
+      --paper: #FFFFFF;
+
+      --hairline: #DDE6EF;
+      --muted: #5B6B7C;
+
+      --ok: #158A4A;
+      --warn: #D89A1F;
+      --danger: #C0392B;
+
+      --r-sm: 8px;
+      --r-md: 12px;
+      --r-lg: 18px;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family:
+        'Inter',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        sans-serif;
+
+      background: var(--canvas);
+      color: var(--ink);
+
+      min-height: 100vh;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =====================================================
+       TOP BAR
+    ===================================================== */
+
+    .topbar {
+      background:
+        linear-gradient(
+          135deg,
+          var(--nivea-deep),
+          var(--nivea-mid)
+        );
+
+      padding: 1rem 2.2rem;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 1rem;
+    }
+
+    .tb-left {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .tb-mark {
+      width: 34px;
+      height: 34px;
+
+      border-radius: 9px;
+
+      background:
+        rgba(255,255,255,.14);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+    }
+
+    .tb-mark svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .tb-brand {
+      color: #FFFFFF;
+
+      font-family:
+        'Space Grotesk',
+        sans-serif;
+
+      font-size: 15px;
+      font-weight: 700;
+
+      letter-spacing: .01em;
+    }
+
+    .tb-sub {
+      color: #9CBBDD;
+
+      font-size: 11.5px;
+
+      letter-spacing: .02em;
+
+      margin-top: 1px;
+    }
+
+    .tb-right {
+      color: #BFD6EE;
+
+      font-size: 10.5px;
+
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      letter-spacing: .06em;
+      text-transform: uppercase;
+
+      background:
+        rgba(255,255,255,.08);
+
+      padding: 5px 12px;
+
+      border-radius: 20px;
+    }
+
+    .shelf-ticks {
+      height: 4px;
+
+      background:
+        linear-gradient(
+          90deg,
+          var(--nivea-mid) 0%,
+          var(--nivea) 50%,
+          var(--nivea-mid) 100%
+        );
+    }
+
+    /* =====================================================
+       PAGE
+    ===================================================== */
+
+    .page {
+      max-width: 1180px;
+
+      margin: 0 auto;
+
+      padding: 2.7rem 2rem 3rem;
+
+      width: 100%;
+
+      flex: 1;
+    }
+
+    .eyebrow {
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size: 10.5px;
+      font-weight: 600;
+
+      letter-spacing: .12em;
+
+      text-transform: uppercase;
+
+      color: var(--nivea);
+
+      margin-bottom: .7rem;
+    }
+
+    .title-area {
+      display: flex;
+
+      justify-content: space-between;
+      align-items: flex-start;
+
+      gap: 1rem;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 2rem;
+    }
+
+    .title {
+      font-family:
+        'Space Grotesk',
+        sans-serif;
+
+      font-size: 29px;
+      font-weight: 700;
+
+      letter-spacing: -.01em;
+
+      color: var(--nivea-deep);
+    }
+
+    .subtitle {
+      font-size: 13.5px;
+
+      color: var(--steel);
+
+      max-width: 650px;
+
+      line-height: 1.55;
+
+      margin-top: .45rem;
+    }
+
+    .header-actions {
+      display: flex;
+
+      gap: .7rem;
+
+      flex-wrap: wrap;
+    }
+
+    /* =====================================================
+       BUTTONS
+    ===================================================== */
+
+    .button {
+      border: none;
+
+      display: inline-flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: .45rem;
+
+      padding: .68rem 1rem;
+
+      border-radius: 9px;
+
+      text-decoration: none;
+
+      font-size: 12.5px;
+      font-weight: 600;
+
+      font-family: 'Inter', sans-serif;
+
+      cursor: pointer;
+
+      transition:
+        background .15s,
+        transform .15s,
+        box-shadow .15s,
+        border-color .15s;
+    }
+
+    .button-primary {
+      background: var(--nivea);
+      color: #FFFFFF;
+
+      box-shadow:
+        0 4px 14px
+        rgba(0,87,168,.25);
+    }
+
+    .button-primary:hover {
+      background: var(--nivea-mid);
+
+      transform:
+        translateY(-1px);
+
+      box-shadow:
+        0 6px 18px
+        rgba(0,87,168,.32);
+    }
+
+    .button-secondary {
+      color: var(--nivea-deep);
+
+      background: #FFFFFF;
+
+      border:
+        1px solid
+        var(--hairline);
+    }
+
+    .button-secondary:hover {
+      border-color: #BFD3E6;
+
+      background: #F8FAFC;
+    }
+
+    /* =====================================================
+       STATS
+    ===================================================== */
+
+    .stats {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 10px;
+
+      margin-bottom: 2.2rem;
+    }
+
+    .stat {
+      background: var(--paper);
+
+      border:
+        1px solid
+        var(--hairline);
+
+      border-radius:
+        var(--r-md);
+
+      padding:
+        1rem 1.1rem;
+    }
+
+    .stat-num {
+      font-family:
+        'Space Grotesk',
+        sans-serif;
+
+      font-size: 22px;
+      font-weight: 700;
+
+      color: var(--nivea-deep);
+    }
+
+    .stat-label {
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size: 9.5px;
+
+      color: var(--muted);
+
+      letter-spacing: .06em;
+
+      text-transform: uppercase;
+
+      margin-top: .3rem;
+    }
+
+    /* =====================================================
+       SECTIONS
+    ===================================================== */
+
+    .section-head {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      margin-bottom: 1rem;
+    }
+
+    .section-label {
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size: 10.5px;
+      font-weight: 600;
+
+      letter-spacing: .1em;
+
+      text-transform: uppercase;
+
+      color: var(--muted);
+    }
+
+    .section-rule {
+      flex: 1;
+
+      height: 1px;
+
+      background:
+        var(--hairline);
+    }
+
+    /* =====================================================
+       FILTERS
+    ===================================================== */
+
+    .filter-card {
+      background: var(--paper);
+
+      border:
+        1px solid
+        var(--hairline);
+
+      border-radius:
+        var(--r-lg);
+
+      padding:
+        1.15rem 1.2rem;
+
+      margin-bottom:
+        1.5rem;
+    }
+
+    .filters {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: .8rem;
+    }
+
+    .filter-group label {
+      display: block;
+
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size: 9px;
+      font-weight: 600;
+
+      color: var(--muted);
+
+      text-transform: uppercase;
+
+      letter-spacing: .05em;
+
+      margin-bottom: .4rem;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      width: 100%;
+
+      height: 39px;
+
+      padding:
+        0 .7rem;
+
+      background:
+        #FFFFFF;
+
+      border:
+        1px solid
+        var(--hairline);
+
+      border-radius:
+        8px;
+
+      color:
+        var(--ink);
+
+      font-family:
+        'Inter',
+        sans-serif;
+
+      font-size:
+        12px;
+
+      outline:
+        none;
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      border-color:
+        var(--nivea);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(0,87,168,.07);
+    }
+
+    .filter-actions {
+      display: flex;
+
+      justify-content:
+        flex-end;
+
+      margin-top:
+        .9rem;
+    }
+
+    .clear-filters {
+      border:
+        none;
+
+      background:
+        transparent;
+
+      color:
+        var(--nivea);
+
+      font-size:
+        11.5px;
+
+      font-weight:
+        600;
+
+      cursor:
+        pointer;
+    }
+
+    /* =====================================================
+       TABLE
+    ===================================================== */
+
+    .table-card {
+      background:
+        var(--paper);
+
+      border:
+        1px solid
+        var(--hairline);
+
+      border-radius:
+        var(--r-lg);
+
+      overflow:
+        hidden;
+    }
+
+    .table-head {
+      padding:
+        1rem 1.2rem;
+
+      display:
+        flex;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        center;
+
+      gap:
+        1rem;
+
+      border-bottom:
+        1px solid
+        var(--hairline);
+    }
+
+    .table-title {
+      font-family:
+        'Space Grotesk',
+        sans-serif;
+
+      color:
+        var(--nivea-deep);
+
+      font-size:
+        14px;
+
+      font-weight:
+        700;
+    }
+
+    .row-count {
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      color:
+        var(--muted);
+
+      font-size:
+        9.5px;
+
+      text-transform:
+        uppercase;
+    }
+
+    .table-scroll {
+      width:
+        100%;
+
+      overflow-x:
+        auto;
+    }
+
+    table {
+      width:
+        100%;
+
+      border-collapse:
+        collapse;
+
+      min-width:
+        900px;
+    }
+
+    th {
+      text-align:
+        left;
+
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size:
+        9px;
+
+      text-transform:
+        uppercase;
+
+      letter-spacing:
+        .04em;
+
+      color:
+        var(--muted);
+
+      background:
+        #F7F9FC;
+
+      padding:
+        .8rem .85rem;
+
+      border-bottom:
+        1px solid
+        var(--hairline);
+
+      white-space:
+        nowrap;
+    }
+
+    td {
+      padding:
+        .82rem .85rem;
+
+      font-size:
+        11.5px;
+
+      color:
+        var(--steel);
+
+      border-bottom:
+        1px solid
+        #EDF1F5;
+
+      vertical-align:
+        middle;
+    }
+
+    tbody tr {
+      cursor:
+        pointer;
+
+      transition:
+        background .12s;
+    }
+
+    tbody tr:hover {
+      background:
+        #F7FAFD;
+    }
+
+    tbody tr:last-child td {
+      border-bottom:
+        none;
+    }
+
+    .td-main {
+      color:
+        var(--ink);
+
+      font-weight:
+        600;
+    }
+
+    .pill {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      border-radius:
+        20px;
+
+      padding:
+        4px 9px;
+
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size:
+        8.5px;
+
+      font-weight:
+        600;
+
+      white-space:
+        nowrap;
+
+      background:
+        var(--canvas);
+    }
+
+    .pill-hs {
+      background:
+        #EAF3FB;
+
+      color:
+        #0057A8;
+    }
+
+    .pill-pp {
+      background:
+        #F2EDF9;
+
+      color:
+        #654399;
+    }
+
+    .general {
+      font-weight:
+        700;
+
+      color:
+        var(--nivea);
+    }
+
+    .info-text {
+      max-width:
+        245px;
+
+      overflow:
+        hidden;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+    /* =====================================================
+       STATES
+    ===================================================== */
+
+    .state-box {
+      padding:
+        3.5rem 1.5rem;
+
+      text-align:
+        center;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12.5px;
+    }
+
+    .state-icon {
+      font-size:
+        28px;
+
+      margin-bottom:
+        .8rem;
+    }
+
+    .state-title {
+      font-family:
+        'Space Grotesk',
+        sans-serif;
+
+      font-size:
+        15px;
+
+      color:
+        var(--nivea-deep);
+
+      font-weight:
+        700;
+
+      margin-bottom:
+        .35rem;
+    }
+
+    /* =====================================================
+       MODAL
+    ===================================================== */
+
+    .modal-overlay {
+      position:
+        fixed;
+
+      inset:
+        0;
+
+      background:
+        rgba(0, 28, 54, .55);
+
+      z-index:
+        999;
+
+      display:
+        none;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      padding:
+        1rem;
+    }
+
+    .modal-overlay.open {
+      display:
+        flex;
+    }
+
+    .modal {
+      width:
+        100%;
+
+      max-width:
+        700px;
+
+      max-height:
+        90vh;
+
+      overflow-y:
+        auto;
+
+      background:
+        #FFFFFF;
+
+      border-radius:
+        18px;
+
+      box-shadow:
+        0 24px 70px
+        rgba(0,0,0,.25);
+    }
+
+    .modal-header {
+      padding:
+        1.25rem 1.35rem;
+
+      border-bottom:
+        1px solid
+        var(--hairline);
+
+      display:
+        flex;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        flex-start;
+
+      gap:
+        1rem;
+    }
+
+    .modal-eyebrow {
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size:
+        9px;
+
+      text-transform:
+        uppercase;
+
+      letter-spacing:
+        .07em;
+
+      color:
+        var(--nivea);
+
+      font-weight:
+        700;
+
+      margin-bottom:
+        .35rem;
+    }
+
+    .modal-title {
+      font-family:
+        'Space Grotesk',
+        sans-serif;
+
+      color:
+        var(--nivea-deep);
+
+      font-size:
+        18px;
+
+      font-weight:
+        700;
+    }
+
+    .modal-close {
+      width:
+        32px;
+
+      height:
+        32px;
+
+      border:
+        none;
+
+      border-radius:
+        8px;
+
+      background:
+        var(--canvas);
+
+      color:
+        var(--muted);
+
+      cursor:
+        pointer;
+
+      font-size:
+        18px;
+
+      flex-shrink:
+        0;
+    }
+
+    .modal-body {
+      padding:
+        1.3rem 1.35rem
+        1.5rem;
+    }
+
+    .detail-grid {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
+      gap:
+        .75rem;
+
+      margin-bottom:
+        1.3rem;
+    }
+
+    .detail-box {
+      background:
+        #F7F9FC;
+
+      border:
+        1px solid
+        var(--hairline);
+
+      border-radius:
+        10px;
+
+      padding:
+        .8rem;
+    }
+
+    .detail-label {
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size:
+        8.5px;
+
+      text-transform:
+        uppercase;
+
+      color:
+        var(--muted);
+
+      letter-spacing:
+        .05em;
+
+      margin-bottom:
+        .3rem;
+    }
+
+    .detail-value {
+      font-size:
+        12px;
+
+      color:
+        var(--ink);
+
+      font-weight:
+        600;
+
+      line-height:
+        1.4;
+    }
+
+    .modal-section {
+      margin-top:
+        1.25rem;
+    }
+
+    .modal-section-title {
+      font-family:
+        'Space Grotesk',
+        sans-serif;
+
+      font-size:
+        13px;
+
+      font-weight:
+        700;
+
+      color:
+        var(--nivea-deep);
+
+      margin-bottom:
+        .55rem;
+    }
+
+    .comment-box {
+      background:
+        #F7F9FC;
+
+      border:
+        1px solid
+        var(--hairline);
+
+      border-radius:
+        10px;
+
+      padding:
+        .9rem;
+
+      color:
+        var(--steel);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.6;
+
+      white-space:
+        pre-wrap;
+    }
+
+    .photos-grid {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(135px, 1fr)
+        );
+
+      gap:
+        .75rem;
+    }
+
+    .photo-link {
+      min-height:
+        90px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      text-align:
+        center;
+
+      padding:
+        .8rem;
+
+      border-radius:
+        10px;
+
+      background:
+        var(--canvas);
+
+      border:
+        1px solid
+        var(--hairline);
+
+      text-decoration:
+        none;
+
+      color:
+        var(--nivea);
+
+      font-size:
+        11px;
+
+      font-weight:
+        600;
+
+      transition:
+        background .15s,
+        border-color .15s;
+    }
+
+    .photo-link:hover {
+      background:
+        #E3EEF8;
+
+      border-color:
+        #B7CEE2;
+    }
+
+    /* =====================================================
+       FOOTER
+    ===================================================== */
+
+    .footer {
+      border-top:
+        1px solid
+        var(--hairline);
+
+      text-align:
+        center;
+
+      padding:
+        1.3rem;
+
+      font-family:
+        'IBM Plex Mono',
+        monospace;
+
+      font-size:
+        10px;
+
+      color:
+        var(--muted);
+
+      letter-spacing:
+        .04em;
+    }
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media(max-width: 900px) {
+
+      .filters {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .detail-grid {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+    }
+
+    @media(max-width: 640px) {
+
+      .topbar {
+        padding:
+          .9rem 1rem;
+      }
+
+      .tb-right {
+        display:
+          none;
+      }
+
+      .page {
+        padding:
+          2rem 1rem
+          1.5rem;
+      }
+
+      .title {
+        font-size:
+          23px;
+      }
+
+      .stats {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .filters {
+        grid-template-columns:
+          1fr;
+      }
+
+      .header-actions {
+        width:
+          100%;
+      }
+
+      .header-actions .button {
+        flex:
+          1;
+      }
+
+      .detail-grid {
+        grid-template-columns:
+          1fr;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+  <!-- =================================================
+       TOPBAR
+  ================================================== -->
+
+  <div class="topbar">
+
+    <div class="tb-left">
+
+      <div class="tb-mark">
+
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M12 2L4 6V12C4 17 7.5 20.5 12 22C16.5 20.5 20 17 20 12V6L12 2Z"
+            stroke="#fff"
+            stroke-width="1.6"
+          />
+        </svg>
+
+      </div>
+
+      <div>
+
+        <div class="tb-brand">
+          Reportes · Sales Operations
+        </div>
+
+        <div class="tb-sub">
+          Beiersdorf · Nivea
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="tb-right">
+      Información PDV
+    </div>
+
+  </div>
+
+  <div class="shelf-ticks"></div>
+
+
+  <!-- =================================================
+       PAGE
+  ================================================== -->
+
+  <div class="page">
+
+    <div class="eyebrow">
+      Ejecución · Punto de Venta
+    </div>
+
+    <div class="title-area">
+
+      <div>
+
+        <div class="title">
+          Reportes desde PDV
+        </div>
+
+        <div class="subtitle">
+          Consolidado de información relevante reportada
+          desde los puntos de venta.
+        </div>
+
+      </div>
+
+      <div class="header-actions">
+
+        <a
+          href="index.html"
+          class="button button-secondary"
+        >
+          ← Centro de Reportes
+        </a>
+
+        <a
+          href="https://script.google.com/macros/s/AKfycbyu29jMt0bRBIGxovn1lZ_OwGy-cAVqbASVTB_koQfH0mE0Nbvac4Zd0eosBjXubAz0/exec"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="button button-primary"
+        >
+          ＋ Registrar información
+        </a>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         STATS
+    ================================================== -->
+
+    <div class="stats">
+
+      <div class="stat">
+
+        <div
+          class="stat-num"
+          id="statReports"
+        >
+          —
+        </div>
+
+        <div class="stat-label">
+          Reportes
+        </div>
+
+      </div>
+
+      <div class="stat">
+
+        <div
+          class="stat-num"
+          id="statRetailers"
+        >
+          —
+        </div>
+
+        <div class="stat-label">
+          Retailers
+        </div>
+
+      </div>
+
+      <div class="stat">
+
+        <div
+          class="stat-num"
+          id="statRooms"
+        >
+          —
+        </div>
+
+        <div class="stat-label">
+          Salas afectadas
+        </div>
+
+      </div>
+
+      <div class="stat">
+
+        <div
+          class="stat-num"
+          id="statGeneral"
+        >
+          —
+        </div>
+
+        <div class="stat-label">
+          Reportes generales
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         FILTERS
+    ================================================== -->
+
+    <div class="section-head">
+
+      <div class="section-label">
+        Filtros
+      </div>
+
+      <div class="section-rule"></div>
+
+    </div>
+
+
+    <div class="filter-card">
+
+      <div class="filters">
+
+        <div class="filter-group">
+
+          <label>
+            Desde
+          </label>
+
+          <input
+            type="date"
+            id="filterDateFrom"
+          >
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Hasta
+          </label>
+
+          <input
+            type="date"
+            id="filterDateTo"
+          >
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Retailer
+          </label>
+
+          <select id="filterRetailer">
+
+            <option value="">
+              Todos
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Sala
+          </label>
+
+          <input
+            type="text"
+            id="filterRoom"
+            placeholder="Ej: UN135"
+          >
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Supervisor
+          </label>
+
+          <select id="filterSupervisor">
+
+            <option value="">
+              Todos
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Tipo
+          </label>
+
+          <select id="filterType">
+
+            <option value="">
+              Todos
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Categoría
+          </label>
+
+          <select id="filterCategory">
+
+            <option value="">
+              Todas
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Información
+          </label>
+
+          <select id="filterInformation">
+
+            <option value="">
+              Todas
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+      <div class="filter-actions">
+
+        <button
+          class="clear-filters"
+          onclick="clearFilters()"
+        >
+          Limpiar filtros
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TABLE
+    ================================================== -->
+
+    <div class="section-head">
+
+      <div class="section-label">
+        Detalle
+      </div>
+
+      <div class="section-rule"></div>
+
+    </div>
+
+
+    <div class="table-card">
+
+      <div class="table-head">
+
+        <div class="table-title">
+          Información reportada
+        </div>
+
+        <div
+          class="row-count"
+          id="rowCount"
+        >
+          Cargando...
+        </div>
+
+      </div>
+
+
+      <div
+        id="loadingState"
+        class="state-box"
+      >
+
+        <div class="state-icon">
+          ⏳
+        </div>
+
+        <div class="state-title">
+          Cargando información
+        </div>
+
+        <div>
+          Estamos leyendo los reportes desde Google Sheets.
+        </div>
+
+      </div>
+
+
+      <div
+        id="errorState"
+        class="state-box"
+        style="display:none;"
+      >
+
+        <div class="state-icon">
+          ⚠️
+        </div>
+
+        <div class="state-title">
+          No se pudo cargar la información
+        </div>
+
+        <div id="errorMessage">
+          Revisa la conexión con Google Sheets.
+        </div>
+
+      </div>
+
+
+      <div
+        id="emptyState"
+        class="state-box"
+        style="display:none;"
+      >
+
+        <div class="state-icon">
+          🔎
+        </div>
+
+        <div class="state-title">
+          No hay resultados
+        </div>
+
+        <div>
+          No existen reportes que coincidan
+          con los filtros seleccionados.
+        </div>
+
+      </div>
+
+
+      <div
+        id="tableContainer"
+        class="table-scroll"
+        style="display:none;"
+      >
+
+        <table>
+
+          <thead>
+
+            <tr>
+
+              <th>Fecha</th>
+
+              <th>Retailer</th>
+
+              <th>Sala</th>
+
+              <th>Supervisor</th>
+
+              <th>Tipo</th>
+
+              <th>Categoría</th>
+
+              <th>Información</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody id="tableBody"></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =================================================
+       MODAL
+  ================================================== -->
+
+  <div
+    id="modalOverlay"
+    class="modal-overlay"
+    onclick="overlayClick(event)"
+  >
+
+    <div class="modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <div
+            class="modal-eyebrow"
+            id="modalEyebrow"
+          >
+            Reporte PDV
+          </div>
+
+          <div
+            class="modal-title"
+            id="modalTitle"
+          >
+            Detalle
+          </div>
+
+        </div>
+
+        <button
+          class="modal-close"
+          onclick="closeModal()"
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="modal-body">
+
+        <div
+          class="detail-grid"
+          id="modalDetails"
+        ></div>
+
+
+        <div class="modal-section">
+
+          <div class="modal-section-title">
+            Información reportada
+          </div>
+
+          <div
+            class="comment-box"
+            id="modalInformation"
+          ></div>
+
+        </div>
+
+
+        <div class="modal-section">
+
+          <div class="modal-section-title">
+            Comentario
+          </div>
+
+          <div
+            class="comment-box"
+            id="modalComment"
+          ></div>
+
+        </div>
+
+
+        <div
+          class="modal-section"
+          id="photosSection"
+        >
+
+          <div class="modal-section-title">
+            Fotografías
+          </div>
+
+          <div
+            class="photos-grid"
+            id="modalPhotos"
+          ></div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =================================================
+       FOOTER
+  ================================================== -->
+
+  <div class="footer">
+    Beiersdorf · Nivea · Sales Operations · 2026
+  </div>
+
+
+  <script>
+
+    /*****************************************************
+     * GOOGLE SHEETS
+     *****************************************************/
+
+    const CSV_URL =
+      'https://docs.google.com/spreadsheets/d/17v4hMimYYvrwsKvxPpwvIII5vphY3EHQGcTPa8ho75Q/gviz/tq?tqx=out:csv&sheet=Informaci%C3%B3n%20PDV';
+
+
+    /*****************************************************
+     * DATA
+     *****************************************************/
+
+    let allReports = [];
+    let filteredReports = [];
+
+
+    /*****************************************************
+     * START
+     *****************************************************/
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      () => {
+
+        bindFilters();
+
+        loadReports();
+
+      }
+    );
+
+
+    /*****************************************************
+     * LOAD GOOGLE SHEETS
+     *****************************************************/
+
+    function loadReports() {
+
+      showLoading();
+
+      Papa.parse(
+        CSV_URL,
+        {
+
+          download: true,
+
+          header: true,
+
+          skipEmptyLines: true,
+
+          complete: result => {
+
+            try {
+
+              processReports(
+                result.data
+              );
+
+            } catch (error) {
+
+              console.error(
+                error
+              );
+
+              showError(
+                'La estructura de la información recibida no es válida.'
+              );
+
+            }
+
+          },
+
+          error: error => {
+
+            console.error(
+              error
+            );
+
+            showError(
+              'No fue posible leer los datos desde Google Sheets.'
+            );
+
+          }
+
+        }
+      );
+
+    }
+
+
+    /*****************************************************
+     * PROCESS
+     *****************************************************/
+
+    function processReports(rows) {
+
+      allReports =
+        rows
+          .map(
+            (row, index) => ({
+
+              id:
+                index,
+
+              fecha:
+                clean(
+                  row['Fecha']
+                ),
+
+              retailer:
+                clean(
+                  row['Retailer']
+                ),
+
+              sala:
+                clean(
+                  row['Sala']
+                ),
+
+              supervisor:
+                clean(
+                  row['Supervisor']
+                ),
+
+              tipo:
+                clean(
+                  row['Tipo']
+                ),
+
+              categoria:
+                clean(
+                  row['Categoría']
+                ),
+
+              informacion:
+                clean(
+                  row['Información']
+                ),
+
+              comentario:
+                clean(
+                  row['Comentario']
+                ),
+
+              fotografias:
+                clean(
+                  row['Fotografías']
+                )
+
+            })
+          )
+          .filter(
+            report =>
+              report.fecha ||
+              report.retailer ||
+              report.sala
+          );
+
+
+      allReports.sort(
+        (a, b) =>
+          dateValue(b.fecha) -
+          dateValue(a.fecha)
+      );
+
+
+      populateFilters();
+
+      applyFilters();
+
+    }
+
+
+    /*****************************************************
+     * FILTER EVENTS
+     *****************************************************/
+
+    function bindFilters() {
+
+      const ids = [
+
+        'filterDateFrom',
+        'filterDateTo',
+        'filterRetailer',
+        'filterRoom',
+        'filterSupervisor',
+        'filterType',
+        'filterCategory',
+        'filterInformation'
+
+      ];
+
+      ids.forEach(
+        id => {
+
+          const element =
+            document.getElementById(
+              id
+            );
+
+          element.addEventListener(
+            'input',
+            applyFilters
+          );
+
+          element.addEventListener(
+            'change',
+            applyFilters
+          );
+
+        }
+      );
+
+    }
+
+
+    /*****************************************************
+     * FILTER OPTIONS
+     *****************************************************/
+
+    function populateFilters() {
+
+      populateSelect(
+        'filterRetailer',
+        uniqueValues(
+          'retailer'
+        )
+      );
+
+      populateSelect(
+        'filterSupervisor',
+        uniqueValues(
+          'supervisor'
+        )
+      );
+
+      populateSelect(
+        'filterType',
+        uniqueValues(
+          'tipo'
+        )
+      );
+
+      populateSelect(
+        'filterCategory',
+        uniqueValues(
+          'categoria'
+        )
+      );
+
+      populateSelect(
+        'filterInformation',
+        uniqueValues(
+          'informacion'
+        )
+      );
+
+    }
+
+
+    function populateSelect(
+      id,
+      values
+    ) {
+
+      const select =
+        document.getElementById(
+          id
+        );
+
+      const placeholder =
+        select.options[0].cloneNode(
+          true
+        );
+
+      select.innerHTML = '';
+
+      select.appendChild(
+        placeholder
+      );
+
+      values.forEach(
+        value => {
+
+          const option =
+            document.createElement(
+              'option'
+            );
+
+          option.value =
+            value;
+
+          option.textContent =
+            value;
+
+          select.appendChild(
+            option
+          );
+
+        }
+      );
+
+    }
+
+
+    function uniqueValues(
+      property
+    ) {
+
+      return [
+
+        ...new Set(
+
+          allReports
+            .map(
+              report =>
+                report[property]
+            )
+            .filter(
+              Boolean
+            )
+
+        )
+
+      ].sort(
+        (a, b) =>
+          a.localeCompare(
+            b,
+            'es'
+          )
+      );
+
+    }
+
+
+    /*****************************************************
+     * APPLY FILTERS
+     *****************************************************/
+
+    function applyFilters() {
+
+      const dateFrom =
+        document.getElementById(
+          'filterDateFrom'
+        ).value;
+
+      const dateTo =
+        document.getElementById(
+          'filterDateTo'
+        ).value;
+
+      const retailer =
+        document.getElementById(
+          'filterRetailer'
+        ).value;
+
+      const room =
+        normalize(
+          document.getElementById(
+            'filterRoom'
+          ).value
+        );
+
+      const supervisor =
+        document.getElementById(
+          'filterSupervisor'
+        ).value;
+
+      const type =
+        document.getElementById(
+          'filterType'
+        ).value;
+
+      const category =
+        document.getElementById(
+          'filterCategory'
+        ).value;
+
+      const information =
+        document.getElementById(
+          'filterInformation'
+        ).value;
+
+
+      filteredReports =
+        allReports.filter(
+          report => {
+
+            const reportDate =
+              dateValue(
+                report.fecha
+              );
+
+
+            if (
+              dateFrom &&
+              reportDate <
+              dateValue(
+                dateFrom
+              )
+            ) {
+
+              return false;
+
+            }
+
+
+            if (
+              dateTo &&
+              reportDate >
+              endOfDayValue(
+                dateTo
+              )
+            ) {
+
+              return false;
+
+            }
+
+
+            if (
+              retailer &&
+              report.retailer !==
+              retailer
+            ) {
+
+              return false;
+
+            }
+
+
+            if (
+              room &&
+              !normalize(
+                report.sala
+              ).includes(
+                room
+              )
+            ) {
+
+              return false;
+
+            }
+
+
+            if (
+              supervisor &&
+              report.supervisor !==
+              supervisor
+            ) {
+
+              return false;
+
+            }
+
+
+            if (
+              type &&
+              report.tipo !==
+              type
+            ) {
+
+              return false;
+
+            }
+
+
+            if (
+              category &&
+              report.categoria !==
+              category
+            ) {
+
+              return false;
+
+            }
+
+
+            if (
+              information &&
+              report.informacion !==
+              information
+            ) {
+
+              return false;
+
+            }
+
+
+            return true;
+
+          }
+        );
+
+
+      render();
+
+    }
+
+
+    /*****************************************************
+     * CLEAR FILTERS
+     *****************************************************/
+
+    function clearFilters() {
+
+      document.getElementById(
+        'filterDateFrom'
+      ).value = '';
+
+      document.getElementById(
+        'filterDateTo'
+      ).value = '';
+
+      document.getElementById(
+        'filterRetailer'
+      ).value = '';
+
+      document.getElementById(
+        'filterRoom'
+      ).value = '';
+
+      document.getElementById(
+        'filterSupervisor'
+      ).value = '';
+
+      document.getElementById(
+        'filterType'
+      ).value = '';
+
+      document.getElementById(
+        'filterCategory'
+      ).value = '';
+
+      document.getElementById(
+        'filterInformation'
+      ).value = '';
+
+      applyFilters();
+
+    }
+
+
+    /*****************************************************
+     * RENDER
+     *****************************************************/
+
+    function render() {
+
+      renderStats();
+
+      renderTable();
+
+    }
+
+
+    /*****************************************************
+     * STATS
+     *****************************************************/
+
+    function renderStats() {
+
+      const retailers =
+        new Set(
+
+          filteredReports
+            .map(
+              report =>
+                report.retailer
+            )
+            .filter(
+              Boolean
+            )
+
+        );
+
+
+      const rooms =
+        new Set(
+
+          filteredReports
+            .map(
+              report =>
+                report.sala
+            )
+            .filter(
+              sala =>
+                sala &&
+                normalize(
+                  sala
+                ) !==
+                'general'
+            )
+
+        );
+
+
+      const generalReports =
+        filteredReports.filter(
+          report =>
+            normalize(
+              report.sala
+            ) ===
+            'general'
+        ).length;
+
+
+      document.getElementById(
+        'statReports'
+      ).textContent =
+        filteredReports.length;
+
+
+      document.getElementById(
+        'statRetailers'
+      ).textContent =
+        retailers.size;
+
+
+      document.getElementById(
+        'statRooms'
+      ).textContent =
+        rooms.size;
+
+
+      document.getElementById(
+        'statGeneral'
+      ).textContent =
+        generalReports;
+
+    }
+
+
+    /*****************************************************
+     * TABLE
+     *****************************************************/
+
+    function renderTable() {
+
+      hideAllStates();
+
+
+      document.getElementById(
+        'rowCount'
+      ).textContent =
+        filteredReports.length +
+        (
+          filteredReports.length === 1
+            ? ' reporte'
+            : ' reportes'
+        );
+
+
+      if (
+        filteredReports.length === 0
+      ) {
+
+        document.getElementById(
+          'emptyState'
+        ).style.display =
+          'block';
+
+        return;
+
+      }
+
+
+      const tbody =
+        document.getElementById(
+          'tableBody'
+        );
+
+      tbody.innerHTML = '';
+
+
+      filteredReports.forEach(
+        report => {
+
+          const tr =
+            document.createElement(
+              'tr'
+            );
+
+
+          tr.addEventListener(
+            'click',
+            () =>
+              openModal(
+                report
+              )
+          );
+
+
+          tr.appendChild(
+            createCell(
+              formatDate(
+                report.fecha
+              )
+            )
+          );
+
+
+          tr.appendChild(
+            createCell(
+              report.retailer,
+              'td-main'
+            )
+          );
+
+
+          const roomCell =
+            createCell(
+              report.sala
+            );
+
+
+          if (
+            normalize(
+              report.sala
+            ) ===
+            'general'
+          ) {
+
+            roomCell.classList.add(
+              'general'
+            );
+
+          }
+
+
+          tr.appendChild(
+            roomCell
+          );
+
+
+          tr.appendChild(
+            createCell(
+              report.supervisor
+            )
+          );
+
+
+          const typeCell =
+            document.createElement(
+              'td'
+            );
+
+
+          const pill =
+            document.createElement(
+              'span'
+            );
+
+
+          pill.className =
+            'pill ' +
+            (
+              report.tipo === 'H&S'
+                ? 'pill-hs'
+                : 'pill-pp'
+            );
+
+
+          pill.textContent =
+            report.tipo ||
+            '—';
+
+
+          typeCell.appendChild(
+            pill
+          );
+
+
+          tr.appendChild(
+            typeCell
+          );
+
+
+          tr.appendChild(
+            createCell(
+              report.categoria
+            )
+          );
+
+
+          tr.appendChild(
+            createCell(
+              report.informacion,
+              'info-text'
+            )
+          );
+
+
+          tbody.appendChild(
+            tr
+          );
+
+        }
+      );
+
+
+      document.getElementById(
+        'tableContainer'
+      ).style.display =
+        'block';
+
+    }
+
+
+    function createCell(
+      value,
+      className
+    ) {
+
+      const td =
+        document.createElement(
+          'td'
+        );
+
+
+      td.textContent =
+        value ||
+        '—';
+
+
+      if (className) {
+
+        td.className =
+          className;
+
+      }
+
+
+      return td;
+
+    }
+
+
+    /*****************************************************
+     * MODAL
+     *****************************************************/
+
+    function openModal(
+      report
+    ) {
+
+      document.getElementById(
+        'modalEyebrow'
+      ).textContent =
+        formatDate(
+          report.fecha
+        );
+
+
+      document.getElementById(
+        'modalTitle'
+      ).textContent =
+        (
+          report.retailer ||
+          'Reporte'
+        ) +
+        ' · ' +
+        (
+          report.sala ||
+          'Sin sala'
+        );
+
+
+      const detailContainer =
+        document.getElementById(
+          'modalDetails'
+        );
+
+
+      detailContainer.innerHTML = '';
+
+
+      const details = [
+
+        [
+          'Retailer',
+          report.retailer
+        ],
+
+        [
+          'Sala',
+          report.sala
+        ],
+
+        [
+          'Supervisor',
+          report.supervisor
+        ],
+
+        [
+          'Tipo',
+          report.tipo
+        ],
+
+        [
+          'Categoría',
+          report.categoria
+        ],
+
+        [
+          'Fecha',
+          formatDate(
+            report.fecha
+          )
+        ]
+
+      ];
+
+
+      details.forEach(
+        detail => {
+
+          const box =
+            document.createElement(
+              'div'
+            );
+
+          box.className =
+            'detail-box';
+
+
+          const label =
+            document.createElement(
+              'div'
+            );
+
+          label.className =
+            'detail-label';
+
+          label.textContent =
+            detail[0];
+
+
+          const value =
+            document.createElement(
+              'div'
+            );
+
+          value.className =
+            'detail-value';
+
+          value.textContent =
+            detail[1] ||
+            '—';
+
+
+          box.appendChild(
+            label
+          );
+
+
+          box.appendChild(
+            value
+          );
+
+
+          detailContainer.appendChild(
+            box
+          );
+
+        }
+      );
+
+
+      document.getElementById(
+        'modalInformation'
+      ).textContent =
+        report.informacion ||
+        'Sin información registrada.';
+
+
+      document.getElementById(
+        'modalComment'
+      ).textContent =
+        report.comentario ||
+        'Sin comentario adicional.';
+
+
+      renderPhotos(
+        report.fotografias
+      );
+
+
+      document.getElementById(
+        'modalOverlay'
+      ).classList.add(
+        'open'
+      );
+
+
+      document.body.style.overflow =
+        'hidden';
+
+    }
+
+
+    /*****************************************************
+     * PHOTOS
+     *****************************************************/
+
+    function renderPhotos(
+      rawPhotos
+    ) {
+
+      const section =
+        document.getElementById(
+          'photosSection'
+        );
+
+
+      const container =
+        document.getElementById(
+          'modalPhotos'
+        );
+
+
+      container.innerHTML = '';
+
+
+      const photos =
+        extractUrls(
+          rawPhotos
+        );
+
+
+      if (
+        photos.length === 0
+      ) {
+
+        section.style.display =
+          'none';
+
+        return;
+
+      }
+
+
+      section.style.display =
+        'block';
+
+
+      photos.forEach(
+        (url, index) => {
+
+          const link =
+            document.createElement(
+              'a'
+            );
+
+
+          link.className =
+            'photo-link';
+
+
+          link.href =
+            url;
+
+
+          link.target =
+            '_blank';
+
+
+          link.rel =
+            'noopener noreferrer';
+
+
+          link.textContent =
+            '📷 Ver fotografía ' +
+            (
+              index + 1
+            );
+
+
+          container.appendChild(
+            link
+          );
+
+        }
+      );
+
+    }
+
+
+    function closeModal() {
+
+      document.getElementById(
+        'modalOverlay'
+      ).classList.remove(
+        'open'
+      );
+
+
+      document.body.style.overflow =
+        '';
+
+    }
+
+
+    function overlayClick(
+      event
+    ) {
+
+      if (
+        event.target.id ===
+        'modalOverlay'
+      ) {
+
+        closeModal();
+
+      }
+
+    }
+
+
+    document.addEventListener(
+      'keydown',
+      event => {
+
+        if (
+          event.key ===
+          'Escape'
+        ) {
+
+          closeModal();
+
+        }
+
+      }
+    );
+
+
+    /*****************************************************
+     * STATES
+     *****************************************************/
+
+    function hideAllStates() {
+
+      document.getElementById(
+        'loadingState'
+      ).style.display =
+        'none';
+
+
+      document.getElementById(
+        'errorState'
+      ).style.display =
+        'none';
+
+
+      document.getElementById(
+        'emptyState'
+      ).style.display =
+        'none';
+
+
+      document.getElementById(
+        'tableContainer'
+      ).style.display =
+        'none';
+
+    }
+
+
+    function showLoading() {
+
+      hideAllStates();
+
+
+      document.getElementById(
+        'loadingState'
+      ).style.display =
+        'block';
+
+
+      document.getElementById(
+        'rowCount'
+      ).textContent =
+        'Cargando...';
+
+    }
+
+
+    function showError(
+      message
+    ) {
+
+      hideAllStates();
+
+
+      document.getElementById(
+        'errorState'
+      ).style.display =
+        'block';
+
+
+      document.getElementById(
+        'errorMessage'
+      ).textContent =
+        message;
+
+
+      document.getElementById(
+        'rowCount'
+      ).textContent =
+        'Sin conexión';
+
+
+      document.getElementById(
+        'statReports'
+      ).textContent =
+        '—';
+
+
+      document.getElementById(
+        'statRetailers'
+      ).textContent =
+        '—';
+
+
+      document.getElementById(
+        'statRooms'
+      ).textContent =
+        '—';
+
+
+      document.getElementById(
+        'statGeneral'
+      ).textContent =
+        '—';
+
+    }
+
+
+    /*****************************************************
+     * UTILITIES
+     *****************************************************/
+
+    function clean(
+      value
+    ) {
+
+      if (
+        value === null ||
+        value === undefined
+      ) {
+
+        return '';
+
+      }
+
+
+      return String(
+        value
+      ).trim();
+
+    }
+
+
+    function normalize(
+      value
+    ) {
+
+      return clean(
+        value
+      )
+        .toLowerCase()
+        .normalize(
+          'NFD'
+        )
+        .replace(
+          /[\u0300-\u036f]/g,
+          ''
+        );
+
+    }
+
+
+    function extractUrls(
+      text
+    ) {
+
+      if (!text) {
+
+        return [];
+
+      }
+
+
+      const matches =
+        String(text).match(
+          /https?:\/\/[^\s,;]+/g
+        );
+
+
+      return matches ||
+        [];
+
+    }
+
+
+    function dateValue(
+      value
+    ) {
+
+      const date =
+        parseDate(
+          value
+        );
+
+
+      if (!date) {
+
+        return 0;
+
+      }
+
+
+      return date.getTime();
+
+    }
+
+
+    function endOfDayValue(
+      value
+    ) {
+
+      const date =
+        parseDate(
+          value
+        );
+
+
+      if (!date) {
+
+        return 0;
+
+      }
+
+
+      date.setHours(
+        23,
+        59,
+        59,
+        999
+      );
+
+
+      return date.getTime();
+
+    }
+
+
+    function parseDate(
+      value
+    ) {
+
+      if (!value) {
+
+        return null;
+
+      }
+
+
+      const text =
+        String(
+          value
+        ).trim();
+
+
+      /*
+       * yyyy-mm-dd
+       */
+
+      const isoMatch =
+        text.match(
+          /^(\d{4})-(\d{1,2})-(\d{1,2})/
+        );
+
+
+      if (isoMatch) {
+
+        return new Date(
+          Number(
+            isoMatch[1]
+          ),
+          Number(
+            isoMatch[2]
+          ) - 1,
+          Number(
+            isoMatch[3]
+          )
+        );
+
+      }
+
+
+      /*
+       * dd/mm/yyyy
+       */
+
+      const latamMatch =
+        text.match(
+          /^(\d{1,2})\/(\d{1,2})\/(\d{4})/
+        );
+
+
+      if (latamMatch) {
+
+        return new Date(
+          Number(
+            latamMatch[3]
+          ),
+          Number(
+            latamMatch[2]
+          ) - 1,
+          Number(
+            latamMatch[1]
+          )
+        );
+
+      }
+
+
+      const nativeDate =
+        new Date(
+          text
+        );
+
+
+      if (
+        !isNaN(
+          nativeDate.getTime()
+        )
+      ) {
+
+        return nativeDate;
+
+      }
+
+
+      return null;
+
+    }
+
+
+    function formatDate(
+      value
+    ) {
+
+      const date =
+        parseDate(
+          value
+        );
+
+
+      if (!date) {
+
+        return value ||
+          '—';
+
+      }
+
+
+      return date.toLocaleDateString(
+        'es-CL',
+        {
+
+          day:
+            '2-digit',
+
+          month:
+            '2-digit',
+
+          year:
+            'numeric'
+
+        }
+      );
+
+    }
+
+  </script>
+
+</body>
+
+</html>

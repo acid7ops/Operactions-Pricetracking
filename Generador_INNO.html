@@ -166,9 +166,9 @@
     .metric-line{font-size:11px;color:#53647E;margin:2px 0;text-align:center;white-space:nowrap}
     .metric-line.gap{font-weight:700}
     .msl{font-size:15px;font-weight:800;margin-top:4px;color:var(--nivea)}
-    .msl.red{color:var(--red)}
-    .msl.green{color:var(--green)}
-    .msl.blue{color:var(--nivea)}
+    .msl-value.red{color:var(--red)}
+    .msl-value.green{color:var(--green)}
+    .msl-value.blue{color:var(--nivea)}
     .empty-card{opacity:.45}
 
     .spgr-block{margin-bottom:26px}
@@ -188,6 +188,75 @@
     .spgr-label{display:flex;align-items:center;justify-content:flex-end;text-align:right;min-height:98px;padding-right:8px;font-size:15px;font-weight:800;color:var(--nivea-dark);line-height:1.25}
     .spgr-label .product{font-size:12px;font-weight:600;color:#52627B;display:block;max-width:155px;margin-top:3px}
     .matrix-card{justify-self:center}
+
+    .compact-checks{display:flex!important;gap:7px!important;flex-wrap:wrap;max-height:none!important;overflow:visible!important}
+    .compact-checks label{width:auto!important;min-width:112px;background:#F7FAFD;border:1px solid #DDE6EF;border-radius:8px;padding:7px 9px!important}
+
+    .weekly-spgr-layout{
+      display:grid;
+      grid-template-columns:245px auto;
+      column-gap:28px;
+      align-items:center;
+      justify-content:center;
+      width:max-content;
+      max-width:100%;
+      margin:0 auto 24px;
+    }
+    .weekly-product-side{
+      width:245px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:stretch;
+      gap:14px;
+      align-self:stretch;
+    }
+    .weekly-product-item{
+      display:grid;
+      grid-template-columns:68px minmax(0,1fr);
+      align-items:center;
+      column-gap:12px;
+      width:100%;
+      max-width:245px;
+      text-align:right;
+    }
+    .weekly-product-image{
+      width:58px;
+      height:82px;
+      object-fit:contain;
+      display:block;
+      justify-self:center;
+    }
+    .weekly-product-text{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:flex-end;
+    }
+    .weekly-product-code{
+      font-family:"Aptos Display","Aptos","Segoe UI",Arial,sans-serif;
+      font-size:15px;
+      font-weight:800;
+      color:var(--nivea-dark);
+      line-height:1.15;
+      margin-bottom:3px;
+    }
+    .weekly-product-name{
+      font-family:"Aptos","Segoe UI",Arial,sans-serif;
+      font-size:11px;
+      font-weight:600;
+      color:#52627B;
+      line-height:1.25;
+      max-width:165px;
+    }
+    .weekly-data-side{min-width:0}
+    .weekly-data-side .retailer-block{margin-left:0;margin-right:0}
+    @media(max-width:850px){
+      .weekly-spgr-layout{grid-template-columns:1fr;width:100%}
+      .weekly-product-side{width:100%;flex-direction:row;flex-wrap:wrap;margin-bottom:16px}
+      .weekly-product-item{max-width:245px}
+    }
 
     .spgr-summary{
       display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;
@@ -281,7 +350,7 @@
     <div class="upload-grid">
       <div class="upload-box">
         <strong>Maestro INNO – SPGR</strong>
-        <small>Excel con columnas <b>INNO</b> y <b>SPGR</b>. Opcionalmente puedes pegar una imagen del producto en la misma fila (recomendado: columna C).</small>
+        <small>Excel con columnas <b>INNO</b> y <b>SPGR</b>. Puedes agregar <b>FOTOS</b> en la columna C: se admiten tanto imágenes pegadas/ancladas como la función de Excel <b>Imagen en celda</b>.</small>
         <input id="masterFile" type="file" accept=".xlsx,.xls,.xlsm" />
         <div id="masterStatus" class="status">Sin maestro cargado.</div>
       </div>
@@ -334,10 +403,17 @@
         </div>
       </div>
 
-      <div class="field">
-        <label>Detalle Store Number</label>
-        <label class="detail-toggle"><input id="storeDetailToggle" type="checkbox"> Mostrar tiendas del GAP mostrado</label>
-        <div class="hint">En Automático, corresponde al mayor GAP de cada cuadro.</div>
+      <div class="field wide">
+        <label>Apertura Store Number por GAP ganador</label>
+        <label class="detail-toggle" style="max-width:360px"><input id="storeDetailToggle" type="checkbox"> Mostrar detalle de Store Number</label>
+        <div class="hint" style="margin-top:7px">Elige qué GAP ganador quieres aperturar. Solo se mostrarán las salas de las tarjetas donde ese GAP sea el mayor. Puedes seleccionar más de uno.</div>
+        <div id="storeGapChecks" class="checks compact-checks" style="margin-top:8px">
+          <label><input type="checkbox" value="shown" checked><span>Todos los GAP ganadores</span></label>
+          <label><input type="checkbox" value="backstock"><span>Backstock</span></label>
+          <label><input type="checkbox" value="void"><span>VOID</span></label>
+          <label><input type="checkbox" value="replenishment"><span>Replenishment</span></label>
+          <label><input type="checkbox" value="quiebre"><span>Quiebre</span></label>
+        </div>
       </div>
 
       <div class="field wide">
@@ -461,7 +537,7 @@
       <button id="exportBtn" class="btn btn-secondary" disabled>Exportar PNG</button>
       <button id="copyBtn" class="btn btn-secondary" disabled>Copiar imagen</button>
     </div>
-    <div class="export-hint">Al exportar o copiar, se omiten el título superior y el logo, y el PNG queda con fondo transparente. Si el maestro contiene imágenes convencionales pegadas/ancladas a la fila del SPGR, pueden incluirse automáticamente. Las imágenes creadas con la función moderna de Excel “Imagen en celda” pueden no ser legibles en navegador; para máxima compatibilidad, pega la imagen sobre la celda de la misma fila.</div>
+    <div class="export-hint">Al exportar o copiar, se omiten el título superior y el logo, y el PNG queda con fondo transparente. Si el maestro contiene imágenes en la columna FOTOS, el generador intenta incluirlas automáticamente, tanto si están pegadas/ancladas como si fueron insertadas con “Imagen en celda”.</div>
     <div id="message" class="message"></div>
   </section>
 
@@ -495,10 +571,10 @@
   };
 
   const GAP_META = {
-    backstock: { label:'Backstock', totalLabel:'Backstock', key:'backstock' },
-    void: { label:'VOID', totalLabel:'VOID', key:'void' },
-    replenishment: { label:'Replenishment', totalLabel:'REP', key:'replenishment' },
-    quiebre: { label:'Quiebre', totalLabel:'Quiebre', key:'quiebre' }
+    backstock: { label:'Backstock', shortLabel:'Back.', totalLabel:'Backstock', key:'backstock' },
+    void: { label:'VOID', shortLabel:'VOID', totalLabel:'VOID', key:'void' },
+    replenishment: { label:'Replenishment', shortLabel:'Repl.', totalLabel:'REP', key:'replenishment' },
+    quiebre: { label:'Quiebre', shortLabel:'Quiebre', totalLabel:'Quiebre', key:'quiebre' }
   };
   const GAP_ORDER = ['backstock','void','replenishment','quiebre'];
 
@@ -657,6 +733,73 @@
     return result;
   }
 
+  function normalizeZipPath(baseDir,target){
+    const parts=[];
+    (baseDir+'/'+target).split('/').forEach(part=>{
+      if(!part || part==='.') return;
+      if(part==='..') parts.pop(); else parts.push(part);
+    });
+    return parts.join('/');
+  }
+
+  async function extractInCellImagesByRow(arrayBuffer){
+    // Excel "Place in Cell" stores images as Rich Data. Map sheet row -> media image.
+    const result=new Map();
+    try{
+      const zip=await JSZip.loadAsync(arrayBuffer);
+      const rvPath='xl/richData/rdrichvalue.xml';
+      const relListPath='xl/richData/richValueRel.xml';
+      const relsPath='xl/richData/_rels/richValueRel.xml.rels';
+      if(!zip.file(rvPath) || !zip.file(relListPath) || !zip.file(relsPath)) return result;
+
+      const parser=new DOMParser();
+      const rvDoc=parser.parseFromString(await zip.file(rvPath).async('string'),'application/xml');
+      const relListDoc=parser.parseFromString(await zip.file(relListPath).async('string'),'application/xml');
+      const relsDoc=parser.parseFromString(await zip.file(relsPath).async('string'),'application/xml');
+
+      // Position in richValueRel corresponds to the LocalImageIdentifier stored in each rv.
+      const relSequence=[...relListDoc.getElementsByTagNameNS('*','rel')].map(el=>
+        el.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id') || el.getAttribute('r:id')
+      );
+      const targetByRid=new Map();
+      [...relsDoc.getElementsByTagNameNS('*','Relationship')].forEach(el=>{
+        targetByRid.set(el.getAttribute('Id'),el.getAttribute('Target'));
+      });
+      const rvNodes=[...rvDoc.getElementsByTagNameNS('*','rv')];
+
+      // Look for cells with vm= in worksheet(s). vm is 1-based rich-value metadata index.
+      const sheetPaths=Object.keys(zip.files).filter(x=>/^xl\/worksheets\/sheet\d+\.xml$/i.test(x));
+      for(const sheetPath of sheetPaths){
+        const sheetDoc=parser.parseFromString(await zip.file(sheetPath).async('string'),'application/xml');
+        const cells=[...sheetDoc.getElementsByTagNameNS('*','c')];
+        for(const cell of cells){
+          const vm=Number(cell.getAttribute('vm'));
+          if(!Number.isFinite(vm) || vm<1) continue;
+          const ref=cell.getAttribute('r')||'';
+          const m=ref.match(/^(?:[A-Z]+)(\d+)$/i);
+          if(!m) continue;
+          const excelRow=Number(m[1]);
+          const rv=rvNodes[vm-1];
+          if(!rv) continue;
+          const values=[...rv.getElementsByTagNameNS('*','v')];
+          if(!values.length) continue;
+          const relIndex=Number(values[0].textContent);
+          if(!Number.isFinite(relIndex)) continue;
+          const rid=relSequence[relIndex];
+          const target=targetByRid.get(rid);
+          if(!rid || !target) continue;
+          const mediaPath=normalizeZipPath('xl/richData',target);
+          if(!zip.file(mediaPath)) continue;
+          const b64=await zip.file(mediaPath).async('base64');
+          result.set(excelRow-1,`data:${mimeFromPath(mediaPath)};base64,${b64}`);
+        }
+      }
+    }catch(err){
+      console.warn('No se pudieron extraer imágenes en celda (Rich Data):',err);
+    }
+    return result;
+  }
+
   async function readMaster(file){
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type:'array', dense:true, cellDates:false });
@@ -680,6 +823,8 @@
     if(!map.size) throw new Error('No se encontraron relaciones INNO–SPGR válidas.');
 
     const rowImages=await extractAnchoredImagesByRow(buf);
+    const inCellImages=await extractInCellImagesByRow(buf);
+    for(const [row,src] of inCellImages) rowImages.set(row,src);
     const images=new Map();
     for(let i=1;i<grid.length;i++){
       const spgr=normSPGR(grid[i]?.[spgrIdx]);
@@ -977,8 +1122,19 @@
     return String(a).localeCompare(String(b),'es',{numeric:true,sensitivity:'base'});
   }
 
+  function gapPct1(v){
+    if(v===null || v===undefined || !Number.isFinite(v)) return null;
+    return Math.round(v*1000)/10; // porcentaje redondeado a 1 decimal
+  }
+
   function calcStats(rows, gapChoice='auto', compositeStores=false){
-    if(!rows.length) return {empty:true,rows:0,stores:0,gapStores:0,gapStoreNumbers:[],msl:null,backstock:null,void:null,replenishment:null,quiebre:null,gapKey:'backstock'};
+    if(!rows.length) return {
+      empty:true,rows:0,stores:0,gapStores:0,gapStoreNumbers:[],
+      gapStoresByKey:{},gapStoreNumbersByKey:{},
+      msl:null,backstock:null,void:null,replenishment:null,quiebre:null,
+      gapKey:'backstock',gapKeys:['backstock']
+    };
+
     const stats={
       empty:false,
       rows:rows.length,
@@ -988,19 +1144,46 @@
       replenishment:avg(rows,'replenishment'),
       quiebre:avg(rows,'quiebre')
     };
+
     const keyFn = r => compositeStores ? `${r.retailer}||${r.store}` : r.store;
     stats.stores=new Set(rows.map(keyFn)).size;
-    let gapKey=gapChoice;
+
+    stats.gapStoresByKey={};
+    stats.gapStoreNumbersByKey={};
+    GAP_ORDER.forEach(k=>{
+      const kRows=rows.filter(r => (r[k] ?? 0) > 0);
+      stats.gapStoresByKey[k]=new Set(kRows.map(keyFn)).size;
+      stats.gapStoreNumbersByKey[k]=[...new Set(kRows.map(r=>r.store).filter(Boolean))].sort(naturalStoreSort);
+    });
+
+    let gapKeys=[];
     if(gapChoice==='auto'){
-      gapKey=GAP_ORDER.reduce((best,k)=>{
-        const bv=stats[best] ?? -Infinity, kv=stats[k] ?? -Infinity;
-        return kv>bv ? k : best;
-      },GAP_ORDER[0]);
+      // El usuario ve porcentajes con 1 decimal. Por eso, si dos GAP quedan
+      // iguales después de ese redondeo, ambos se consideran ganadores.
+      const displayed=GAP_ORDER.map(k=>({key:k,pct:gapPct1(stats[k]) ?? -Infinity}));
+      const maxPct=Math.max(...displayed.map(x=>x.pct));
+
+      if(maxPct<=0){
+        gapKeys=[GAP_ORDER[0]];
+      }else{
+        gapKeys=displayed.filter(x=>x.pct===maxPct).map(x=>x.key);
+      }
+    }else{
+      gapKeys=[gapChoice];
     }
-    stats.gapKey=gapKey;
-    const gapRows=rows.filter(r => (r[gapKey] ?? 0) > 0);
-    stats.gapStores=new Set(gapRows.map(keyFn)).size;
-    stats.gapStoreNumbers=[...new Set(gapRows.map(r=>r.store).filter(Boolean))].sort(naturalStoreSort);
+
+    stats.gapKeys=gapKeys;
+    stats.gapKey=gapKeys[0];
+
+    // Si hay empate, "Salas X/Y" representa la unión de salas afectadas
+    // por cualquiera de los GAP ganadores mostrados.
+    const winnerStores=new Set();
+    gapKeys.forEach(k=>{
+      (stats.gapStoreNumbersByKey[k] || []).forEach(s=>winnerStores.add(s));
+    });
+    stats.gapStoreNumbers=[...winnerStores].sort(naturalStoreSort);
+    stats.gapStores=stats.gapStoreNumbers.length;
+
     return stats;
   }
 
@@ -1072,17 +1255,38 @@
     }).join('')}</div>`;
   }
 
+  function weeklyProductSideHTML(spgrs,weeks){
+    return `<aside class="weekly-product-side">${spgrs.map(spgr=>{
+      const product=productNameFor(spgr,weeks);
+      const src=state.masterImages.get(spgr);
+      const img=(document.getElementById('productImageToggle')?.checked && src)
+        ? `<img class="weekly-product-image" src="${src}" alt="Producto ${escapeHTML(spgr)}">`
+        : `<div class="weekly-product-image"></div>`;
+      return `<div class="weekly-product-item">
+        ${img}
+        <div class="weekly-product-text">
+          <div class="weekly-product-code">${escapeHTML(spgr)}</div>
+          ${product?`<div class="weekly-product-name">${escapeHTML(product)}</div>`:''}
+        </div>
+      </div>`;
+    }).join('')}</aside>`;
+  }
+
   function cardHTML(stats, weekLabel='', className=''){
     if(stats.empty){
       return `<div class="week-card-wrap ${className}">${weekLabel?`<div class="week-label">${escapeHTML(weekLabel)}</div>`:''}<div class="metric-card empty-card"><div class="not-worked">No trabajado</div><div class="not-worked-sub">Producto no trabajado<br>en este retailer</div></div></div>`;
     }
-    const meta=GAP_META[stats.gapKey];
+    const winnerKeys=(stats.gapKeys && stats.gapKeys.length) ? stats.gapKeys : [stats.gapKey];
+    const gapLabel=winnerKeys.length>1
+      ? winnerKeys.map(k=>GAP_META[k].shortLabel).join('/')
+      : GAP_META[winnerKeys[0]].label;
+    const gapValue=stats[winnerKeys[0]];
     return `<div class="week-card-wrap ${className}">
       ${weekLabel?`<div class="week-label">${escapeHTML(weekLabel)}</div>`:''}
       <div class="metric-card">
         <div class="metric-line">Salas: ${stats.gapStores}/${stats.stores}</div>
-        <div class="metric-line gap">${meta.label} ${pct(stats[stats.gapKey])}</div>
-        <div class="msl ${mslClass(stats.msl)}">MSL: ${pct(stats.msl)}</div>
+        <div class="metric-line gap">${escapeHTML(gapLabel)} ${pct(gapValue)}</div>
+        <div class="msl">MSL: <span class="msl-value ${mslClass(stats.msl)}">${pct(stats.msl)}</span></div>
       </div>
     </div>`;
   }
@@ -1119,21 +1323,60 @@
     }
 
     const totalRows=rowsForWeeks(totalWeeks,totalRetailers,totalSpgrs);
-    return totalBarHTML(calcStats(totalRows,'auto',true));
+
+    // IMPORTANTE: el Total general cuenta Store Number únicos en todo el período.
+    // Si UN781 aparece en W1, W2, W3 y/o en más de un SPGR, cuenta una sola vez.
+    // No se suman "visitas" semanales.
+    return totalBarHTML(calcStats(totalRows,'auto',false));
   }
 
   function storeDetailHTML(items){
     if(!document.getElementById('storeDetailToggle').checked) return '';
-    const valid=items.filter(x=>x.stats && !x.stats.empty && x.stats.gapStoreNumbers && x.stats.gapStoreNumbers.length);
-    if(!valid.length) return '';
-    const rows=valid.map(x=>{
-      const meta=GAP_META[x.stats.gapKey];
-      const pieces=[x.retailer,x.week];
-      if(x.spgr) pieces.push(`SPGR ${x.spgr}`);
-      const label=pieces.filter(Boolean).join(' · ');
-      return `<div class="store-detail-row"><b>${escapeHTML(label)}</b> · ${escapeHTML(meta.label)}: <span class="store-list">${x.stats.gapStoreNumbers.map(escapeHTML).join(', ')}</span></div>`;
-    }).join('');
-    return `<section class="store-detail-section"><div class="store-detail-title">Detalle Store Number · GAP mostrado</div><div class="store-detail-grid">${rows}</div></section>`;
+    const choices=selectedValues('storeGapChecks');
+    if(!choices.length) return '';
+
+    const showAllWinners=choices.includes('shown');
+    const selectedWinnerKeys=choices.filter(k=>GAP_META[k]);
+    const rows=[];
+
+    items.forEach(x=>{
+      if(!x.stats || x.stats.empty) return;
+
+      const winners=(x.stats.gapKeys && x.stats.gapKeys.length)
+        ? x.stats.gapKeys
+        : [x.stats.gapKey];
+
+      // "Todos los GAP ganadores" -> apertura cada GAP que ganó en esa tarjeta.
+      // GAP específico -> SOLO si ese GAP está entre los ganadores de la tarjeta.
+      let keys=[];
+      if(showAllWinners){
+        keys.push(...winners);
+      }
+      selectedWinnerKeys.forEach(k=>{
+        if(winners.includes(k) && !keys.includes(k)) keys.push(k);
+      });
+
+      keys.forEach(k=>{
+        const stores=x.stats.gapStoreNumbersByKey?.[k] || [];
+        if(!stores.length) return;
+
+        const pieces=[x.retailer,x.week];
+        if(x.spgr) pieces.push(`SPGR ${x.spgr}`);
+        const label=pieces.filter(Boolean).join(' · ');
+
+        rows.push(
+          `<div class="store-detail-row"><b>${escapeHTML(label)}</b> · `+
+          `${escapeHTML(GAP_META[k].label)}: `+
+          `<span class="store-list">${stores.map(escapeHTML).join(', ')}</span></div>`
+        );
+      });
+    });
+
+    if(!rows.length) return '';
+    return `<section class="store-detail-section">
+      <div class="store-detail-title">Detalle Store Number · GAP ganador seleccionado</div>
+      <div class="store-detail-grid">${rows.join('')}</div>
+    </section>`;
   }
 
   function generateReport(){
@@ -1160,39 +1403,32 @@
     const mode=document.getElementById('spgrMode').value;
     const details=[];
 
-    // La información del/los SPGR se muestra SIEMPRE, incluso si se consolidan.
-    if(mode!=='separate'){
-      report.insertAdjacentHTML('beforeend',spgrSummaryHTML(spgrs,weeks));
-    }
+    const makeRetailerRows=(target,activeSpgrs,detailSpgr='')=>{
+      retailers.forEach(ret=>{
+        const cards=weeks.map(w=>{
+          const rows=rowsFor(w,[ret],activeSpgrs);
+          const stats=calcStats(rows,gap);
+          details.push({retailer:ret,week:w,spgr:detailSpgr,stats});
+          return cardHTML(stats,w);
+        }).join('');
+        target.insertAdjacentHTML('beforeend',`<div class="retailer-block"><div class="retailer-title">${escapeHTML(ret)}</div><div class="cards-row" style="--cols:${weeks.length}">${cards}</div></div>`);
+      });
+    };
 
     if(mode==='separate'){
       spgrs.forEach(spgr=>{
-        const block=document.createElement('section'); block.className='spgr-block';
-        const product=productNameFor(spgr,weeks);
-        block.innerHTML=`<div class="spgr-block-title">${productImageHTML(spgr)}<div>SPGR ${escapeHTML(spgr)}${product?`<span>${escapeHTML(product)}</span>`:''}</div></div>`;
-        retailers.forEach(ret=>{
-          const cards=weeks.map(w=>{
-            const rows=rowsFor(w,[ret],[spgr]);
-            const stats=calcStats(rows,gap);
-            details.push({retailer:ret,week:w,spgr,stats});
-            return cardHTML(stats,w);
-          }).join('');
-          block.innerHTML+=`<div class="retailer-block"><div class="retailer-title">${escapeHTML(ret)}</div><div class="cards-row" style="--cols:${weeks.length}">${cards}</div></div>`;
-        });
-        report.appendChild(block);
+        const layout=document.createElement('section');
+        layout.className='weekly-spgr-layout';
+        layout.innerHTML=weeklyProductSideHTML([spgr],weeks)+`<div class="weekly-data-side"></div>`;
+        makeRetailerRows(layout.querySelector('.weekly-data-side'),[spgr],spgr);
+        report.appendChild(layout);
       });
     }else{
-      retailers.forEach(ret=>{
-        const cards=weeks.map(w=>{
-          const rows=rowsFor(w,[ret],spgrs);
-          const stats=calcStats(rows,gap);
-          details.push({retailer:ret,week:w,spgr:spgrs.length===1?spgrs[0]:'',stats});
-          return cardHTML(stats,w);
-        }).join('');
-        const block=document.createElement('div');block.className='retailer-block';
-        block.innerHTML=`<div class="retailer-title">${escapeHTML(ret)}</div><div class="cards-row" style="--cols:${weeks.length}">${cards}</div>`;
-        report.appendChild(block);
-      });
+      const layout=document.createElement('section');
+      layout.className='weekly-spgr-layout';
+      layout.innerHTML=weeklyProductSideHTML(spgrs,weeks)+`<div class="weekly-data-side"></div>`;
+      makeRetailerRows(layout.querySelector('.weekly-data-side'),spgrs,spgrs.length===1?spgrs[0]:'');
+      report.appendChild(layout);
     }
 
     report.insertAdjacentHTML('beforeend',storeDetailHTML(details));

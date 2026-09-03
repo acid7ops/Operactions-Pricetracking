@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>INNO Tracker · PPT Generator</title>
+
+  <!-- Librerías: lectura de Excel + exportación PNG -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <style>
+    :root{
+      --nivea:#003DA5;
+      --nivea-dark:#08234F;
+      --text:#1D2A44;
+      --muted:#60708D;
+      --card:#F5F5F6;
+      --line:#E7EAF0;
+      --green:#00A651;
+      --red:#FF1E1E;
+      --shadow:0 8px 18px rgba(17,35,68,.10);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Aptos","Segoe UI",Arial,sans-serif;
+      color:var(--text);
+      background:#EEF2F7;
+    }
+    button,input,select{font:inherit}
+    .app{max-width:1480px;margin:0 auto;padding:24px}
+    .app-head{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px;
+    }
+    .app-title{font-size:24px;font-weight:800;color:var(--nivea);margin:0 0 5px}
+    .app-sub{font-size:13px;color:var(--muted);margin:0}
+    .badge{background:var(--nivea);color:#fff;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700}
+
+    .panel{
+      background:#fff;border:1px solid #E5E9F1;border-radius:14px;padding:18px;box-shadow:0 3px 14px rgba(20,35,60,.05);margin-bottom:16px;
+    }
+    .panel-title{font-size:14px;font-weight:800;color:var(--nivea-dark);margin:0 0 14px;text-transform:uppercase;letter-spacing:.3px}
+    .upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .upload-box{
+      border:1.5px dashed #BCC7D8;border-radius:12px;padding:16px;background:#FAFBFD;min-height:120px;
+    }
+    .upload-box strong{display:block;color:var(--nivea);margin-bottom:5px}
+    .upload-box small{display:block;color:var(--muted);line-height:1.4;margin-bottom:12px}
+    input[type=file]{width:100%;font-size:12px}
+    .status{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.45}
+    .status.ok{color:#087E45;font-weight:700}
+    .status.err{color:#B42318;font-weight:700}
+
+    .wor-list{margin-top:10px;display:flex;flex-direction:column;gap:7px}
+    .wor-item{display:grid;grid-template-columns:1fr 90px auto;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);padding:8px;border-radius:8px}
+    .wor-name{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .week-edit{width:100%;border:1px solid #CCD4E0;border-radius:6px;padding:5px 7px;font-size:11px;text-transform:uppercase}
+    .mini-btn{border:0;background:#EEF2F8;color:#52627A;border-radius:6px;padding:5px 8px;cursor:pointer;font-weight:700}
+
+    .controls-grid{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:14px}
+    .field label{display:block;font-size:11px;font-weight:800;color:#4C5C74;text-transform:uppercase;letter-spacing:.35px;margin-bottom:6px}
+    .field select,.field input[type=text]{
+      width:100%;height:38px;border:1px solid #CDD5E1;border-radius:8px;background:#fff;padding:0 10px;color:var(--text);outline:none;
+    }
+    .field select:focus,.field input[type=text]:focus{border-color:var(--nivea);box-shadow:0 0 0 3px rgba(0,61,165,.08)}
+    .wide{grid-column:span 2}
+
+    .multi-box{border:1px solid #CDD5E1;border-radius:9px;background:#fff;overflow:hidden}
+    .multi-actions{display:flex;gap:8px;padding:8px;border-bottom:1px solid #EDF0F4;background:#FAFBFC}
+    .multi-actions button{border:0;background:transparent;color:var(--nivea);font-size:11px;font-weight:800;cursor:pointer;padding:2px 4px}
+    .multi-search{width:100%;height:30px;border:1px solid #DCE2EA;border-radius:6px;padding:0 8px;font-size:11px}
+    .checks{max-height:145px;overflow:auto;padding:5px 8px 8px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 10px}
+    .check{display:flex;align-items:center;gap:6px;font-size:11px;padding:4px 2px;min-width:0}
+    .check span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .check input{accent-color:var(--nivea)}
+
+    .hint{font-size:11px;color:#77859A;margin-top:7px;line-height:1.4}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .btn{
+      border:0;border-radius:9px;padding:10px 16px;font-weight:800;cursor:pointer;transition:.15s ease;
+    }
+    .btn-primary{background:var(--nivea);color:#fff}
+    .btn-primary:hover{filter:brightness(.95)}
+    .btn-secondary{background:#EEF2F8;color:var(--nivea-dark)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .export-hint{font-size:11px;color:#6B7890;margin-top:8px;line-height:1.4}
+
+    .message{display:none;margin-top:12px;padding:10px 12px;border-radius:8px;font-size:12px}
+    .message.show{display:block}
+    .message.error{background:#FFF0F0;color:#A12626;border:1px solid #FFD0D0}
+    .message.info{background:#EFF6FF;color:#174EA6;border:1px solid #CADFFF}
+
+    .preview-label{display:flex;justify-content:space-between;align-items:center;margin:18px 0 8px;color:#5A6880;font-size:12px}
+    .report-shell{width:100%;overflow:auto;background:#DDE4EE;border-radius:12px;padding:18px}
+
+    /* ====== ÁREA QUE SE EXPORTA A POWERPOINT ====== */
+    #report{
+      --cols:4;
+      width:1280px;
+      min-height:720px;
+      background:#fff;
+      color:var(--text);
+      padding:24px 28px 20px;
+      position:relative;
+      overflow:hidden;
+    }
+    .ppt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px}
+    .ppt-eyebrow{font-family:"Aptos","Segoe UI",Arial,sans-serif;font-size:18px;color:var(--nivea);font-weight:500;margin-bottom:5px;letter-spacing:.2px}
+    .ppt-main-title{font-family:"Aptos Display","Aptos","Segoe UI",Arial,sans-serif;font-size:38px;line-height:1.05;color:var(--nivea);font-weight:400;margin:0}
+    .ppt-main-title .strong{font-weight:800}
+    .ppt-logo{
+      width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--nivea);color:#fff;font-weight:800;font-size:17px;letter-spacing:1px;margin-right:2px;
+    }
+
+    .retailer-block{margin:0 0 23px 155px;max-width:720px}
+    .retailer-title{font-family:"Aptos Display","Aptos","Segoe UI",Arial,sans-serif;font-size:23px;color:var(--nivea);font-weight:800;margin:0 0 4px 3px;text-transform:uppercase}
+    .cards-row{display:grid;grid-template-columns:repeat(var(--cols), 132px);gap:14px;align-items:start}
+    .week-card-wrap{text-align:center}
+    .week-label{font-size:15px;font-weight:800;color:var(--nivea-dark);margin-bottom:3px}
+    .metric-card{
+      width:132px;min-height:98px;background:var(--card);border-radius:8px;box-shadow:var(--shadow);padding:17px 8px 10px;display:flex;flex-direction:column;justify-content:center;align-items:center;
+    }
+    .metric-line{font-size:11px;color:#53647E;margin:2px 0;text-align:center;white-space:nowrap}
+    .metric-line.gap{font-weight:700}
+    .msl{font-size:15px;font-weight:800;margin-top:4px;color:var(--nivea)}
+    .msl.red{color:var(--red)}
+    .msl.green{color:var(--green)}
+    .msl.blue{color:var(--nivea)}
+    .empty-card{opacity:.45}
+
+    .spgr-block{margin-bottom:26px}
+    .spgr-block-title{font-size:20px;font-weight:800;color:var(--nivea);margin:0 0 13px 2px}
+    .spgr-block-title span{font-size:13px;color:#65758D;font-weight:500;margin-left:8px}
+
+    /* Matriz SPGR x Retailer */
+    .matrix-week{margin-bottom:24px}
+    .matrix-week-title{font-size:15px;color:var(--nivea-dark);font-weight:800;margin:0 0 7px 305px}
+    .matrix-grid{display:grid;align-items:start;column-gap:16px;row-gap:12px}
+    .matrix-corner{min-height:1px}
+    .matrix-retailer{font-family:"Aptos Display","Aptos","Segoe UI",Arial,sans-serif;font-size:22px;font-weight:800;color:var(--nivea);text-align:center;text-transform:uppercase;line-height:1}
+    .matrix-week-small{font-size:13px;font-weight:800;color:var(--nivea-dark);text-align:center;margin-top:4px}
+    .spgr-label{display:flex;align-items:center;justify-content:flex-end;text-align:right;min-height:98px;padding-right:8px;font-size:15px;font-weight:800;color:var(--nivea-dark);line-height:1.25}
+    .spgr-label .product{font-size:12px;font-weight:600;color:#52627B;display:block;max-width:155px;margin-top:3px}
+    .matrix-card{justify-self:center}
+
+    .total-bar{
+      margin-top:20px;background:var(--nivea);color:#fff;border-radius:7px;height:64px;display:grid;grid-template-columns:1.3fr 1fr 1.35fr 1fr 1fr;align-items:center;padding:0 55px;gap:15px;box-shadow:0 5px 12px rgba(0,61,165,.18);
+    }
+    .total-item{font-size:13px;text-align:center;white-space:nowrap}
+    .total-item:first-child{text-align:left;font-weight:800;font-size:15px}
+    .total-msl{font-weight:800;font-size:20px}
+    .report-note{font-size:9px;color:#8A96A8;text-align:right;margin-top:5px;min-height:11px}
+    .not-worked{font-size:12px;font-weight:800;color:#53647E;line-height:1.2;text-align:center}
+    .not-worked-sub{font-size:9px;color:#7B879A;line-height:1.2;margin-top:5px;text-align:center}
+
+    .store-detail-section{margin:18px 0 8px;padding-top:13px;border-top:1px solid #E3E7EE}
+    .store-detail-title{font-size:13px;font-weight:800;color:var(--nivea);margin:0 0 9px;text-transform:uppercase;letter-spacing:.2px}
+    .store-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 16px}
+    .store-detail-row{font-size:10px;line-height:1.35;color:#465771;background:#F7F8FA;border-radius:6px;padding:7px 9px}
+    .store-detail-row b{color:var(--nivea-dark)}
+    .store-list{color:#263A5E;font-weight:600}
+
+    .detail-toggle{height:38px;border:1px solid #CDD5E1;border-radius:8px;background:#fff;padding:0 10px;display:flex;align-items:center;gap:8px;font-size:11px;color:#42536F}
+    .detail-toggle input{accent-color:var(--nivea)}
+
+    .total-config{
+      margin-top:18px;padding-top:16px;border-top:1px solid #E7EAF0;
+    }
+    .total-config-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}
+    .total-config-title{font-size:12px;font-weight:800;color:var(--nivea-dark);text-transform:uppercase;letter-spacing:.35px;margin:0 0 3px}
+    .total-config-sub{font-size:11px;color:var(--muted);margin:0;line-height:1.4}
+    .total-grid{display:grid;grid-template-columns:minmax(230px,340px) 1fr;gap:14px;align-items:start}
+    .total-field label{display:block;font-size:10px;font-weight:800;color:#4C5C74;text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px}
+    .total-field input,.total-field select{width:100%;height:36px;border:1px solid #CDD5E1;border-radius:8px;background:#fff;padding:0 9px;color:var(--text);outline:none}
+    .total-field input:focus,.total-field select:focus{border-color:var(--nivea);box-shadow:0 0 0 3px rgba(0,61,165,.08)}
+    .total-mode-fields{display:block}
+    .total-mode-fields.hidden{display:none}
+    .total-custom-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .total-mode-note{font-size:11px;color:#66758B;line-height:1.45;padding:8px 10px;background:#F7F9FC;border-radius:8px;border:1px solid #E7EBF1}
+
+    @media(max-width:1100px){.total-grid{grid-template-columns:1fr}.total-custom-grid{grid-template-columns:1fr}}
+    @media(max-width:900px){
+      .upload-grid,.controls-grid{grid-template-columns:1fr}.wide{grid-column:auto}.app{padding:12px}.report-shell{padding:8px}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="app-head">
+    <div>
+      <h1 class="app-title">INNO Tracker · Generador PPT</h1>
+      <p class="app-sub">Carga el maestro INNO–SPGR y los WOR semanales. La salida se genera con el formato de las slides de seguimiento.</p>
+    </div>
+    <div class="badge">Beiersdorf · Field Sales</div>
+  </div>
+
+  <section class="panel">
+    <h2 class="panel-title">1. Archivos de entrada</h2>
+    <div class="upload-grid">
+      <div class="upload-box">
+        <strong>Maestro INNO – SPGR</strong>
+        <small>Excel con solo dos columnas: <b>INNO</b> y <b>SPGR</b>. Puedes reemplazarlo cuando cambie.</small>
+        <input id="masterFile" type="file" accept=".xlsx,.xls,.xlsm" />
+        <div id="masterStatus" class="status">Sin maestro cargado.</div>
+      </div>
+      <div class="upload-box">
+        <strong>WOR semanales</strong>
+        <small>Selecciona uno o varios WOR. Se leerá únicamente la hoja <b>Base de Datos</b>. La semana se detecta desde el nombre del archivo y puedes corregirla.</small>
+        <input id="worFiles" type="file" accept=".xlsx,.xls,.xlsm" multiple />
+        <div id="worStatus" class="status">Sin WOR cargados.</div>
+        <div id="worList" class="wor-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2 class="panel-title">2. Selección para la slide</h2>
+    <div class="controls-grid">
+      <div class="field">
+        <label>INNO</label>
+        <select id="innoSelect"><option value="">Carga el maestro primero</option></select>
+      </div>
+      <div class="field">
+        <label>Vista</label>
+        <select id="viewSelect">
+          <option value="retailerWeeks">Retailer × Semanas</option>
+          <option value="matrix">SPGR × Retailer</option>
+        </select>
+      </div>
+      <div class="field" id="spgrModeField">
+        <label>SPGR en vista semanal</label>
+        <select id="spgrMode">
+          <option value="consolidated">Consolidar SPGR seleccionados</option>
+          <option value="separate">Mostrar cada SPGR por separado</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>GAP mostrado en tarjeta</label>
+        <select id="gapSelect">
+          <option value="auto">Automático · mayor GAP</option>
+          <option value="backstock">Backstock</option>
+          <option value="void">VOID</option>
+          <option value="replenishment">Replenishment</option>
+          <option value="quiebre">Quiebre</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Detalle Store Number</label>
+        <label class="detail-toggle"><input id="storeDetailToggle" type="checkbox"> Mostrar tiendas del GAP mostrado</label>
+        <div class="hint">En Automático, corresponde al mayor GAP de cada cuadro.</div>
+      </div>
+
+      <div class="field wide">
+        <label>SPGR · selección múltiple</label>
+        <div class="multi-box">
+          <div class="multi-actions">
+            <button type="button" onclick="setAllChecks('spgrChecks',true)">Seleccionar todos</button>
+            <button type="button" onclick="setAllChecks('spgrChecks',false)">Limpiar</button>
+            <input id="spgrSearch" class="multi-search" placeholder="Buscar SPGR..." />
+          </div>
+          <div id="spgrChecks" class="checks"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Semanas</label>
+        <div class="multi-box">
+          <div class="multi-actions">
+            <button type="button" onclick="setAllChecks('weekChecks',true)">Todas</button>
+            <button type="button" onclick="setAllChecks('weekChecks',false)">Limpiar</button>
+          </div>
+          <div id="weekChecks" class="checks"></div>
+        </div>
+        <div class="hint">La barra “Total general” se configura de forma independiente más abajo.</div>
+      </div>
+
+      <div class="field">
+        <label>Retailers</label>
+        <div class="multi-box">
+          <div class="multi-actions">
+            <button type="button" onclick="setAllChecks('retailerChecks',true)">Todos</button>
+            <button type="button" onclick="setAllChecks('retailerChecks',false)">Limpiar</button>
+          </div>
+          <div id="retailerChecks" class="checks"></div>
+        </div>
+      </div>
+
+      <div class="field wide">
+        <label>Línea superior / seguimiento</label>
+        <input id="eyebrowInput" type="text" value="FOLLOW-UP INNOVACIÓN – AGO 26" />
+      </div>
+      <div class="field wide">
+        <label>Título de la slide</label>
+        <input id="titleInput" type="text" value="INNO | GAPS" />
+      </div>
+    </div>
+
+    <div class="total-config">
+      <div class="total-config-head">
+        <div>
+          <div class="total-config-title">Total general · selección independiente</div>
+          <p class="total-config-sub">Define el universo que debe alimentar la barra azul inferior. No tiene que coincidir con lo que se muestra arriba.</p>
+        </div>
+      </div>
+      <div class="total-grid">
+        <div class="total-field">
+          <label>Modo Total general</label>
+          <select id="totalMode">
+            <option value="follow">Seguir selección de arriba</option>
+            <option value="all">Todo INNO · todos los SPGR y retailers</option>
+            <option value="custom">Selección independiente</option>
+          </select>
+          <div id="totalFollowNote" class="total-mode-note" style="margin-top:8px;">Usa exactamente los SPGR, retailers y semanas seleccionados en la vista superior.</div>
+        </div>
+
+        <div>
+          <div id="totalAllFields" class="total-mode-fields hidden">
+            <div class="total-field">
+              <label>Semanas para Total general</label>
+              <div class="multi-box">
+                <div class="multi-actions">
+                  <button type="button" onclick="setAllChecks('totalAllWeekChecks',true)">Todas</button>
+                  <button type="button" onclick="setAllChecks('totalAllWeekChecks',false)">Limpiar</button>
+                </div>
+                <div id="totalAllWeekChecks" class="checks"></div>
+              </div>
+              <div class="hint">Incluye todos los SPGR de la INNO y todos los retailers con datos para esos productos. Tú eliges qué semana(s) consolidar.</div>
+            </div>
+          </div>
+
+          <div id="totalCustomFields" class="total-mode-fields hidden">
+            <div class="total-custom-grid">
+              <div class="total-field">
+                <label>SPGR Total general</label>
+                <div class="multi-box">
+                  <div class="multi-actions">
+                    <button type="button" onclick="setAllChecks('totalCustomSpgrChecks',true)">Todos</button>
+                    <button type="button" onclick="setAllChecks('totalCustomSpgrChecks',false)">Limpiar</button>
+                  </div>
+                  <div id="totalCustomSpgrChecks" class="checks"></div>
+                </div>
+              </div>
+              <div class="total-field">
+                <label>Retailers Total general</label>
+                <div class="multi-box">
+                  <div class="multi-actions">
+                    <button type="button" onclick="setAllChecks('totalCustomRetailerChecks',true)">Todos</button>
+                    <button type="button" onclick="setAllChecks('totalCustomRetailerChecks',false)">Limpiar</button>
+                  </div>
+                  <div id="totalCustomRetailerChecks" class="checks"></div>
+                </div>
+              </div>
+              <div class="total-field">
+                <label>Semanas Total general</label>
+                <div class="multi-box">
+                  <div class="multi-actions">
+                    <button type="button" onclick="setAllChecks('totalCustomWeekChecks',true)">Todas</button>
+                    <button type="button" onclick="setAllChecks('totalCustomWeekChecks',false)">Limpiar</button>
+                  </div>
+                  <div id="totalCustomWeekChecks" class="checks"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="generateBtn" class="btn btn-primary">Generar vista</button>
+      <button id="exportBtn" class="btn btn-secondary" disabled>Exportar PNG</button>
+      <button id="copyBtn" class="btn btn-secondary" disabled>Copiar imagen</button>
+    </div>
+    <div class="export-hint">Al exportar o copiar, se omiten el título superior y el logo, y el PNG queda con fondo transparente. Se exportan solo los cuadros, sus encabezados, el detalle de Store Number (si está activado) y el Total general.</div>
+    <div id="message" class="message"></div>
+  </section>
+
+  <div class="preview-label">
+    <span>Vista previa · formato 1280 px de ancho</span>
+    <span>MSL: <b style="color:#FF1E1E">&lt;80%</b> · <b style="color:#003DA5">80–&lt;95%</b> · <b style="color:#00A651">≥95%</b></span>
+  </div>
+  <div class="report-shell">
+    <div id="report">
+      <div class="ppt-header">
+        <div>
+          <div class="ppt-eyebrow">FOLLOW-UP INNOVACIÓN – AGO 26</div>
+          <h2 class="ppt-main-title"><span class="strong">INNO</span> | GAPS</h2>
+        </div>
+        <div class="ppt-logo">NIVEA</div>
+      </div>
+      <div style="height:430px;display:flex;align-items:center;justify-content:center;color:#9AA5B5;font-size:16px;">Carga los archivos y genera una vista.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ============================================================
+  // ESTADO
+  // ============================================================
+  const state = {
+    masterMap: new Map(),       // INNO -> Set(SPGR)
+    wor: new Map(),             // id -> { id, fileName, week, rows }
+    reportReady: false
+  };
+
+  const GAP_META = {
+    backstock: { label:'Backstock', totalLabel:'Backstock', key:'backstock' },
+    void: { label:'VOID', totalLabel:'VOID', key:'void' },
+    replenishment: { label:'Replenishment', totalLabel:'REP', key:'replenishment' },
+    quiebre: { label:'Quiebre', totalLabel:'Quiebre', key:'quiebre' }
+  };
+  const GAP_ORDER = ['backstock','void','replenishment','quiebre'];
+
+  // ============================================================
+  // HELPERS
+  // ============================================================
+  function normText(v){
+    return String(v ?? '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+      .trim().toLowerCase().replace(/[^a-z0-9]+/g,' ')
+      .replace(/\s+/g,' ').trim();
+  }
+  function normSPGR(v){
+    if(v === null || v === undefined) return '';
+    const s = String(v).trim();
+    return s.replace(/\.0+$/,'');
+  }
+  function asNumber(v){
+    if(v === null || v === undefined || v === '') return null;
+    if(typeof v === 'number') return Number.isFinite(v) ? v : null;
+    const s = String(v).trim().replace(',','.');
+    if(!s || s === '-') return null;
+    const n = Number(s);
+    return Number.isFinite(n) ? n : null;
+  }
+  function pct(v, decimals=1){
+    if(v === null || v === undefined || !Number.isFinite(v)) return '-';
+    const p = v * 100;
+    let s = p.toFixed(decimals);
+    if(decimals === 1) s = s.replace(/\.0$/,'');
+    else s = s.replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+    return s.replace('.',',') + '%';
+  }
+  function mslClass(v){
+    if(v === null || !Number.isFinite(v)) return 'blue';
+    if(v < .80) return 'red';
+    if(v >= .95) return 'green';
+    return 'blue';
+  }
+  function escapeHTML(s){
+    return String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+  function sanitizeFileName(s){
+    return String(s || 'INNO_Tracker').replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,'_').slice(0,100);
+  }
+  function detectWeek(fileName){
+    const base = fileName.replace(/\.[^.]+$/,'');
+    let m = base.match(/(?:^|[\s_\-])W\s*0*(\d+)\b/i);
+    if(!m) m = base.match(/SEMANA\s*0*(\d+)\b/i);
+    return m ? `W${Number(m[1])}` : '';
+  }
+  function weekNumber(w){
+    const m = String(w).match(/(\d+)/); return m ? Number(m[1]) : 999;
+  }
+  function selectedValues(containerId){
+    return [...document.querySelectorAll(`#${containerId} input[type=checkbox]:checked`)].map(x=>x.value);
+  }
+  function setAllChecks(containerId, checked){
+    document.querySelectorAll(`#${containerId} input[type=checkbox]`).forEach(cb => {
+      if(cb.closest('.check').style.display !== 'none') cb.checked = checked;
+    });
+    if(containerId === 'spgrChecks') refreshRetailers();
+    if(containerId === 'totalCustomSpgrChecks') refreshTotalRetailers();
+  }
+  window.setAllChecks = setAllChecks;
+
+  function showMessage(text,type='info'){
+    const el=document.getElementById('message');
+    el.className=`message show ${type}`; el.textContent=text;
+  }
+  function clearMessage(){
+    const el=document.getElementById('message'); el.className='message'; el.textContent='';
+  }
+
+  function headerIndex(headers, aliases){
+    const normalized = headers.map(normText);
+    for(const alias of aliases){
+      const idx = normalized.indexOf(normText(alias));
+      if(idx >= 0) return idx; // primera coincidencia: importante para Quiebre duplicado
+    }
+    return -1;
+  }
+
+  // ============================================================
+  // LECTURA EXCEL
+  // ============================================================
+  async function fileToWorkbook(file){
+    const buf = await file.arrayBuffer();
+    return XLSX.read(buf, { type:'array', dense:true, cellDates:false });
+  }
+
+  async function readMaster(file){
+    const wb = await fileToWorkbook(file);
+    if(!wb.SheetNames.length) throw new Error('El maestro no contiene hojas.');
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const grid = XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+    if(grid.length < 2) throw new Error('El maestro está vacío.');
+    const headers = grid[0];
+    const innoIdx = headerIndex(headers,['INNO']);
+    const spgrIdx = headerIndex(headers,['SPGR']);
+    if(innoIdx < 0 || spgrIdx < 0) throw new Error('El maestro debe tener las columnas INNO y SPGR.');
+
+    const map = new Map();
+    for(let i=1;i<grid.length;i++){
+      const inno = String(grid[i]?.[innoIdx] ?? '').trim();
+      const spgr = normSPGR(grid[i]?.[spgrIdx]);
+      if(!inno || !spgr) continue;
+      if(!map.has(inno)) map.set(inno,new Set());
+      map.get(inno).add(spgr);
+    }
+    if(!map.size) throw new Error('No se encontraron relaciones INNO–SPGR válidas.');
+    return map;
+  }
+
+  async function readWOR(file){
+    const wb = await fileToWorkbook(file);
+    const baseName = wb.SheetNames.find(n => normText(n) === 'base de datos');
+    if(!baseName) throw new Error(`“${file.name}” no tiene una hoja llamada “Base de Datos”.`);
+    const ws = wb.Sheets[baseName];
+    const grid = XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:true});
+    if(grid.length < 2) throw new Error(`“${file.name}”: Base de Datos está vacía.`);
+
+    const h = grid[0];
+    const idx = {
+      retailer: headerIndex(h,['Retailer']),
+      store: headerIndex(h,['Store Number','Store','Sala']),
+      spgr: headerIndex(h,['SPGR']),
+      product: headerIndex(h,['Product','Producto']),
+      actual: headerIndex(h,['Actual']),
+      backstock: headerIndex(h,['Store Backstock','Backstock']),
+      void: headerIndex(h,['VOID']),
+      replenishment: headerIndex(h,['Replenishment']),
+      quiebre: headerIndex(h,['Quiebre'])
+    };
+    const required = ['retailer','store','spgr','actual','backstock','void','replenishment','quiebre'];
+    const missing = required.filter(k => idx[k] < 0);
+    if(missing.length) throw new Error(`“${file.name}”: faltan columnas requeridas: ${missing.join(', ')}.`);
+
+    const rows=[];
+    for(let r=1;r<grid.length;r++){
+      const row=grid[r];
+      if(!row) continue;
+      const spgr=normSPGR(row[idx.spgr]);
+      const retailer=String(row[idx.retailer] ?? '').trim();
+      const store=String(row[idx.store] ?? '').trim();
+      if(!spgr || !retailer || !store) continue;
+      rows.push({
+        retailer,
+        store,
+        spgr,
+        product: idx.product >= 0 ? String(row[idx.product] ?? '').trim() : '',
+        actual: asNumber(row[idx.actual]),
+        backstock: asNumber(row[idx.backstock]),
+        void: asNumber(row[idx.void]),
+        replenishment: asNumber(row[idx.replenishment]),
+        quiebre: asNumber(row[idx.quiebre])
+      });
+    }
+    return rows;
+  }
+
+  // ============================================================
+  // CARGA DE ARCHIVOS
+  // ============================================================
+  document.getElementById('masterFile').addEventListener('change', async e => {
+    const file=e.target.files[0]; if(!file) return;
+    const status=document.getElementById('masterStatus');
+    status.className='status'; status.textContent='Leyendo maestro...';
+    try{
+      state.masterMap=await readMaster(file);
+      const spgrCount=[...state.masterMap.values()].reduce((a,s)=>a+s.size,0);
+      status.className='status ok';
+      status.textContent=`✓ ${file.name} · ${state.masterMap.size} INNO · ${spgrCount} SPGR`;
+      populateInnos();
+      populateTotalSPGRs();
+      refreshTotalRetailers();
+      clearMessage();
+    }catch(err){
+      state.masterMap=new Map(); status.className='status err'; status.textContent='✕ '+err.message; populateInnos(); populateTotalSPGRs(); refreshTotalRetailers();
+    }
+  });
+
+  document.getElementById('worFiles').addEventListener('change', async e => {
+    const files=[...e.target.files]; if(!files.length) return;
+    const status=document.getElementById('worStatus');
+    status.className='status'; status.textContent=`Leyendo ${files.length} archivo(s)...`;
+    let ok=0, errors=[];
+    for(const file of files){
+      try{
+        const rows=await readWOR(file);
+        const id=`wor_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        state.wor.set(id,{id,fileName:file.name,week:detectWeek(file.name),rows});
+        ok++;
+      }catch(err){errors.push(err.message)}
+    }
+    status.className=errors.length?'status err':'status ok';
+    status.textContent=errors.length ? `✓ ${ok} cargado(s). Error: ${errors.join(' | ')}` : `✓ ${ok} WOR cargado(s).`;
+    renderWORList(); refreshWeeks(); refreshRetailers(); refreshTotalWeeks(); refreshTotalRetailers();
+    e.target.value='';
+  });
+
+  function renderWORList(){
+    const box=document.getElementById('worList'); box.innerHTML='';
+    [...state.wor.values()].forEach(item=>{
+      const div=document.createElement('div'); div.className='wor-item';
+      div.innerHTML=`
+        <div class="wor-name" title="${escapeHTML(item.fileName)}">${escapeHTML(item.fileName)} · ${item.rows.length.toLocaleString('es-CL')} filas</div>
+        <input class="week-edit" value="${escapeHTML(item.week)}" placeholder="W4" data-id="${item.id}">
+        <button class="mini-btn" data-remove="${item.id}">×</button>`;
+      box.appendChild(div);
+    });
+    box.querySelectorAll('.week-edit').forEach(inp=>inp.addEventListener('change',()=>{
+      const item=state.wor.get(inp.dataset.id); if(item){ item.week=inp.value.trim().toUpperCase(); refreshWeeks(); refreshTotalWeeks(); }
+    }));
+    box.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.wor.delete(btn.dataset.remove); renderWORList(); refreshWeeks(); refreshRetailers(); refreshTotalWeeks(); refreshTotalRetailers();
+    }));
+  }
+
+  // ============================================================
+  // CONTROLES
+  // ============================================================
+  function populateInnos(){
+    const sel=document.getElementById('innoSelect');
+    sel.innerHTML='<option value="">Selecciona INNO...</option>';
+    [...state.masterMap.keys()].sort((a,b)=>a.localeCompare(b,'es')).forEach(inno=>{
+      const op=document.createElement('option');op.value=inno;op.textContent=inno;sel.appendChild(op);
+    });
+    populateSPGRs();
+  }
+
+  document.getElementById('innoSelect').addEventListener('change',()=>{
+    populateSPGRs();
+    const inno=document.getElementById('innoSelect').value;
+    if(inno) document.getElementById('titleInput').value=`${cleanInnoName(inno)} | GAPS`;
+    refreshRetailers();
+    populateTotalSPGRs();
+    refreshTotalRetailers();
+  });
+
+  function cleanInnoName(inno){
+    return String(inno).replace(/^INNO\s+/i,'').trim();
+  }
+
+  function populateSPGRs(){
+    const inno=document.getElementById('innoSelect').value;
+    const box=document.getElementById('spgrChecks'); box.innerHTML='';
+    if(!inno || !state.masterMap.has(inno)) return;
+    [...state.masterMap.get(inno)].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach((spgr,i)=>{
+      const lab=document.createElement('label'); lab.className='check';
+      lab.innerHTML=`<input type="checkbox" value="${escapeHTML(spgr)}" ${i===0?'checked':''}><span>${escapeHTML(spgr)}</span>`;
+      box.appendChild(lab);
+    });
+    box.querySelectorAll('input').forEach(cb=>cb.addEventListener('change',refreshRetailers));
+  }
+
+  document.getElementById('spgrSearch').addEventListener('input',e=>{
+    const q=normText(e.target.value);
+    document.querySelectorAll('#spgrChecks .check').forEach(lab=>{
+      lab.style.display=!q || normText(lab.textContent).includes(q) ? 'flex' : 'none';
+    });
+  });
+
+  function refreshWeeks(){
+    const old=new Set(selectedValues('weekChecks'));
+    const weeks=[...new Set([...state.wor.values()].map(x=>x.week).filter(Boolean))].sort((a,b)=>weekNumber(a)-weekNumber(b)||a.localeCompare(b));
+    const box=document.getElementById('weekChecks'); box.innerHTML='';
+    weeks.forEach(w=>{
+      const lab=document.createElement('label');lab.className='check';
+      const checked=old.size ? old.has(w) : true;
+      lab.innerHTML=`<input type="checkbox" value="${escapeHTML(w)}" ${checked?'checked':''}><span>${escapeHTML(w)}</span>`;box.appendChild(lab);
+    });
+    refreshTotalWeeks();
+  }
+
+  function refreshRetailers(){
+    const selectedSpgr=new Set(selectedValues('spgrChecks'));
+    const old=new Set(selectedValues('retailerChecks'));
+    const retailers=new Set();
+    for(const item of state.wor.values()){
+      for(const r of item.rows){
+        if(!selectedSpgr.size || selectedSpgr.has(r.spgr)) retailers.add(r.retailer);
+      }
+    }
+    const box=document.getElementById('retailerChecks');box.innerHTML='';
+    [...retailers].sort((a,b)=>a.localeCompare(b,'es')).forEach(ret=>{
+      const lab=document.createElement('label');lab.className='check';
+      const checked=old.size ? old.has(ret) : true;
+      lab.innerHTML=`<input type="checkbox" value="${escapeHTML(ret)}" ${checked?'checked':''}><span title="${escapeHTML(ret)}">${escapeHTML(ret)}</span>`;box.appendChild(lab);
+    });
+  }
+
+  function populateTotalSPGRs(){
+    const inno=document.getElementById('innoSelect').value;
+    const box=document.getElementById('totalCustomSpgrChecks');
+    if(!box) return;
+    const old=new Set(selectedValues('totalCustomSpgrChecks'));
+    box.innerHTML='';
+    if(!inno || !state.masterMap.has(inno)) return;
+    [...state.masterMap.get(inno)].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true})).forEach(spgr=>{
+      const lab=document.createElement('label'); lab.className='check';
+      const checked=old.size ? old.has(spgr) : true;
+      lab.innerHTML=`<input type="checkbox" value="${escapeHTML(spgr)}" ${checked?'checked':''}><span>${escapeHTML(spgr)}</span>`;
+      box.appendChild(lab);
+    });
+    box.querySelectorAll('input').forEach(cb=>cb.addEventListener('change',refreshTotalRetailers));
+  }
+
+  function refreshTotalWeeks(){
+    const weeks=[...new Set([...state.wor.values()].map(x=>x.week).filter(Boolean))].sort((a,b)=>weekNumber(a)-weekNumber(b)||a.localeCompare(b));
+    const topSelected=new Set(selectedValues('weekChecks'));
+    [['totalAllWeekChecks',true],['totalCustomWeekChecks',true]].forEach(([id])=>{
+      const box=document.getElementById(id); if(!box) return;
+      const old=new Set(selectedValues(id));
+      box.innerHTML='';
+      weeks.forEach(w=>{
+        const lab=document.createElement('label'); lab.className='check';
+        const checked=old.size ? old.has(w) : (topSelected.size ? topSelected.has(w) : true);
+        lab.innerHTML=`<input type="checkbox" value="${escapeHTML(w)}" ${checked?'checked':''}><span>${escapeHTML(w)}</span>`;
+        box.appendChild(lab);
+      });
+    });
+  }
+
+  function refreshTotalRetailers(){
+    const box=document.getElementById('totalCustomRetailerChecks'); if(!box) return;
+    const old=new Set(selectedValues('totalCustomRetailerChecks'));
+    const inno=document.getElementById('innoSelect').value;
+    let spgrs=new Set(selectedValues('totalCustomSpgrChecks'));
+    if(!spgrs.size && inno && state.masterMap.has(inno)) spgrs=new Set(state.masterMap.get(inno));
+    const retailers=new Set();
+    for(const item of state.wor.values()){
+      for(const r of item.rows){
+        if(!spgrs.size || spgrs.has(r.spgr)) retailers.add(r.retailer);
+      }
+    }
+    box.innerHTML='';
+    [...retailers].sort((a,b)=>a.localeCompare(b,'es')).forEach(ret=>{
+      const lab=document.createElement('label'); lab.className='check';
+      const checked=old.size ? old.has(ret) : true;
+      lab.innerHTML=`<input type="checkbox" value="${escapeHTML(ret)}" ${checked?'checked':''}><span title="${escapeHTML(ret)}">${escapeHTML(ret)}</span>`;
+      box.appendChild(lab);
+    });
+  }
+
+  document.getElementById('viewSelect').addEventListener('change',()=>{
+    document.getElementById('spgrModeField').style.display=document.getElementById('viewSelect').value==='retailerWeeks'?'block':'none';
+  });
+
+  function refreshTotalModeUI(){
+    const mode=document.getElementById('totalMode').value;
+    document.getElementById('totalAllFields').classList.toggle('hidden',mode!=='all');
+    document.getElementById('totalCustomFields').classList.toggle('hidden',mode!=='custom');
+    document.getElementById('totalFollowNote').style.display=mode==='follow'?'block':'none';
+    if(mode==='all' || mode==='custom') refreshTotalWeeks();
+    if(mode==='custom'){ populateTotalSPGRs(); refreshTotalRetailers(); }
+  }
+  document.getElementById('totalMode').addEventListener('change',refreshTotalModeUI);
+  refreshTotalModeUI();
+
+  // ============================================================
+  // CÁLCULOS
+  // ============================================================
+  function rowsFor(week, retailers, spgrs){
+    const retailerSet=new Set(retailers), spgrSet=new Set(spgrs);
+    const out=[];
+    for(const item of state.wor.values()){
+      if(item.week !== week) continue;
+      for(const r of item.rows){
+        if(retailerSet.size && !retailerSet.has(r.retailer)) continue;
+        if(spgrSet.size && !spgrSet.has(r.spgr)) continue;
+        out.push(r);
+      }
+    }
+    return out;
+  }
+
+  function rowsForWeeks(weeks, retailers, spgrs){
+    const weekSet=new Set(weeks), retailerSet=new Set(retailers), spgrSet=new Set(spgrs);
+    const out=[];
+    for(const item of state.wor.values()){
+      if(weekSet.size && !weekSet.has(item.week)) continue;
+      for(const r of item.rows){
+        if(retailerSet.size && !retailerSet.has(r.retailer)) continue;
+        if(spgrSet.size && !spgrSet.has(r.spgr)) continue;
+        out.push(r);
+      }
+    }
+    return out;
+  }
+
+  function avg(rows,key){
+    const values=rows.map(r=>r[key]).filter(v=>v!==null && Number.isFinite(v));
+    return values.length ? values.reduce((a,b)=>a+b,0)/values.length : null;
+  }
+
+  function naturalStoreSort(a,b){
+    return String(a).localeCompare(String(b),'es',{numeric:true,sensitivity:'base'});
+  }
+
+  function calcStats(rows, gapChoice='auto', compositeStores=false){
+    if(!rows.length) return {empty:true,rows:0,stores:0,gapStores:0,gapStoreNumbers:[],msl:null,backstock:null,void:null,replenishment:null,quiebre:null,gapKey:'backstock'};
+    const stats={
+      empty:false,
+      rows:rows.length,
+      msl:avg(rows,'actual'),
+      backstock:avg(rows,'backstock'),
+      void:avg(rows,'void'),
+      replenishment:avg(rows,'replenishment'),
+      quiebre:avg(rows,'quiebre')
+    };
+    const keyFn = r => compositeStores ? `${r.retailer}||${r.store}` : r.store;
+    stats.stores=new Set(rows.map(keyFn)).size;
+    let gapKey=gapChoice;
+    if(gapChoice==='auto'){
+      gapKey=GAP_ORDER.reduce((best,k)=>{
+        const bv=stats[best] ?? -Infinity, kv=stats[k] ?? -Infinity;
+        return kv>bv ? k : best;
+      },GAP_ORDER[0]);
+    }
+    stats.gapKey=gapKey;
+    const gapRows=rows.filter(r => (r[gapKey] ?? 0) > 0);
+    stats.gapStores=new Set(gapRows.map(keyFn)).size;
+    stats.gapStoreNumbers=[...new Set(gapRows.map(r=>r.store).filter(Boolean))].sort(naturalStoreSort);
+    return stats;
+  }
+
+  function productNameFor(spgr, weeks){
+    for(const item of state.wor.values()){
+      if(weeks.length && !weeks.includes(item.week)) continue;
+      const hit=item.rows.find(r=>r.spgr===spgr && r.product);
+      if(hit) return hit.product;
+    }
+    return '';
+  }
+
+  function topGlobalGaps(stats,n=2){
+    const arr=GAP_ORDER.map(k=>({key:k,value:stats[k] ?? 0})).sort((a,b)=>b.value-a.value);
+    return arr.slice(0,n);
+  }
+
+  // ============================================================
+  // RENDER PPT
+  // ============================================================
+  document.getElementById('generateBtn').addEventListener('click',generateReport);
+
+  function validateSelections(){
+    if(!state.masterMap.size) return 'Carga el Excel maestro INNO–SPGR.';
+    if(!state.wor.size) return 'Carga al menos un WOR.';
+    const inno=document.getElementById('innoSelect').value;
+    if(!inno) return 'Selecciona una INNO.';
+    if(!selectedValues('spgrChecks').length) return 'Selecciona al menos un SPGR.';
+    if(!selectedValues('weekChecks').length) return 'Selecciona al menos una semana.';
+    if(!selectedValues('retailerChecks').length) return 'Selecciona al menos un retailer.';
+    const missingWeek=[...state.wor.values()].some(x=>!x.week);
+    if(missingWeek) return 'Hay un WOR sin semana asignada. Escribe W1, W2, W3, etc. en la lista de archivos.';
+    const totalMode=document.getElementById('totalMode').value;
+    if(totalMode==='all' && !selectedValues('totalAllWeekChecks').length) return 'Selecciona al menos una semana para el Total general.';
+    if(totalMode==='custom'){
+      if(!selectedValues('totalCustomSpgrChecks').length) return 'Selecciona al menos un SPGR para el Total general.';
+      if(!selectedValues('totalCustomRetailerChecks').length) return 'Selecciona al menos un retailer para el Total general.';
+      if(!selectedValues('totalCustomWeekChecks').length) return 'Selecciona al menos una semana para el Total general.';
+    }
+    return '';
+  }
+
+  function reportHeaderHTML(){
+    const eyebrow=escapeHTML(document.getElementById('eyebrowInput').value.trim());
+    const title=document.getElementById('titleInput').value.trim() || 'INNO | GAPS';
+    const parts=title.split('|');
+    const titleHTML=parts.length>1
+      ? `<span class="strong">${escapeHTML(parts[0].trim())}</span> | ${escapeHTML(parts.slice(1).join('|').trim())}`
+      : `<span class="strong">${escapeHTML(title)}</span>`;
+    return `<div class="ppt-header"><div><div class="ppt-eyebrow">${eyebrow}</div><h2 class="ppt-main-title">${titleHTML}</h2></div><div class="ppt-logo">NIVEA</div></div>`;
+  }
+
+  function cardHTML(stats, weekLabel='', className=''){
+    if(stats.empty){
+      return `<div class="week-card-wrap ${className}">${weekLabel?`<div class="week-label">${escapeHTML(weekLabel)}</div>`:''}<div class="metric-card empty-card"><div class="not-worked">No trabajado</div><div class="not-worked-sub">Producto no trabajado<br>en este retailer</div></div></div>`;
+    }
+    const meta=GAP_META[stats.gapKey];
+    return `<div class="week-card-wrap ${className}">
+      ${weekLabel?`<div class="week-label">${escapeHTML(weekLabel)}</div>`:''}
+      <div class="metric-card">
+        <div class="metric-line">Salas: ${stats.gapStores}/${stats.stores}</div>
+        <div class="metric-line gap">${meta.label} ${pct(stats[stats.gapKey])}</div>
+        <div class="msl ${mslClass(stats.msl)}">MSL: ${pct(stats.msl)}</div>
+      </div>
+    </div>`;
+  }
+
+  function totalBarHTML(stats, week=''){
+    if(stats.empty) return '';
+    const gaps=topGlobalGaps(stats,2);
+    return `<div class="total-bar">
+      <div class="total-item">Total general</div>
+      <div class="total-item">${stats.stores.toLocaleString('es-CL')} tiendas</div>
+      <div class="total-item total-msl">MSL: ${pct(stats.msl)}</div>
+      <div class="total-item">${GAP_META[gaps[0].key].totalLabel}: ${pct(gaps[0].value)}</div>
+      <div class="total-item">${GAP_META[gaps[1].key].totalLabel}: ${pct(gaps[1].value)}</div>
+    </div><div class="report-note"></div>`;
+  }
+
+  function resolveTotalBar(spgrs,weeks,retailers){
+    const mode=document.getElementById('totalMode').value;
+    const inno=document.getElementById('innoSelect').value;
+    let totalSpgrs=[], totalWeeks=[], totalRetailers=[];
+
+    if(mode==='follow'){
+      totalSpgrs=[...spgrs];
+      totalWeeks=[...weeks];
+      totalRetailers=[...retailers];
+    }else if(mode==='all'){
+      totalSpgrs=inno && state.masterMap.has(inno) ? [...state.masterMap.get(inno)] : [];
+      totalWeeks=selectedValues('totalAllWeekChecks').sort((a,b)=>weekNumber(a)-weekNumber(b)||a.localeCompare(b));
+      totalRetailers=[]; // vacío = todos los retailers con registros para los SPGR elegidos
+    }else{
+      totalSpgrs=selectedValues('totalCustomSpgrChecks');
+      totalWeeks=selectedValues('totalCustomWeekChecks').sort((a,b)=>weekNumber(a)-weekNumber(b)||a.localeCompare(b));
+      totalRetailers=selectedValues('totalCustomRetailerChecks');
+    }
+
+    const totalRows=rowsForWeeks(totalWeeks,totalRetailers,totalSpgrs);
+    return totalBarHTML(calcStats(totalRows,'auto',true));
+  }
+
+  function storeDetailHTML(items){
+    if(!document.getElementById('storeDetailToggle').checked) return '';
+    const valid=items.filter(x=>x.stats && !x.stats.empty && x.stats.gapStoreNumbers && x.stats.gapStoreNumbers.length);
+    if(!valid.length) return '';
+    const rows=valid.map(x=>{
+      const meta=GAP_META[x.stats.gapKey];
+      const pieces=[x.retailer,x.week];
+      if(x.spgr) pieces.push(`SPGR ${x.spgr}`);
+      const label=pieces.filter(Boolean).join(' · ');
+      return `<div class="store-detail-row"><b>${escapeHTML(label)}</b> · ${escapeHTML(meta.label)}: <span class="store-list">${x.stats.gapStoreNumbers.map(escapeHTML).join(', ')}</span></div>`;
+    }).join('');
+    return `<section class="store-detail-section"><div class="store-detail-title">Detalle Store Number · GAP mostrado</div><div class="store-detail-grid">${rows}</div></section>`;
+  }
+
+  function generateReport(){
+    clearMessage();
+    const err=validateSelections(); if(err){showMessage(err,'error');return;}
+    const view=document.getElementById('viewSelect').value;
+    const spgrs=selectedValues('spgrChecks');
+    const weeks=selectedValues('weekChecks').sort((a,b)=>weekNumber(a)-weekNumber(b)||a.localeCompare(b));
+    const retailers=selectedValues('retailerChecks');
+    const gap=document.getElementById('gapSelect').value;
+    const report=document.getElementById('report');
+    report.innerHTML=reportHeaderHTML();
+
+    if(view==='matrix') renderMatrix(report,spgrs,weeks,retailers,gap);
+    else renderRetailerWeeks(report,spgrs,weeks,retailers,gap);
+
+    state.reportReady=true;
+    document.getElementById('exportBtn').disabled=false;
+    document.getElementById('copyBtn').disabled=false;
+    showMessage('Vista generada. Puedes exportarla como PNG o copiarla directamente.','info');
+  }
+
+  function renderRetailerWeeks(report,spgrs,weeks,retailers,gap){
+    const mode=document.getElementById('spgrMode').value;
+    const details=[];
+    if(mode==='separate'){
+      spgrs.forEach(spgr=>{
+        const block=document.createElement('section'); block.className='spgr-block';
+        const product=productNameFor(spgr,weeks);
+        block.innerHTML=`<div class="spgr-block-title">SPGR ${escapeHTML(spgr)}${product?`<span>${escapeHTML(product)}</span>`:''}</div>`;
+        retailers.forEach(ret=>{
+          const cards=weeks.map(w=>{
+            const rows=rowsFor(w,[ret],[spgr]);
+            const stats=calcStats(rows,gap);
+            details.push({retailer:ret,week:w,spgr,stats});
+            return cardHTML(stats,w);
+          }).join('');
+          block.innerHTML+=`<div class="retailer-block"><div class="retailer-title">${escapeHTML(ret)}</div><div class="cards-row" style="--cols:${weeks.length}">${cards}</div></div>`;
+        });
+        report.appendChild(block);
+      });
+    }else{
+      retailers.forEach(ret=>{
+        const cards=weeks.map(w=>{
+          const rows=rowsFor(w,[ret],spgrs);
+          const stats=calcStats(rows,gap);
+          details.push({retailer:ret,week:w,spgr:spgrs.length===1?spgrs[0]:'',stats});
+          return cardHTML(stats,w);
+        }).join('');
+        const block=document.createElement('div');block.className='retailer-block';
+        block.innerHTML=`<div class="retailer-title">${escapeHTML(ret)}</div><div class="cards-row" style="--cols:${weeks.length}">${cards}</div>`;
+        report.appendChild(block);
+      });
+    }
+
+    report.insertAdjacentHTML('beforeend',storeDetailHTML(details));
+    report.insertAdjacentHTML('beforeend',resolveTotalBar(spgrs,weeks,retailers));
+  }
+
+  function renderMatrix(report,spgrs,weeks,retailers,gap){
+    const details=[];
+    weeks.forEach(week=>{
+      const section=document.createElement('section');section.className='matrix-week';
+      if(weeks.length>1) section.innerHTML=`<div class="matrix-week-title">${escapeHTML(week)}</div>`;
+      const cols=`235px repeat(${retailers.length}, 1fr)`;
+      let html=`<div class="matrix-grid" style="grid-template-columns:${cols}"><div class="matrix-corner"></div>`;
+      retailers.forEach(ret=>{
+        html+=`<div><div class="matrix-retailer">${escapeHTML(ret)}</div><div class="matrix-week-small">${escapeHTML(week)}</div></div>`;
+      });
+      spgrs.forEach(spgr=>{
+        const product=productNameFor(spgr,[week]);
+        html+=`<div class="spgr-label"><div>${escapeHTML(spgr)}${product?`<span class="product">${escapeHTML(product)}</span>`:''}</div></div>`;
+        retailers.forEach(ret=>{
+          const rows=rowsFor(week,[ret],[spgr]);
+          const stats=calcStats(rows,gap);
+          details.push({retailer:ret,week,spgr,stats});
+          html+=cardHTML(stats,'','matrix-card');
+        });
+      });
+      html+='</div>';
+      section.innerHTML+=html;
+      report.appendChild(section);
+    });
+    report.insertAdjacentHTML('beforeend',storeDetailHTML(details));
+    report.insertAdjacentHTML('beforeend',resolveTotalBar(spgrs,weeks,retailers));
+  }
+
+  // ============================================================
+  // EXPORTACIÓN · SIN FONDO / SIN TÍTULO DEL SLIDE
+  // ============================================================
+  function cropTransparentCanvas(sourceCanvas, padding=8){
+    const ctx=sourceCanvas.getContext('2d');
+    const {width,height}=sourceCanvas;
+    const data=ctx.getImageData(0,0,width,height).data;
+    let minX=width, minY=height, maxX=-1, maxY=-1;
+
+    for(let y=0;y<height;y++){
+      for(let x=0;x<width;x++){
+        const alpha=data[(y*width+x)*4+3];
+        if(alpha>2){
+          if(x<minX) minX=x;
+          if(x>maxX) maxX=x;
+          if(y<minY) minY=y;
+          if(y>maxY) maxY=y;
+        }
+      }
+    }
+
+    if(maxX<minX || maxY<minY) return sourceCanvas;
+    minX=Math.max(0,minX-padding);
+    minY=Math.max(0,minY-padding);
+    maxX=Math.min(width-1,maxX+padding);
+    maxY=Math.min(height-1,maxY+padding);
+
+    const out=document.createElement('canvas');
+    out.width=maxX-minX+1;
+    out.height=maxY-minY+1;
+    out.getContext('2d').drawImage(
+      sourceCanvas,
+      minX,minY,out.width,out.height,
+      0,0,out.width,out.height
+    );
+    return out;
+  }
+
+  async function reportCanvas(){
+    const report=document.getElementById('report');
+
+    // Se usa un clon invisible para no alterar la vista previa.
+    const clone=report.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.style.position='fixed';
+    clone.style.left='-10000px';
+    clone.style.top='0';
+    clone.style.zIndex='-99999';
+    clone.style.background='transparent';
+    clone.style.minHeight='0';
+    clone.style.height='auto';
+    clone.style.overflow='visible';
+    clone.style.width=report.offsetWidth+'px';
+
+    // El título/eyebrow/logo ya suelen existir en el PowerPoint.
+    const header=clone.querySelector('.ppt-header');
+    if(header) header.remove();
+
+    document.body.appendChild(clone);
+
+    try{
+      const canvas=await html2canvas(clone,{
+        scale:2,
+        backgroundColor:null,
+        useCORS:true,
+        logging:false,
+        windowWidth:clone.scrollWidth,
+        windowHeight:clone.scrollHeight
+      });
+      return cropTransparentCanvas(canvas,12);
+    }finally{
+      clone.remove();
+    }
+  }
+
+  document.getElementById('exportBtn').addEventListener('click',async()=>{
+    if(!state.reportReady)return;
+    const btn=document.getElementById('exportBtn');btn.disabled=true;btn.textContent='Generando...';
+    try{
+      const canvas=await reportCanvas();
+      const a=document.createElement('a');
+      a.href=canvas.toDataURL('image/png');
+      a.download=sanitizeFileName(document.getElementById('titleInput').value)+'_figuras.png';
+      a.click();
+    }catch(err){showMessage('No se pudo exportar: '+err.message,'error')}
+    finally{btn.disabled=false;btn.textContent='Exportar PNG'}
+  });
+
+  document.getElementById('copyBtn').addEventListener('click',async()=>{
+    if(!state.reportReady)return;
+    const btn=document.getElementById('copyBtn');btn.disabled=true;btn.textContent='Copiando...';
+    try{
+      const canvas=await reportCanvas();
+      const blob=await new Promise(res=>canvas.toBlob(res,'image/png'));
+      if(!navigator.clipboard || !window.ClipboardItem) throw new Error('Tu navegador no permite copiar imágenes directamente. Usa Exportar PNG.');
+      await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+      showMessage('Imagen sin fondo y sin título copiada al portapapeles. Ya puedes pegarla en PowerPoint.','info');
+    }catch(err){showMessage(err.message,'error')}
+    finally{btn.disabled=false;btn.textContent='Copiar imagen'}
+  });
+</script>
+</body>
+</html>

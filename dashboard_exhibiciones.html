@@ -137,17 +137,7 @@
 
 <script>
 const SHEET_ID="1Ny4_WjIAf57mhpgdwhAvgauYpH-1EuPD-x_v5JQ7qFM";
-
-/*
- * PEGA AQUÍ UNA SOLA VEZ el mismo link /exec del formulario.
- * Ejemplo:
- * const DATA_WEBAPP_URL="https://script.google.com/macros/s/XXXXXXXX/exec";
- *
- * El dashboard usará Apps Script como fuente de datos y dejará de depender
- * del estado visual de filtros aplicados dentro del Google Sheets.
- */
-const DATA_WEBAPP_URL="PEGAR_AQUI_URL_EXEC_DEL_FORMULARIO";
-
+const SHEETS={PLAN:"_DB Plan",HIST:"_DB Hist",CONTROL:"_DB Control",REVISION:"_DB Revision",ESTADO:"_DB Estado",EXTRAS:"_DB Extras",MAPPING:"_DB Mapping"};
 const MAX_BARS=12;
 let DB={plan:[],hist:[],control:[],revision:[],estado:[],extras:[],mapping:[]};
 let RAW=[];
@@ -156,65 +146,15 @@ let CURRENT_MONTH="";
 let state={mode:"actual",period:"",phase:"F1",cliente:"Todos",estado:"Todos",tipoExhibicion:"Todas",categoria:"Todos",supervisor:"Todos",mercaderista:"Todos",search:"",drill:null,barShowAll:false};
 let coverageDonutChart=null,implementationDonutChart=null,barChart=null,evolutionChart=null;
 
-function dashboardDataUrl(){
-  const base=clean(DATA_WEBAPP_URL).split("?")[0];
-  if(!base || base.includes("PEGAR_AQUI")){
-    throw new Error("Falta configurar DATA_WEBAPP_URL con el link /exec del formulario.");
-  }
-  return base;
-}
-
-function fetchDashboardData(){
-  return new Promise((resolve,reject)=>{
-    let finished=false;
-    const callback="secondaryShelfData_"+Date.now()+"_"+Math.random().toString(36).slice(2);
-    const script=document.createElement("script");
-    const timeout=setTimeout(()=>{
-      cleanup();
-      reject(new Error("La fuente de datos tardó demasiado en responder."));
-    },30000);
-
-    function cleanup(){
-      if(finished)return;
-      finished=true;
-      clearTimeout(timeout);
-      try{delete window[callback]}catch(e){window[callback]=undefined}
-      if(script.parentNode)script.parentNode.removeChild(script);
-    }
-
-    window[callback]=payload=>{
-      cleanup();
-      if(!payload || payload.ok!==true){
-        reject(new Error(payload&&payload.message?payload.message:"No fue posible leer los datos del dashboard."));
-        return;
-      }
-      resolve(payload.data||{});
-    };
-
-    script.onerror=()=>{
-      cleanup();
-      reject(new Error("No fue posible conectar con la fuente de datos del Centro de Reportes."));
-    };
-
-    script.src=dashboardDataUrl()+"?view=dashboard-data&callback="+encodeURIComponent(callback)+"&_="+Date.now();
-    document.head.appendChild(script);
-  });
-}
+function sheetCsvUrl(sheetName){return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}&_=${Date.now()}`}
+async function fetchSheet(sheetName){const r=await fetch(sheetCsvUrl(sheetName),{cache:"no-store"});if(!r.ok)throw new Error(`No fue posible leer ${sheetName}`);const text=await r.text();return Papa.parse(text,{header:true,skipEmptyLines:true,transformHeader:h=>clean(h)}).data||[]}
 
 async function loadData(){
   const btn=document.getElementById("refreshBtn"),msg=document.getElementById("statusMsg"),body=document.getElementById("appBody");
   btn.disabled=true;btn.textContent="Actualizando…";msg.style.display="block";msg.classList.remove("error");msg.textContent="Cargando planificación histórica, fases y estado actual…";body.style.display="none";
   try{
-    const data=await fetchDashboardData();
-    DB={
-      plan:data.plan||[],
-      hist:data.hist||[],
-      control:data.control||[],
-      revision:data.revision||[],
-      estado:data.estado||[],
-      extras:data.extras||[],
-      mapping:data.mapping||[]
-    };
+    const [plan,hist,control,revision,estado,extras,mapping]=await Promise.all(Object.values(SHEETS).map(fetchSheet));
+    DB={plan,hist,control,revision,estado,extras,mapping};
     preparePeriods();
     RAW=buildSelectedUniverse();
     resetInvalidFilters();
@@ -401,13 +341,7 @@ function renderComparisonTable(rows){
 }
 function renderHistoricalInsights(){
   const section=document.getElementById("historyInsights"),rows=comparisonRows();
-  if(!rows.length){
-    section.classList.add("hidden");
-    document.getElementById("comparePanel").classList.remove("open");
-    document.getElementById("compareChev").classList.remove("open");
-    document.getElementById("compareCount").textContent="0";
-    return
-  }
+  if(!rows.length){section.classList.add("hidden");return}
   section.classList.remove("hidden");
   const title=section.querySelector('.history-head h2'),sub=section.querySelector('.history-head p');
   title.textContent="Comparación Fase 1 → Fase 2";

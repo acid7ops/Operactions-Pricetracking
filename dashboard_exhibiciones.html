@@ -164,7 +164,7 @@ function updateModeBadge(){const b=document.getElementById("viewBadge");if(state
 function updatePhaseNote(){
   const note=document.getElementById("phaseNote");
   const controls=controlsForMonth(state.period);const total=controls.length;const activeF2=controls.filter(c=>c.fase>=2).length;
-  if(state.mode==="actual"&&state.phase==="F1")note.textContent=`Primera Fase · estado vivo para retailers aún en F1 y snapshot congelado para los ${activeF2} que ya pasaron a F2.`;
+  if(state.mode==="actual"&&state.phase==="F1")note.textContent=`Primera Fase · usa la fecha de inicio configurada por retailer; estado vivo para quienes siguen en F1 y snapshot congelado para los ${activeF2} que ya pasaron a F2.`;
   else if(state.mode==="actual"&&state.phase==="F2")note.textContent=`Segunda Fase · ${activeF2} de ${total} retailers activados. Solo esos retailers entran en los indicadores de F2.`;
   else if(state.phase==="F1")note.textContent=`Histórico · snapshot oficial de Primera Fase para ${monthLabel(state.period)}.`;
   else note.textContent=`Histórico · snapshot oficial de Segunda Fase para ${monthLabel(state.period)}.`;
@@ -178,7 +178,7 @@ function buildActualF1(month){
     const c=controlMap.get(clientKey(p.cliente));let s=null,source="Pendiente",date="";
     if(c&&c.fase>=2){s=hist1.get(p.llave);source=s?(s.source||"Snapshot Fase 1"):"Pendiente";date=s?.fecha||""}
     else{
-      const cur=current.get(p.llave);const start=c?.inicio||monthStart(month);const valid=cur&&cur.dateObj&&cur.dateObj>=start&&monthFromDate(cur.dateObj)===month;
+      const cur=current.get(p.llave);const start=c?.inicio||monthStart(month);const valid=cur&&cur.dateObj&&cur.dateObj>=start;
       if(valid){s=cur;source="Formulario";date=cur.fecha}
     }
     rows.push(standardRow(p,s,date,source,"Fase 1"));
@@ -216,7 +216,7 @@ function controlsForMonth(month){return DB.control.map(r=>{const mes=normalizeMo
 function controlMapForMonth(month){return new Map(controlsForMonth(month).map(c=>[clientKey(c.cliente),c]))}
 function historyMap(month,phase){const m=new Map();DB.hist.forEach(r=>{if(normalizeMonth(getField(r,["Mes"]))!==month||Number(clean(getField(r,["Fase"])))!==Number(phase))return;const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),ex=clean(getField(r,["Exhibición","Exhibicion"])),key=clean(getField(r,["Llave"]))||makeKey(codigo,ex);m.set(key,{estado:canonicalStatus(getField(r,["Estado"])),razon:clean(getField(r,["Razón","Razon"])),comentario:clean(getField(r,["Comentario"])),foto:clean(getField(r,["Foto URL","Foto"])),source:clean(getField(r,["Fuente actualización","Fuente actualizacion"])),fecha:formatSheetDate(getField(r,["Fecha Snapshot"])),dateObj:parseSheetDate(getField(r,["Fecha Snapshot"]))})});return m}
 function revisionMap(month){const m=new Map();DB.revision.forEach(r=>{if(normalizeMonth(getField(r,["Mes"]))!==month)return;const key=clean(getField(r,["Llave"]));if(key)m.set(key,{cambios:normalizeChange(getField(r,["Cambios"])),fecha:formatSheetDate(getField(r,["Fecha Carga"]))})});return m}
-function currentStateMap(){const m=new Map();DB.estado.forEach(r=>{const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),ex=clean(getField(r,["Exhibición","Exhibicion"]));if(!codigo||!ex)return;const d=parseSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"]));m.set(clean(getField(r,["Llave"]))||makeKey(codigo,ex),{estado:canonicalStatus(getField(r,["Estado"])),razon:clean(getField(r,["Razón","Razon"])),comentario:clean(getField(r,["Comentario"])),foto:clean(getField(r,["Foto URL","Foto"])),fecha:d?formatDate(d):formatSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"])),dateObj:d})});return m}
+function currentStateMap(){const m=new Map();DB.estado.forEach(r=>{const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),ex=clean(getField(r,["Exhibición","Exhibicion"]));if(!codigo||!ex)return;const d=parseSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"]));const value={estado:canonicalStatus(getField(r,["Estado"])),razon:clean(getField(r,["Razón","Razon"])),comentario:clean(getField(r,["Comentario"])),foto:clean(getField(r,["Foto URL","Foto"])),fecha:d?formatDate(d):formatSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"])),dateObj:d};const derivedKey=makeKey(codigo,ex);const storedKey=clean(getField(r,["Llave"]));m.set(derivedKey,value);if(storedKey&&storedKey!==derivedKey)m.set(storedKey,value)});return m}
 
 function getField(row,candidates){const map=new Map(Object.keys(row||{}).map(k=>[normalizeText(k),k]));for(const c of candidates){const k=map.get(normalizeText(c));if(k!==undefined)return row[k]}return""}
 function clean(v){return v==null?"":String(v).trim()}

@@ -112,7 +112,6 @@
       <div class="compare-table-wrap"><table class="compare-table"><thead><tr><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Mercaderista</th><th>Fase 1</th><th>Fase 2</th><th>Evolución</th><th>Actualización F2</th><th>Razón / Comentario F2</th></tr></thead><tbody id="compareTableBody"></tbody></table><div id="compareEmpty" class="compare-empty" style="display:none">No hay exhibiciones para comparar con los filtros seleccionados.</div></div>
     </div>
 
-    <div class="evolution-wrap"><h3>Evolución mensual del target</h3><p>Mismo filtro de retailer, supervisor, mercaderista y categoría aplicado sobre la planificación histórica.</p><div class="evolution-canvas"><canvas id="evolutionChart"></canvas></div></div>
   </section>
 
   <section class="merch-panel hidden" id="merchPanel">
@@ -130,6 +129,13 @@
   </div>
 
   <div id="detailPanel"><div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Categoría</th><th>Estado</th><th id="updateHeader">Actualización</th><th>Razón / Comentario</th><th>Mercaderista</th><th>Supervisor</th><th>Foto</th></tr></thead><tbody id="tableBody"></tbody></table><div class="empty-state" id="emptyState" style="display:none">No hay exhibiciones que coincidan con los filtros.</div></div></div>
+
+  <div class="evolution-wrap hidden" id="evolutionBottom">
+    <h3>Evolución mensual del target</h3>
+    <p>Mismo filtro de retailer, supervisor, mercaderista y categoría aplicado sobre la planificación histórica.</p>
+    <div class="evolution-canvas"><canvas id="evolutionChart"></canvas></div>
+  </div>
+
   <footer>SECONDARY SHELF · VISIBILITY · BEIERSDORF SALES OPERATIONS · PLANIFICACIÓN Y FASES DESDE GOOGLE SHEETS</footer>
 </div>
 
@@ -340,9 +346,14 @@ function renderComparisonTable(rows){
   rows.forEach(r=>{const tr=document.createElement("tr"),reason=[r.razonF2,r.comentarioF2].filter(Boolean).join(" · ");tr.innerHTML=`<td>${esc(r.cliente)}</td><td class="mono">${esc(r.codigo)}</td><td>${esc(exhibitionExportName({exhibicion:r.exhibicion,nombreFormulario:r.nombreFormulario}))}</td><td>${esc(r.mercaderista||"—")}</td><td><span class="status-chip ${classify(r.estadoF1)}">${esc(r.estadoF1)}</span></td><td><span class="status-chip ${classify(r.estadoF2)}">${esc(r.estadoF2)}</span></td><td><span class="compare-chip ${comparisonClass(r.evolucion)}">${esc(r.evolucion)}</span></td><td>${esc(r.actualizacionF2||"—")}</td><td>${esc(reason||"—")}</td>`;tbody.appendChild(tr)})
 }
 function renderHistoricalInsights(){
-  const section=document.getElementById("historyInsights"),rows=comparisonRows();
-  if(!rows.length){section.classList.add("hidden");return}
+  const section=document.getElementById("historyInsights"),evolutionBottom=document.getElementById("evolutionBottom"),rows=comparisonRows();
+  if(!rows.length){
+    section.classList.add("hidden");
+    evolutionBottom.classList.add("hidden");
+    return
+  }
   section.classList.remove("hidden");
+  evolutionBottom.classList.remove("hidden");
   const title=section.querySelector('.history-head h2'),sub=section.querySelector('.history-head p');
   title.textContent="Comparación Fase 1 → Fase 2";
   sub.textContent=state.mode==="actual"?"Evolución en vivo para retailers ya activados en Segunda Fase.":"Resultados oficiales del periodo para retailers que cuentan con Segunda Fase.";

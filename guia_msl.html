@@ -237,9 +237,8 @@ const GONDOLA_ICONS = {
 
 let currentStore = null;
 let currentGondola = null;
-const checkedState = JSON.parse(localStorage.getItem('mslChecked') || '{}');
+const checkedState = {};
 
-function saveChecked(){ localStorage.setItem('mslChecked', JSON.stringify(checkedState)); }
 function normalize(s){ return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
 /* ---------- LANDING ---------- */
@@ -333,6 +332,10 @@ function storeProducts(){ return gondolaProducts(currentGondola); }
 function checkKey(p){ return currentStore.code + '|' + currentGondola + '|' + p.ean; }
 
 function initGuide(){
+  // reset checklist every time this gondola is entered, so going back and re-entering starts fresh
+  Object.keys(checkedState).forEach(k => {
+    if(k.startsWith(currentStore.code + '|' + currentGondola + '|')) delete checkedState[k];
+  });
   document.getElementById('bannerStoreName').textContent = currentStore.name;
   document.getElementById('bannerMerch').textContent = currentStore.merch + ' · ' + currentStore.re;
   document.getElementById('guideTitle').textContent = GONDOLA_META[currentGondola].label;
@@ -404,7 +407,6 @@ function openModal(idx){
   document.getElementById('checkBtn').onclick = () => {
     const key = checkKey(p);
     checkedState[key] = !checkedState[key];
-    saveChecked();
     openModal(idx);
     renderGuide();
   };

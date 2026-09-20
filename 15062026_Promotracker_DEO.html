@@ -20,11 +20,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 :root{
-  --nivea:#0057A8; --nivea-deep:#00294F; --nivea-mid:#0A3D73; --nivea-light:#E6F1FB;
+  --nivea:#0B4C8C; --nivea-deep:#071F3D; --nivea-mid:#123A5C; --nivea-light:#E7EEF5;
   --ink:#0B1C2C; --muted:#5B6B7C; --faint:#8698A8;
-  --paper:#FFFFFF; --canvas:#EEF3F9; --line:#DCE6F0; --mist:#E7EFF8;
-  --green:#158A4A; --green-bg:#EAF3DE; --red:#C0392B; --red-bg:#FCEBEB;
-  --amber:#D89A1F; --orange:#E65100;
+  --paper:#FDFCFA; --canvas:#EEF1F6; --line:#DDE2EA; --mist:#E8EEF5;
+  --green:#3F7D53; --green-bg:#EAF2E9; --red:#9B3A32; --red-bg:#FBEDEB;
+  --amber:#A3690A; --orange:#A3690A;
   --r-sm:6px; --r-md:10px; --r-lg:14px;
   --sh-sm:0 1px 3px rgba(10,27,46,.07);
   --sh-md:0 4px 16px rgba(10,27,46,.09);
@@ -73,14 +73,14 @@ body{
   content:'DEO PROMOTRACKER';
   font-family:'IBM Plex Mono',monospace;
   font-size:8.5px;letter-spacing:.14em;
-  color:#A9CDEF;font-weight:500;
+  color:#9CB9DC;font-weight:500;
 }
 .apl-tabs{display:flex;overflow-x:auto;flex:1}
 .apl-tab{
   padding:.5rem 1rem;
   font-family:'IBM Plex Mono',monospace;
   font-size:10.5px;font-weight:500;
-  color:#8FB6DD;cursor:pointer;
+  color:#6E93C2;cursor:pointer;
   border-bottom:3px solid transparent;
   white-space:nowrap;
   transition:color .15s,border-color .15s;
@@ -169,7 +169,7 @@ body{
 }
 .b-blue{background:var(--nivea-light);color:var(--nivea)}
 .b-dark{background:var(--nivea-deep);color:white}
-.b-ps{background:#FFF8E1;color:#B8620A;border:1px solid #FFE082}
+.b-ps{background:#FBF1DE;color:#A3690A;border:1px solid #E8CFA0}
 
 /* ── KPIs ── */
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.75rem}
@@ -199,7 +199,7 @@ body{
 
 /* ── Layout ── */
 .main{display:grid;grid-template-columns:1fr 240px;gap:.75rem;margin-bottom:.75rem}
-.left-col{display:flex;flex-direction:column;gap:.75rem}
+.left-col{display:flex;flex-direction:column;gap:.75rem;min-width:0}
 .rcol{display:flex;flex-direction:column;gap:.75rem}
 
 /* ── Cards ── */
@@ -208,6 +208,7 @@ body{
   padding:.85rem 1.1rem;overflow:visible;
   border:1px solid var(--line);
   box-shadow:var(--sh-sm);
+  min-width:0;
 }
 .card.hist-mode{overflow-x:auto}
 .sec-lbl{
@@ -231,8 +232,8 @@ table.pt th{
 table.pt th.lh{text-align:left;min-width:115px;position:sticky;left:0;background:var(--canvas);z-index:2}
 table.pt th.lhm{text-align:left;min-width:60px}
 table.pt th.wc{color:var(--nivea);background:var(--nivea-light)}
-table.pt th.hd{color:#0F6E56}
-table.pt th.hr{color:#854F0B}
+table.pt th.hd{color:#0B5C46}
+table.pt th.hr{color:#8A5A22}
 table.pt td{
   padding:5px 6px;border-bottom:.5px solid var(--mist);
   text-align:center;vertical-align:middle;
@@ -241,14 +242,14 @@ table.pt td{
 table.pt td.cli{
   text-align:left;font-family:'Space Grotesk',sans-serif;
   font-weight:600;color:var(--nivea-deep);
-  background:#F5F8FD;font-size:10.5px;
+  background:#F6F8FB;font-size:10.5px;
   position:sticky;left:0;z-index:1;min-width:115px;
   vertical-align:top;padding-top:7px;
   border-right:1px solid var(--line);
 }
 table.pt td.mrc{text-align:left;min-width:60px}
-table.pt td.wc{background:#EBF4FC}
-table.pt td.wc-niv{background:#D6EAF8;font-weight:700;color:var(--nivea-deep)}
+table.pt td.wc{background:#EEF3FA}
+table.pt td.wc-niv{background:#DCE7F3;font-weight:700;color:var(--nivea-deep)}
 table.pt td.pend{color:var(--faint);font-size:9px}
 table.pt tr:last-child td{border-bottom:none}
 table.pt .tot-row td{
@@ -296,7 +297,7 @@ table.pt tr:hover td:not(.cli){background:var(--mist)}
 }
 .al-item:last-child{border-bottom:none}
 .adot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:3px}
-.ar{background:var(--red)}.ag{background:var(--green)}.ap{background:#9C27B0}
+.ar{background:var(--red)}.ag{background:var(--green)}.ap{background:#6B4C7A}
 .atxt{font-size:10.5px;line-height:1.5;color:var(--ink)}
 .ameta{font-family:'IBM Plex Mono',monospace;font-size:8px;color:var(--faint);margin-top:2px;letter-spacing:.03em}
 
@@ -386,11 +387,11 @@ table.pt tr:hover td:not(.cli){background:var(--mist)}
             Promo &middot; IX vs Dove &middot; IX vs Rexona
             &nbsp;&nbsp;
             <span style="font-weight:400;text-transform:none;font-size:8px;color:#bbb">
-              <span style="color:#e65100;font-weight:600">Naranja</span> = promo Nivea &middot;
-              <span style="color:#2e6b10">&#8593;</span> precio baja &middot;
-              <span style="color:#a32d2d">&#8595;</span> precio sube &middot;
-              <span style="background:#eaf3de;color:#2e6b10;padding:0 3px;border-radius:3px;font-weight:700">88&#8211;92%</span> ok &middot;
-              <span style="background:#fcebeb;color:#a32d2d;padding:0 3px;border-radius:3px;font-weight:700">fuera de rango</span> alerta
+              <span style="color:#A3690A;font-weight:600">Naranja</span> = promo Nivea &middot;
+              <span style="color:#2F5F3E">&#8593;</span> precio baja &middot;
+              <span style="color:#9B3A32">&#8595;</span> precio sube &middot;
+              <span style="background:#EAF2E9;color:#2F5F3E;padding:0 3px;border-radius:3px;font-weight:700">88&#8211;92%</span> ok &middot;
+              <span style="background:#FBEDEB;color:#9B3A32;padding:0 3px;border-radius:3px;font-weight:700">fuera de rango</span> alerta
             </span>
           </span>
           <button class="hist-btn" id="hist-toggle" onclick="toggleHistorico()">Ver hist&oacute;rico completo</button>
@@ -408,12 +409,12 @@ table.pt tr:hover td:not(.cli){background:var(--mist)}
   <div class="chart-card" id="chart-section">
     <div class="sec-lbl">
       Precio unitario promedio &mdash; Historial <span id="ch-range">W46 &rarr; W30</span>
-      &nbsp;<span id="ch-note" style="font-size:8px;color:#185FA5;font-weight:600">&bull; &aacute;rea azul = Junio 2026</span>
+      &nbsp;<span id="ch-note" style="font-size:8px;color:#0B4C8C;font-weight:600">&bull; &aacute;rea azul = Junio 2026</span>
     </div>
     <div class="legend">
-      <span><span class="lb" style="background:#185FA5"></span>Nivea</span>
-      <span><span class="lb" style="background:#0F6E56"></span>Dove</span>
-      <span><span class="lb" style="background:#854F0B;opacity:.8"></span>Rexona</span>
+      <span><span class="lb" style="background:#0B4C8C"></span>Nivea</span>
+      <span><span class="lb" style="background:#0B5C46"></span>Dove</span>
+      <span><span class="lb" style="background:#8A5A22;opacity:.8"></span>Rexona</span>
     </div>
     <div class="ch-wrap"><canvas id="chart-main"></canvas></div>
   </div>
@@ -426,6 +427,11 @@ var DATA = {"SPRAY":{"PYP":{"SB":{"ps":"2x5.990","NIV":{"W22":{"m":"2x","p":5490
 var HIST  = {"sems":["W46","W47","W48","W49","W50","W51","W52","W1","W2","W3","W4","W5","W6","W7","W8","W9","W10","W11","W12","W13","W14","W15","W16","W17","W18","W19","W20","W21","W22","W23","W24","W25","W26","W27","W28","W29","W30","W31","W32","W33","W34","W35","W36","W37","W38"],"hist":{"HYS":{"niv":[null,2878,2795,2695,2695,2695,2695,2695,2695,2695,2795,null,3127,2927,2927,2580,2580,2579,2579,2579,2579,2550,2550,2550,2548,2548,2613,2547,2596,2569,2632,2645,2645,2696,2658,2658,2658,2658,2728,2728,2728,2728,2695,2695,2695,2709],"dov":[null,3097,3047,2960,3010,3010,3010,3010,3010,3010,3012,null,2962,3012,3012,3012,3012,2962,2962,2962,2962,3210,3012,3012,3012,3012,3020,3020,3082,3270,3145,3208,3208,3245,3095,3095,3095,3120,3220,3256,3256,3139,3230,3230,3143,3143],"rex":[null,2997,2963,2930,2963,2963,2963,2963,2927,2927,2927,null,2963,2895,2928,2962,2895,2895,2895,2895,2895,3127,2895,2895,2895,2895,2845,2845,2820,3132,3045,3045,3045,3045,3245,3245,3132,3195,3180,3208,3208,3095,3262,3262,3262,3262]},"PYP":{"niv":[null,2777,2797,2797,2756,2748,2747,2747,2747,2747,2747,null,2748,2748,2746,2747,2747,2757,2757,2607,2607,2617,2635,2635,2635,2760,2767,2717,2717,2807,2807,2807,2807,2922,2922,2922,2922,2996,2947,2946,2947,2947,2947,2947,2997,2997],"dov":[null,2968,2968,2968,2968,3027,3027,3027,3027,3027,3058,null,3088,3107,3087,3087,3087,3087,3087,3087,3087,3097,3146,3137,3097,3166,3196,3196,3247,3368,3368,3368,3368,3288,3367,3367,3367,3367,3397,3397,3397,3397,3396,3396,3317,3317],"rex":[null,2968,2968,2968,2968,2987,2987,2987,2987,2987,2958,null,3272,2988,2958,2958,2958,2959,2959,2959,2959,2959,3008,3008,3008,3027,2976,2976,2957,3197,3197,3197,3197,3260,3265,3265,3265,3272,3265,3297,3279,3279,3264,3264,3260,3247]}}};
 var NAMES = {"SB": "Salcobrand", "CV": "Cruz Verde", "MA": "Maicao", "PU": "Preunic", "FA": "Ahumada", "LIDER": "Lider", "JUMBO": "Jumbo", "SISA": "Santa Isabel", "UNIMARC": "Unimarc"};
 var SEMS  = ["W30","W31","W32","W33","W34","W35","W36","W37","W38"];
+// SEMS (arriba) viene recortada a las ultimas 9 semanas por el generador.
+// La sobreescribimos con el historico completo acumulado en HIST.sems, asi
+// "Ver historico completo" (y toda la logica que ya usa SEMS) tiene acceso
+// a TODAS las semanas registradas, no solo las ultimas 9.
+SEMS = HIST.sems.slice();
 var FMT   = function(v){ return v == null ? '—' : '$' + Math.round(v).toLocaleString('es-CL'); };
 var apl = 'SPRAY', canal = 'PYP', chartInst = null;
 var showHistorico = false;
@@ -585,9 +591,9 @@ function render() {
   cliList.forEach(function(cli) {
     var d = clients[cli];
     var marcas = [
-      {key:'NIV', lbl:'Nivea',  col:'#185FA5', isN:true},
-      {key:'DOV', lbl:'Dove',   col:'#0F6E56', isN:false},
-      {key:'REX', lbl:'Rexona', col:'#854F0B', isN:false},
+      {key:'NIV', lbl:'Nivea',  col:'#0B4C8C', isN:true},
+      {key:'DOV', lbl:'Dove',   col:'#0B5C46', isN:false},
+      {key:'REX', lbl:'Rexona', col:'#8A5A22', isN:false},
     ];
     marcas = marcas.filter(function(m){
       if (m.key !== 'REX') return true;
@@ -595,11 +601,11 @@ function render() {
     });
     var hasRex = marcas.some(function(m){ return m.key === 'REX'; });
 
-    var ixRows = [{key:'IXD', lbl:'IX vs Dove', col:'#0F6E56'}];
-    if (hasRex) ixRows.push({key:'IXR', lbl:'IX vs Rexona', col:'#854F0B'});
+    var ixRows = [{key:'IXD', lbl:'IX vs Dove', col:'#0B5C46'}];
+    if (hasRex) ixRows.push({key:'IXR', lbl:'IX vs Rexona', col:'#8A5A22'});
 
     var rowspan = marcas.length + ixRows.length;
-    var psStr = (d.ps && d.ps !== 'S/P') ? ' <span style="background:#fff8e1;color:#e65100;padding:0 3px;border-radius:2px;font-size:7px">' + d.ps + '</span>' : '';
+    var psStr = (d.ps && d.ps !== 'S/P') ? ' <span style="background:#FBF1DE;color:#A3690A;padding:0 3px;border-radius:2px;font-size:7px">' + d.ps + '</span>' : '';
 
     marcas.forEach(function(m, mi) {
       var row = '<tr>';
@@ -623,7 +629,7 @@ function render() {
           if (info && info.price) {
             var arrow = priceArrow(info, infoP);
             if (info.isPromo) {
-              promoHtml = '<span style="color:#2e6b10;font-weight:700;background:#eaf3de;padding:1px 5px;border-radius:4px">' + info.label + '</span>' + arrow;
+              promoHtml = '<span style="color:#2F5F3E;font-weight:700;background:#EAF2E9;padding:1px 5px;border-radius:4px">' + info.label + '</span>' + arrow;
             } else {
               var pcls = m.isN ? 'promo-niv' : 'promo-comp';
               promoHtml = '<span class="' + pcls + '">' + info.label + '</span>' + arrow;
@@ -663,8 +669,8 @@ function render() {
     });
   });
 
-  var totRowD = '<tr class="tot-row"><td class="cli" style="color:#888">Total promedio</td><td class="mrc" style="color:#0F6E56;font-style:italic">IX vs Dove</td>';
-  var totRowR = '<tr class="tot-row"><td class="cli"></td><td class="mrc" style="color:#854F0B;font-style:italic">IX vs Rexona</td>';
+  var totRowD = '<tr class="tot-row"><td class="cli" style="color:#888">Total promedio</td><td class="mrc" style="color:#0B5C46;font-style:italic">IX vs Dove</td>';
+  var totRowR = '<tr class="tot-row"><td class="cli"></td><td class="mrc" style="color:#8A5A22;font-style:italic">IX vs Rexona</td>';
   var anyRex = totR.some(function(t){ return t.n > 0; });
 
   VISIBLE_SEMS.forEach(function(s, si) {
@@ -693,7 +699,7 @@ function render() {
   if (prevSem) {
     cliList.forEach(function(cli) {
       var d = clients[cli];
-      [{key:'NIV',lbl:'Nivea',col:'#185FA5'},{key:'DOV',lbl:'Dove',col:'#0F6E56'},{key:'REX',lbl:'Rexona',col:'#854F0B'}].forEach(function(m) {
+      [{key:'NIV',lbl:'Nivea',col:'#0B4C8C'},{key:'DOV',lbl:'Dove',col:'#0B5C46'},{key:'REX',lbl:'Rexona',col:'#8A5A22'}].forEach(function(m) {
         var curr  = d[m.key] ? d[m.key][curSem]  : null;
         var prev  = d[m.key] ? d[m.key][prevSem] : null;
         var iCurr = curr ? pInfo(curr.p, curr.m, pack) : null;
@@ -770,9 +776,9 @@ function render() {
     chartInst = new Chart(document.getElementById('chart-main'), {
       type: 'line',
       data: { labels: sems, datasets: [
-        {label:'Nivea', data:nh, borderColor:'#185FA5', borderWidth:2,   tension:.3, pointRadius:2.5, spanGaps:true, fill:false},
-        {label:'Dove',  data:dh, borderColor:'#0F6E56', borderWidth:2,   tension:.3, pointRadius:2.5, spanGaps:true, fill:false},
-        {label:'Rexona',data:rh, borderColor:'#854F0B', borderWidth:1.5, tension:.3, pointRadius:2,   spanGaps:true, fill:false, borderDash:[4,3]},
+        {label:'Nivea', data:nh, borderColor:'#0B4C8C', borderWidth:2,   tension:.3, pointRadius:2.5, spanGaps:true, fill:false},
+        {label:'Dove',  data:dh, borderColor:'#0B5C46', borderWidth:2,   tension:.3, pointRadius:2.5, spanGaps:true, fill:false},
+        {label:'Rexona',data:rh, borderColor:'#8A5A22', borderWidth:1.5, tension:.3, pointRadius:2,   spanGaps:true, fill:false, borderDash:[4,3]},
       ]},
       options: { responsive:true, maintainAspectRatio:false,
         plugins:{ legend:{display:false}, tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+FMT(c.parsed.y);}}}},

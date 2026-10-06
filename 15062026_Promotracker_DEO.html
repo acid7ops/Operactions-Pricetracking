@@ -459,6 +459,36 @@ var MES_ANIO = 2026;
 // esta cantidad de semanas.
 var CHART_CONTEXTO_SEMANAS = 4;
 
+// Precio unitario promedio semanal para el gráfico, calculado directamente
+// desde DATA: promedio simple entre los clientes del canal con promo activa
+// esa semana (precio de la promo / cantidad, ej. 2x5.990 -> 2.995).
+// Para las semanas que no existen en DATA (historial antiguo) se usa el valor
+// guardado en HIST como respaldo.
+function promedioSemana(clients, marca, sem) {
+  var suma = 0, n = 0;
+  Object.keys(clients).forEach(function(c) {
+    var e = clients[c][marca] ? clients[c][marca][sem] : null;
+    var info = e ? pInfo(e.p, e.m, false) : null;
+    if (info && !info.isSP && info.unit) { suma += info.unit; n++; }
+  });
+  return n ? Math.round(suma / n) : null;
+}
+
+function semanaEnData(clients, sem) {
+  return Object.keys(clients).some(function(c) {
+    return ['NIV','DOV','REX'].some(function(m) {
+      return clients[c][m] && Object.prototype.hasOwnProperty.call(clients[c][m], sem);
+    });
+  });
+}
+
+function serieGrafico(clients, marca, histKey) {
+  var respaldo = HIST.hist[canal][histKey];
+  return HIST.sems.map(function(sem, i) {
+    return semanaEnData(clients, sem) ? promedioSemana(clients, marca, sem) : respaldo[i];
+  });
+}
+
 function pInfo(p, m, pack) {
   if (!p) return null;
   if (pack) return { price: p, label: FMT(p), isPromo: m === 'P', isSP: m === 'SP' || !m };
@@ -560,7 +590,7 @@ function render() {
   var kpis = [
     {cls: avgD == null ? 'b' : (avgD >= 88 && avgD <= 92) ? 'g' : 'r', lbl:'IX Prom. vs Dove',   val: avgD != null ? avgD+'%' : '—', c: avgD == null ? 'cgr' : (avgD >= 88 && avgD <= 92) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
     {cls: avgR == null ? 'b' : (avgR >= 88 && avgR <= 92) ? 'g' : 'r', lbl:'IX Prom. vs Rexona', val: avgR != null ? avgR+'%' : '—', c: avgR == null ? 'cgr' : (avgR >= 88 && avgR <= 92) ? 'cg' : 'cr', sub: curSem + ' · ' + cLabel},
-    {cls:'b', lbl:'Aplicador', val: APL_LBL[apl], c:'cb', sub:'Junio 2026'},
+    {cls:'b', lbl:'Aplicador', val: APL_LBL[apl], c:'cb', sub: MESES[MESES.length - 1].label + ' ' + MES_ANIO},
   ];
   document.getElementById('kpis').innerHTML = kpis.map(function(k){
     return '<div class="kpi ' + k.cls + '"><div class="kpi-lbl">' + k.lbl + '</div>' +
@@ -752,25 +782,26 @@ function render() {
 
   if (apl === 'SPRAY') {
     var fullSems = HIST.sems;
+    var serieN = serieGrafico(clients, 'NIV', 'niv');
+    var serieD = serieGrafico(clients, 'DOV', 'dov');
+    var serieR = serieGrafico(clients, 'REX', 'rex');
     var sems, nh, dh, rh;
     if (showHistorico) {
       sems = fullSems;
-      nh = HIST.hist[canal].niv;
-      dh = HIST.hist[canal].dov;
-      rh = HIST.hist[canal].rex;
+      nh = serieN; dh = serieD; rh = serieR;
     } else {
       var primerMesIdx = fullSems.indexOf(MESES[0].desde);
       var startIdx = primerMesIdx === -1 ? 0 : Math.max(0, primerMesIdx - CHART_CONTEXTO_SEMANAS);
       sems = fullSems.slice(startIdx);
-      nh = HIST.hist[canal].niv.slice(startIdx);
-      dh = HIST.hist[canal].dov.slice(startIdx);
-      rh = HIST.hist[canal].rex.slice(startIdx);
+      nh = serieN.slice(startIdx);
+      dh = serieD.slice(startIdx);
+      rh = serieR.slice(startIdx);
     }
 
     var chRange = document.getElementById('ch-range');
     if (chRange) chRange.textContent = sems[0] + ' → ' + sems[sems.length - 1];
     var chNote = document.getElementById('ch-note');
-    if (chNote) chNote.innerHTML = '&bull; área azul = ' + MESES[0].label + ' ' + MES_ANIO;
+    if (chNote) chNote.innerHTML = '&bull; áreas de color = meses (' + MESES[0].label + ' a ' + MESES[MESES.length - 1].label + ' ' + MES_ANIO + ')';
 
     if (chartInst) chartInst.destroy();
     chartInst = new Chart(document.getElementById('chart-main'), {

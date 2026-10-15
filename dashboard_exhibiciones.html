@@ -213,7 +213,7 @@ function updatePhaseNote(){
 function buildSelectedUniverse(){return state.mode==="actual"?(state.phase==="F1"?buildActualF1(state.period):buildActualF2(state.period)):buildHistoricalPhase(state.period,state.phase==="F1"?1:2)}
 
 function buildActualF1(month){
-  const plans=plansForMonth(month),controlMap=controlMapForMonth(month),current=currentStateMap(),hist1=historyMap(month,1);const rows=[];
+  const plans=plansForMonth(month).filter(p=>phaseApplies(p,1)),controlMap=controlMapForMonth(month),current=currentStateMap(),hist1=historyMap(month,1);const rows=[];
   plans.forEach(p=>{
     const c=controlMap.get(clientKey(p.cliente));let s=null,source="Pendiente",date="";
     if(c&&c.fase>=2){s=hist1.get(p.llave);source=s?(s.source||"Snapshot Fase 1"):"Pendiente";date=s?.fecha||""}
@@ -228,7 +228,7 @@ function buildActualF1(month){
 }
 
 function buildActualF2(month){
-  const plans=plansForMonth(month),controlMap=controlMapForMonth(month),current=currentStateMap(),hist1=historyMap(month,1),revision=revisionMap(month);const active=new Set([...controlMap.values()].filter(c=>c.fase>=2&&c.activacion).map(c=>clientKey(c.cliente)));const rows=[];
+  const plans=plansForMonth(month).filter(p=>phaseApplies(p,2)),controlMap=controlMapForMonth(month),current=currentStateMap(),hist1=historyMap(month,1),revision=revisionMap(month);const active=new Set([...controlMap.values()].filter(c=>c.fase>=2&&c.activacion).map(c=>clientKey(c.cliente)));const rows=[];
   plans.filter(p=>active.has(clientKey(p.cliente))).forEach(p=>{
     const c=controlMap.get(clientKey(p.cliente)),cur=current.get(p.llave),f1=hist1.get(p.llave),rev=revision.get(p.llave);let s=null,source="Pendiente",date="";
     const validForm=cur&&cur.dateObj&&c?.activacion&&cur.dateObj>=c.activacion&&monthFromDate(cur.dateObj)===month;
@@ -240,7 +240,7 @@ function buildActualF2(month){
 }
 
 function buildHistoricalPhase(month,phase){
-  const plans=plansForMonth(month),hist=historyMap(month,phase);const rows=[];
+  const plans=plansForMonth(month).filter(p=>phaseApplies(p,phase)),hist=historyMap(month,phase);const rows=[];
   plans.forEach(p=>{const s=hist.get(p.llave);if(!s)return;rows.push(standardRow(p,s,s.fecha,s.source||`Snapshot Fase ${phase}`,`Fase ${phase}`))});
   return sortRows(rows)
 }
@@ -250,7 +250,17 @@ function standardRow(p,s,date,source,phase){return{periodo:p.mes,fase:phase,fech
 function currentExtrasForMonth(month){const mapping=currentMappingMap();return DB.extras.map(r=>{const d=parseSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"]));if(!d||monthFromDate(d)!==month)return null;const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),m=mapping.get(codigo)||{};return{periodo:month,fase:"Extra",fecha:formatDate(d),cliente:m.cliente||canonicalClient(getField(r,["Retailer","Cliente"]))||inferClientFromCode(codigo),codigo,nombreLocal:m.nombreLocal||"",mercaderista:m.mercaderista||"",exhibicion:clean(getField(r,["Exhibición","Exhibicion"])),nombreFormulario:"",categoria:canonicalCategory(getField(r,["Categoría","Categoria"])),estado:canonicalStatus(getField(r,["Estado"])),razon:"",comentario:"",presenciaMueble:"",supervisor:m.supervisor||clean(getField(r,["Supervisor"])),foto:clean(getField(r,["Foto URL","Foto"])),tipo:clean(getField(r,["Tipo"])),origen:"Extra",planificada:false,actualizacion:"Formulario",llave:"EXTRA||"+makeKey(codigo,getField(r,["Exhibición","Exhibicion"]))}}).filter(Boolean)}
 function currentMappingMap(){const m=new Map();DB.mapping.forEach(r=>{const codigo=normalizeCode(getField(r,["Local","Código Local","Codigo Local"]));if(!codigo)return;m.set(codigo,{cliente:canonicalClient(getField(r,["Cadena","Retailer","Cliente"])),nombreLocal:clean(getField(r,["Nombre de Local","Nombre Local","Nombre local"])),supervisor:clean(getField(r,["Nombre supervisor","Nombre Supervisor","Supervisor"])),mercaderista:clean(getField(r,["Nombre mercaderista","Nombre Mercaderista","Mercaderista"]))})});return m}
 
-function plansForMonth(month){return DB.plan.map(r=>{const mes=normalizeMonth(getField(r,["Mes"]));if(mes!==month)return null;const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),exhibicion=clean(getField(r,["Exhibición","Exhibicion"]));return{mes,id:clean(getField(r,["ID Target"])),llave:clean(getField(r,["Llave"]))||makeKey(codigo,exhibicion),cliente:canonicalClient(getField(r,["Retailer"])),codigo,nombreLocal:clean(getField(r,["Nombre Local"])),supervisor:clean(getField(r,["Supervisor"])),mercaderista:clean(getField(r,["Mercaderista"])),tipo:clean(getField(r,["Tipo"])),categoria:canonicalCategory(getField(r,["Categoría","Categoria"])),exhibicion,nombreFormulario:clean(getField(r,["Nombre Formulario"]))}}).filter(Boolean)}
+function phaseApplication(value){
+  const n=normalizeText(value);
+  if(n==="solo f1"||n==="f1")return "Solo F1";
+  if(n==="solo f2"||n==="f2")return "Solo F2";
+  return "Ambas";
+}
+function phaseApplies(plan,phase){
+  const a=plan.aplicacionFase||"Ambas";
+  return Number(phase)===1 ? a!=="Solo F2" : a!=="Solo F1";
+}
+function plansForMonth(month){return DB.plan.map(r=>{const mes=normalizeMonth(getField(r,["Mes"]));if(mes!==month)return null;const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),exhibicion=clean(getField(r,["Exhibición","Exhibicion"]));return{mes,id:clean(getField(r,["ID Target"])),llave:clean(getField(r,["Llave"]))||makeKey(codigo,exhibicion),cliente:canonicalClient(getField(r,["Retailer"])),codigo,nombreLocal:clean(getField(r,["Nombre Local"])),supervisor:clean(getField(r,["Supervisor"])),mercaderista:clean(getField(r,["Mercaderista"])),tipo:clean(getField(r,["Tipo"])),categoria:canonicalCategory(getField(r,["Categoría","Categoria"])),exhibicion,nombreFormulario:clean(getField(r,["Nombre Formulario"])),aplicacionFase:phaseApplication(getField(r,["Aplicación fase","Aplicacion fase"]))}}).filter(Boolean)}
 
 function controlsForMonth(month){return DB.control.map(r=>{const mes=normalizeMonth(getField(r,["Mes"]));if(mes!==month)return null;return{mes,cliente:canonicalClient(getField(r,["Retailer"])),fase:Number(clean(getField(r,["Fase Actual"]))||1),inicio:parseSheetDate(getField(r,["Fecha Inicio Mes"])),activacion:parseSheetDate(getField(r,["Fecha Activación Fase 2"])),cierre:parseSheetDate(getField(r,["Fecha Cierre Mes"]))}}).filter(Boolean)}
 function controlMapForMonth(month){return new Map(controlsForMonth(month).map(c=>[clientKey(c.cliente),c]))}
@@ -337,7 +347,7 @@ function photoCell(url){if(!url)return'<div class="no-photo">—</div>';const th
 
 function filteredHistoricalComparisonPlans(){
   const controls=controlsForMonth(state.period),f2Clients=new Set(controls.filter(c=>c.activacion||c.fase>=2).map(c=>clientKey(c.cliente)));
-  return plansForMonth(state.period).filter(p=>f2Clients.has(clientKey(p.cliente))&&!isUnimarc(p)).filter(p=>{
+  return plansForMonth(state.period).filter(p=>f2Clients.has(clientKey(p.cliente))&&!isUnimarc(p)&&phaseApplies(p,1)&&phaseApplies(p,2)).filter(p=>{
     if(state.cliente!=="Todos"&&p.cliente!==state.cliente)return false;
     if(state.categorias.length&&!state.categorias.includes(p.categoria))return false;
     if(state.supervisor!=="Todos"&&p.supervisor!==state.supervisor)return false;

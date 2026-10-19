@@ -321,6 +321,93 @@
     @media(max-width:900px){
       .upload-grid,.controls-grid{grid-template-columns:1fr}.wide{grid-column:auto}.app{padding:12px}.report-shell{padding:8px}
     }
+
+    /* ===== V3. PPT 16:9, responsive within the fixed slide, no clipping ===== */
+    #report{
+      display:flex;flex-direction:column;flex-wrap:nowrap;
+      width:1280px;height:720px;min-height:720px;
+      padding:22px 28px 22px;background:#fff;overflow:hidden;
+    }
+    #report .ppt-header{flex:0 0 auto;margin-bottom:12px}
+    .ppt-content-frame{position:relative;flex:1 1 auto;min-height:0;width:100%;overflow:visible}
+    .ppt-content-inner{
+      position:absolute;top:0;left:0;width:100%;
+      transform-origin:top left;will-change:transform;
+    }
+    .ppt-content-inner::after{content:'';display:block;clear:both}
+    .weekly-spgr-layout{
+      width:100%;max-width:none;display:grid;
+      grid-template-columns:208px minmax(0,1fr);
+      gap:23px;align-items:center;justify-content:stretch;margin:0 auto 15px;
+    }
+    .weekly-product-side{width:208px;max-width:208px;align-self:center;gap:13px}
+    .weekly-product-item{width:208px;max-width:208px;grid-template-columns:64px minmax(0,1fr);gap:9px}
+    .weekly-product-image{width:59px;height:82px}
+    .weekly-product-name{max-width:128px;font-size:11px}
+    .weekly-product-code{font-size:15px}
+    .weekly-data-side{
+      display:grid;grid-template-columns:repeat(var(--retailer-grid-cols,3), max-content);
+      column-gap:14px;row-gap:12px;justify-content:center;align-content:center;
+      min-width:0;width:100%;
+    }
+    .weekly-data-side .retailer-block{margin:0;width:max-content;max-width:none}
+    .retailer-block{
+      position:relative;background:#fff;
+      padding:7px 8px 8px;border:1.5px solid transparent;border-radius:13px;
+    }
+    .retailer-title{
+      font-size:20px;line-height:1.08;margin:0 0 5px;
+      text-align:center;min-height:22px;white-space:nowrap;
+    }
+    .cards-row{grid-template-columns:repeat(var(--cols),132px);gap:11px}
+    .week-label{font-size:13px;margin-bottom:4px}
+    .metric-card{width:132px;min-height:94px;padding:11px 7px 8px;box-shadow:none;border-radius:8px}
+    .metric-line{font-size:10.5px;white-space:normal;margin:2px 0}
+    .msl{font-size:14px;margin-top:5px;white-space:nowrap}
+    .retailer-block.opportunity{
+      border:1.5px solid #EAA0A5;
+      background:linear-gradient(145deg,#FFFFFF 45%,#FFF4F5 100%);
+      box-shadow:0 4px 12px rgba(148,47,72,.075);
+    }
+    .retailer-block.opportunity .retailer-title{color:#0057A8}
+    .retailer-block.opportunity::before{
+      content:'';position:absolute;left:12px;right:12px;top:0;
+      height:3px;border-radius:0 0 5px 5px;background:#E46A78;
+    }
+    .opportunity-pill{
+      position:absolute;top:-11px;right:7px;
+      font-size:9px;line-height:1;letter-spacing:.045em;
+      font-weight:800;background:#AE3451;color:white;
+      padding:5px 8px;border-radius:99px;white-space:nowrap;
+    }
+    .store-detail-section{margin:9px 0 9px;padding-top:8px;border-top:1px solid #E3E7EE}
+    .store-detail-title{font-size:11px;margin-bottom:7px}
+    .store-detail-grid{gap:4px 10px}
+    .store-detail-row{font-size:9.3px;line-height:1.26;padding:5px 7px}
+    .total-bar{width:100%;max-width:none;margin:12px auto 0;height:56px;
+      border-radius:6px;padding:0 40px;gap:10px;box-shadow:none}
+    .total-item{font-size:12px}.total-item:first-child{font-size:14px}
+    .total-msl{font-size:19px}
+    .matrix-grid{width:100%;max-width:none;column-gap:9px;row-gap:9px}
+    .matrix-week{margin-bottom:14px}
+    .matrix-retailer{font-size:17px;overflow-wrap:anywhere;line-height:1.08}
+    .matrix-card .metric-card{width:100%;min-width:112px}
+    .matrix-card{width:100%;min-width:0}
+    .matrix-week-title{margin-bottom:7px}
+    .spgr-label{min-height:82px}
+    .matrix-retailer-header{position:relative;text-align:center;min-width:0}
+    .matrix-focus{background:#FFF4F5;border-radius:8px;outline:1px solid #EAA0A5}
+    .matrix-focus-tag{font-size:8px;font-weight:800;color:#AE3451;white-space:nowrap}
+    .matrix-card-container{min-width:0;width:100%}
+    .matrix-focus-cell{background:#FFF4F5;outline:1px solid #EAA0A5;border-radius:8px}
+    #report.slide-export .ppt-header{display:none!important}
+    #report.slide-export{background:transparent!important}
+    @media(max-width:850px){
+      /* La slide conserva su tamaño real también al verla en móvil. */
+      #report .weekly-spgr-layout{grid-template-columns:208px minmax(0,1fr)}
+      #report .weekly-product-side{width:208px;flex-direction:column;margin-bottom:0}
+      #report .weekly-data-side{grid-template-columns:repeat(var(--retailer-grid-cols,3),max-content)!important}
+    }
   </style>
 </head>
 <body>
@@ -394,6 +481,20 @@
           <option value="replenishment">Replenishment</option>
           <option value="quiebre">Quiebre</option>
         </select>
+      </div>
+      <div class="field">
+        <label>Destacar oportunidad</label>
+        <select id="highlightRetailerMode">
+          <option value="none">Sin destacado</option>
+          <option value="manual">Elegir retailer manualmente</option>
+          <option value="autoGap">Automático · mayor GAP</option>
+          <option value="autoMsl">Automático · menor MSL</option>
+        </select>
+      </div>
+      <div class="field" id="highlightRetailerField" style="display:none">
+        <label>Retailer a destacar</label>
+        <select id="highlightRetailerSelect"><option value="">Selecciona retailer...</option></select>
+        <div class="hint">Por ejemplo, Maicao: el destacado será en azul/coral, sin bordes punteados.</div>
       </div>
       <div class="field">
         <label>Imagen de producto</label>
@@ -537,12 +638,12 @@
       <button id="exportBtn" class="btn btn-secondary" disabled>Exportar PNG</button>
       <button id="copyBtn" class="btn btn-secondary" disabled>Copiar imagen</button>
     </div>
-    <div class="export-hint">Al exportar o copiar, se omiten el título superior y el logo, y el PNG queda con fondo transparente. Si el maestro contiene imágenes en la columna FOTOS, el generador intenta incluirlas automáticamente, tanto si están pegadas/ancladas como si fueron insertadas con “Imagen en celda”.</div>
+    <div class="export-hint">PNG 16:9 (1280 × 720, exportado a 2560 × 1440), fondo transparente y sin título ni logo, para pegar sobre tu propia slide. El contenido se escala automáticamente para no cortarse. Si se incluyen muchos SPGR o el detalle de salas, el texto puede quedar pequeño: reduce filtros para mejorar la legibilidad.</div>
     <div id="message" class="message"></div>
   </section>
 
   <div class="preview-label">
-    <span>Vista previa · formato 1280 px de ancho</span>
+    <span id="previewScale">Vista previa · slide 16:9 · 1280 × 720</span>
     <span>MSL: <b style="color:#FF1E1E">&lt;80%</b> · <b style="color:#003DA5">80–&lt;95%</b> · <b style="color:#00A651">≥95%</b></span>
   </div>
   <div class="report-shell">
@@ -599,6 +700,13 @@
     if(!s || s === '-') return null;
     const n = Number(s);
     return Number.isFinite(n) ? n : null;
+  }
+  function asRatioMetric(v){
+    // MSL viene en Base de Datos como 0/1; acepta también 0..100.
+    const n=asNumber(v);
+    if(n===null) return null;
+    if(n>1 && n<=100) return n/100;
+    return n;
   }
   function pct(v, decimals=1){
     if(v === null || v === undefined || !Number.isFinite(v)) return '-';
@@ -848,12 +956,13 @@
       spgr: headerIndex(h,['SPGR']),
       product: headerIndex(h,['Product','Producto']),
       actual: headerIndex(h,['Actual']),
+      msl: headerIndex(h,['MSL']), // exactamente MSL, no Actual ni MSL Re
       backstock: headerIndex(h,['Store Backstock','Backstock']),
       void: headerIndex(h,['VOID']),
       replenishment: headerIndex(h,['Replenishment']),
       quiebre: headerIndex(h,['Quiebre'])
     };
-    const required = ['retailer','store','spgr','actual','backstock','void','replenishment','quiebre'];
+    const required = ['retailer','store','spgr','msl','backstock','void','replenishment','quiebre'];
     const missing = required.filter(k => idx[k] < 0);
     if(missing.length) throw new Error(`“${file.name}”: faltan columnas requeridas: ${missing.join(', ')}.`);
 
@@ -870,7 +979,8 @@
         store,
         spgr,
         product: idx.product >= 0 ? String(row[idx.product] ?? '').trim() : '',
-        actual: asNumber(row[idx.actual]),
+        actual: idx.actual >= 0 ? asNumber(row[idx.actual]) : null,
+        msl: asRatioMetric(row[idx.msl]),
         backstock: asNumber(row[idx.backstock]),
         void: asNumber(row[idx.void]),
         replenishment: asNumber(row[idx.replenishment]),
@@ -1012,7 +1122,27 @@
       const checked=old.size ? old.has(ret) : true;
       lab.innerHTML=`<input type="checkbox" value="${escapeHTML(ret)}" ${checked?'checked':''}><span title="${escapeHTML(ret)}">${escapeHTML(ret)}</span>`;box.appendChild(lab);
     });
+    refreshHighlightRetailers();
   }
+
+  function refreshHighlightRetailers(){
+    const box=document.getElementById('highlightRetailerSelect');
+    const old=box.value;
+    const names=[...document.querySelectorAll('#retailerChecks input[type=checkbox]:checked')].map(x=>x.value);
+    box.innerHTML='<option value="">Selecciona retailer...</option>';
+    names.forEach(name=>{
+      const opt=document.createElement('option');opt.value=name;opt.textContent=name;
+      box.appendChild(opt);
+    });
+    if(names.includes(old)) box.value=old;
+  }
+
+  document.getElementById('highlightRetailerMode').addEventListener('change',()=>{
+    document.getElementById('highlightRetailerField').style.display=
+      document.getElementById('highlightRetailerMode').value==='manual'?'block':'none';
+    refreshHighlightRetailers();
+  });
+  document.getElementById('retailerChecks').addEventListener('change',refreshHighlightRetailers);
 
   function populateTotalSPGRs(){
     const inno=document.getElementById('innoSelect').value;
@@ -1138,7 +1268,7 @@
     const stats={
       empty:false,
       rows:rows.length,
-      msl:avg(rows,'actual'),
+      msl:avg(rows,'msl'),
       backstock:avg(rows,'backstock'),
       void:avg(rows,'void'),
       replenishment:avg(rows,'replenishment'),
@@ -1379,6 +1509,50 @@
     </section>`;
   }
 
+  function retailerToHighlight(retailers,weeks,spgrs){
+    const mode=document.getElementById('highlightRetailerMode').value;
+    if(mode==='none') return '';
+    if(mode==='manual'){
+      const chosen=document.getElementById('highlightRetailerSelect').value;
+      return retailers.includes(chosen) ? chosen : '';
+    }
+    const ranked=retailers.map(ret=>{
+      const stats=calcStats(rowsForWeeks(weeks,[ret],spgrs));
+      const biggestGap=Math.max(...GAP_ORDER.map(k=>stats[k]??0));
+      return {ret,stats,biggestGap};
+    }).filter(x=>!x.stats.empty && x.stats.msl!==null);
+    if(!ranked.length) return '';
+    // Para rankings automáticos, evita declarar como mayor oportunidad
+    // retailers con muestras muy pequeñas si hay otros con >=10 salas.
+    const meaningful=ranked.filter(x=>x.stats.stores>=10);
+    const pool=meaningful.length?meaningful:ranked;
+    if(mode==='autoGap') pool.sort((a,b)=>b.biggestGap-a.biggestGap || a.stats.msl-b.stats.msl);
+    else pool.sort((a,b)=>a.stats.msl-b.stats.msl || b.biggestGap-a.biggestGap);
+    return pool[0].ret;
+  }
+
+  function fitSlideContent(slide, updateUi=false){
+    const frame=slide.querySelector('.ppt-content-frame');
+    const inner=slide.querySelector('.ppt-content-inner');
+    if(!frame || !inner) return 1;
+    inner.style.transform='none';
+    inner.style.left='0px';
+    inner.style.top='0px';
+    const width=Math.max(inner.scrollWidth,inner.offsetWidth,1);
+    const height=Math.max(inner.scrollHeight,inner.offsetHeight,1);
+    const availableWidth=Math.max(frame.clientWidth,1);
+    const availableHeight=Math.max(frame.clientHeight,1);
+    // Nunca recortar: el mismo contenido se adapta a 16:9.
+    const scale=Math.min(1,availableWidth/width,availableHeight/height);
+    inner.style.transform=`scale(${scale})`;
+    inner.style.left=`${Math.max(0,(availableWidth-width*scale)/2)}px`;
+    if(updateUi){
+      const preview=document.getElementById('previewScale');
+      if(preview) preview.textContent=`Vista previa · 16:9 · ajuste ${Math.round(scale*100)}%`;
+    }
+    return scale;
+  }
+
   function generateReport(){
     clearMessage();
     const err=validateSelections(); if(err){showMessage(err,'error');return;}
@@ -1388,15 +1562,23 @@
     const retailers=selectedValues('retailerChecks');
     const gap=document.getElementById('gapSelect').value;
     const report=document.getElementById('report');
-    report.innerHTML=reportHeaderHTML();
+    report.innerHTML=reportHeaderHTML()+
+      '<div class="ppt-content-frame"><div class="ppt-content-inner"></div></div>';
+    const target=report.querySelector('.ppt-content-inner');
+    if(view==='matrix') renderMatrix(target,spgrs,weeks,retailers,gap);
+    else renderRetailerWeeks(target,spgrs,weeks,retailers,gap);
 
-    if(view==='matrix') renderMatrix(report,spgrs,weeks,retailers,gap);
-    else renderRetailerWeeks(report,spgrs,weeks,retailers,gap);
-
+    const scale=fitSlideContent(report,true);
+    if(document.fonts?.ready) document.fonts.ready.then(()=>fitSlideContent(report,true));
+    target.querySelectorAll('img').forEach(img=>{
+      if(!img.complete) img.addEventListener('load',()=>fitSlideContent(report,true),{once:true});
+    });
     state.reportReady=true;
     document.getElementById('exportBtn').disabled=false;
     document.getElementById('copyBtn').disabled=false;
-    showMessage('Vista generada. Puedes exportarla como PNG o copiarla directamente.','info');
+    showMessage(scale<0.65
+      ? 'Slide 16:9 generada sin recortes, pero con bastante contenido. Considera reducir retailers/SPGR o desactivar detalle de salas para mejorar la lectura.'
+      : 'Vista 16:9 generada. Puedes exportar el PNG transparente o copiar la imagen.', 'info');
   }
 
   function renderRetailerWeeks(report,spgrs,weeks,retailers,gap){
@@ -1404,6 +1586,13 @@
     const details=[];
 
     const makeRetailerRows=(target,activeSpgrs,detailSpgr='')=>{
+      const winner=retailerToHighlight(retailers,weeks,activeSpgrs);
+      const widths={card:132,gap:11,retailerPad:18};
+      const retailerWidth=weeks.length*widths.card+(weeks.length-1)*widths.gap+widths.retailerPad;
+      const availableWidth=1224-208-23;
+      const maxCols=Math.max(1,Math.floor((availableWidth+14)/(retailerWidth+14)));
+      const cols=Math.min(retailers.length,maxCols,3);
+      target.style.setProperty('--retailer-grid-cols',cols);
       retailers.forEach(ret=>{
         const cards=weeks.map(w=>{
           const rows=rowsFor(w,[ret],activeSpgrs);
@@ -1411,7 +1600,13 @@
           details.push({retailer:ret,week:w,spgr:detailSpgr,stats});
           return cardHTML(stats,w);
         }).join('');
-        target.insertAdjacentHTML('beforeend',`<div class="retailer-block"><div class="retailer-title">${escapeHTML(ret)}</div><div class="cards-row" style="--cols:${weeks.length}">${cards}</div></div>`);
+        const highlighted=winner===ret;
+        target.insertAdjacentHTML('beforeend',
+          `<div class="retailer-block ${highlighted?'opportunity':''}">
+            ${highlighted?'<div class="opportunity-pill">● OPORTUNIDAD</div>':''}
+            <div class="retailer-title">${escapeHTML(ret)}</div>
+            <div class="cards-row" style="--cols:${weeks.length}">${cards}</div>
+          </div>`);
       });
     };
 
@@ -1430,7 +1625,6 @@
       makeRetailerRows(layout.querySelector('.weekly-data-side'),spgrs,spgrs.length===1?spgrs[0]:'');
       report.appendChild(layout);
     }
-
     report.insertAdjacentHTML('beforeend',storeDetailHTML(details));
     report.insertAdjacentHTML('beforeend',resolveTotalBar(spgrs,weeks,retailers));
   }
@@ -1440,10 +1634,12 @@
     weeks.forEach(week=>{
       const section=document.createElement('section');section.className='matrix-week';
       if(weeks.length>1) section.innerHTML=`<div class="matrix-week-title">${escapeHTML(week)}</div>`;
-      const cols=`235px repeat(${retailers.length}, 1fr)`;
+      const cols=`190px repeat(${retailers.length}, minmax(112px, 1fr))`;
       let html=`<div class="matrix-grid" style="grid-template-columns:${cols}"><div class="matrix-corner"></div>`;
+      const highlight=retailerToHighlight(retailers,[week],spgrs);
       retailers.forEach(ret=>{
-        html+=`<div><div class="matrix-retailer">${escapeHTML(ret)}</div><div class="matrix-week-small">${escapeHTML(week)}</div></div>`;
+        const focus=highlight===ret;
+        html+=`<div class="matrix-retailer-header ${focus?'matrix-focus':''}"><div class="matrix-retailer">${escapeHTML(ret)}</div>${focus?'<span class="matrix-focus-tag">● OPORTUNIDAD</span>':''}<div class="matrix-week-small">${escapeHTML(week)}</div></div>`;
       });
       spgrs.forEach(spgr=>{
         const product=productNameFor(spgr,[week]);
@@ -1452,7 +1648,7 @@
           const rows=rowsFor(week,[ret],[spgr]);
           const stats=calcStats(rows,gap);
           details.push({retailer:ret,week,spgr,stats});
-          html+=cardHTML(stats,'','matrix-card');
+          html+=`<div class="matrix-card-container ${ret===highlight?'matrix-focus-cell':''}">${cardHTML(stats,'','matrix-card')}</div>`;
         });
       });
       html+='</div>';
@@ -1466,73 +1662,49 @@
   // ============================================================
   // EXPORTACIÓN · SIN FONDO / SIN TÍTULO DEL SLIDE
   // ============================================================
-  function cropTransparentCanvas(sourceCanvas, padding=8){
-    const ctx=sourceCanvas.getContext('2d');
-    const {width,height}=sourceCanvas;
-    const data=ctx.getImageData(0,0,width,height).data;
-    let minX=width, minY=height, maxX=-1, maxY=-1;
-
-    for(let y=0;y<height;y++){
-      for(let x=0;x<width;x++){
-        const alpha=data[(y*width+x)*4+3];
-        if(alpha>2){
-          if(x<minX) minX=x;
-          if(x>maxX) maxX=x;
-          if(y<minY) minY=y;
-          if(y>maxY) maxY=y;
-        }
-      }
-    }
-
-    if(maxX<minX || maxY<minY) return sourceCanvas;
-    minX=Math.max(0,minX-padding);
-    minY=Math.max(0,minY-padding);
-    maxX=Math.min(width-1,maxX+padding);
-    maxY=Math.min(height-1,maxY+padding);
-
-    const out=document.createElement('canvas');
-    out.width=maxX-minX+1;
-    out.height=maxY-minY+1;
-    out.getContext('2d').drawImage(
-      sourceCanvas,
-      minX,minY,out.width,out.height,
-      0,0,out.width,out.height
-    );
-    return out;
-  }
-
   async function reportCanvas(){
     const report=document.getElementById('report');
-
-    // Se usa un clon invisible para no alterar la vista previa.
     const clone=report.cloneNode(true);
     clone.removeAttribute('id');
+    // Keep the same #report styles but give a unique id for style inheritance.
+    clone.id='report';
+    clone.classList.add('slide-export');
     clone.style.position='fixed';
     clone.style.left='-10000px';
     clone.style.top='0';
     clone.style.zIndex='-99999';
+    clone.style.width='1280px';
+    clone.style.height='720px';
+    clone.style.minHeight='720px';
+    clone.style.overflow='hidden';
     clone.style.background='transparent';
-    clone.style.minHeight='0';
-    clone.style.height='auto';
-    clone.style.overflow='visible';
-    clone.style.width=report.offsetWidth+'px';
-
-    // El título/eyebrow/logo ya suelen existir en el PowerPoint.
-    const header=clone.querySelector('.ppt-header');
-    if(header) header.remove();
 
     document.body.appendChild(clone);
-
     try{
+      // Export intentionally excludes title and NIVEA logo, keeping 16:9.
+      clone.querySelector('.ppt-header')?.remove();
+      await Promise.all([...clone.querySelectorAll('img')].map(img=>img.complete
+        ? Promise.resolve()
+        : new Promise(resolve=>{
+          img.addEventListener('load',resolve,{once:true});
+          img.addEventListener('error',resolve,{once:true});
+          setTimeout(resolve,1800);
+        })));
+      if(document.fonts?.ready) await document.fonts.ready;
+      fitSlideContent(clone,false);
       const canvas=await html2canvas(clone,{
         scale:2,
         backgroundColor:null,
         useCORS:true,
         logging:false,
-        windowWidth:clone.scrollWidth,
-        windowHeight:clone.scrollHeight
+        width:1280,
+        height:720,
+        windowWidth:1280,
+        windowHeight:720,
+        scrollX:0,
+        scrollY:0
       });
-      return cropTransparentCanvas(canvas,12);
+      return canvas;
     }finally{
       clone.remove();
     }

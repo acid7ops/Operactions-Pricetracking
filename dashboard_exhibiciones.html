@@ -136,7 +136,7 @@
     </div>
   </div>
 
-  <div id="detailPanel"><div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Categoría</th><th>Estado</th><th>Mueble en sala</th><th id="updateHeader">Actualización</th><th>Razón / Comentario</th><th>Mercaderista</th><th>Supervisor</th><th>Foto</th></tr></thead><tbody id="tableBody"></tbody></table><div class="empty-state" id="emptyState" style="display:none">No hay exhibiciones que coincidan con los filtros.</div></div></div>
+  <div id="detailPanel"><div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Categoría</th><th>Estado</th><th id="f1StateHeader" style="display:none">Estado Fase 1</th><th>Mueble en sala</th><th id="updateHeader">Actualización</th><th>Razón / Comentario</th><th>Mercaderista</th><th>Supervisor</th><th>Foto</th></tr></thead><tbody id="tableBody"></tbody></table><div class="empty-state" id="emptyState" style="display:none">No hay exhibiciones que coincidan con los filtros.</div></div></div>
 
   <div class="evolution-wrap hidden" id="evolutionBottom">
     <h3>Evolución mensual del target</h3>
@@ -234,14 +234,21 @@ function buildActualF2(month){
     const validForm=cur&&cur.dateObj&&c?.activacion&&cur.dateObj>=c.activacion&&monthFromDate(cur.dateObj)===month;
     if(validForm){s=cur;source="Formulario";date=cur.fecha}
     else if(rev&&rev.cambios==="No"){s=f1;source="Sin cambios - Excel";date=f1?.fecha||""}
-    rows.push(standardRow(p,s,date,source,"Fase 2"));
+    const row=standardRow(p,s,date,source,"Fase 2");
+    row.estadoFase1=f1?canonicalStatus(f1.estado):(p.aplicacionFase==="Solo F2"?"No aplica":"Sin información");
+    rows.push(row);
   });
   return sortRows(rows)
 }
 
 function buildHistoricalPhase(month,phase){
-  const plans=plansForMonth(month).filter(p=>phaseApplies(p,phase)),hist=historyMap(month,phase);const rows=[];
-  plans.forEach(p=>{const s=hist.get(p.llave);if(!s)return;rows.push(standardRow(p,s,s.fecha,s.source||`Snapshot Fase ${phase}`,`Fase ${phase}`))});
+  const plans=plansForMonth(month).filter(p=>phaseApplies(p,phase)),hist=historyMap(month,phase),hist1=phase===2?historyMap(month,1):null;const rows=[];
+  plans.forEach(p=>{
+    const s=hist.get(p.llave);if(!s)return;
+    const row=standardRow(p,s,s.fecha,s.source||`Snapshot Fase ${phase}`,`Fase ${phase}`);
+    if(phase===2){const f1=hist1.get(p.llave);row.estadoFase1=f1?canonicalStatus(f1.estado):(p.aplicacionFase==="Solo F2"?"No aplica":"Sin información");}
+    rows.push(row)
+  });
   return sortRows(rows)
 }
 
@@ -264,7 +271,31 @@ function plansForMonth(month){return DB.plan.map(r=>{const mes=normalizeMonth(ge
 
 function controlsForMonth(month){return DB.control.map(r=>{const mes=normalizeMonth(getField(r,["Mes"]));if(mes!==month)return null;return{mes,cliente:canonicalClient(getField(r,["Retailer"])),fase:Number(clean(getField(r,["Fase Actual"]))||1),inicio:parseSheetDate(getField(r,["Fecha Inicio Mes"])),activacion:parseSheetDate(getField(r,["Fecha Activación Fase 2"])),cierre:parseSheetDate(getField(r,["Fecha Cierre Mes"]))}}).filter(Boolean)}
 function controlMapForMonth(month){return new Map(controlsForMonth(month).map(c=>[clientKey(c.cliente),c]))}
-function historyMap(month,phase){const m=new Map();DB.hist.forEach(r=>{if(normalizeMonth(getField(r,["Mes"]))!==month||Number(clean(getField(r,["Fase"])))!==Number(phase))return;const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),ex=clean(getField(r,["Exhibición","Exhibicion"])),key=clean(getField(r,["Llave"]))||makeKey(codigo,ex);m.set(key,{estado:canonicalStatus(getField(r,["Estado"])),razon:clean(getField(r,["Razón","Razon"])),comentario:clean(getField(r,["Comentario"])),presenciaMueble:normalizePresence(getField(r,["Presencia Mueble","Presencia mueble"])),foto:clean(getField(r,["Foto URL","Foto"])),source:clean(getField(r,["Fuente actualización","Fuente actualizacion"])),fecha:formatSheetDate(getField(r,["Fecha Snapshot"])),dateObj:parseSheetDate(getField(r,["Fecha Snapshot"]))})});return m}
+function looksLikeUrl_(v){return /^https?:\/\//i.test(clean(v))}
+function looksLikeHistorySource_(v){
+  const n=normalizeText(v);
+  return n==="formulario"||n==="sin cambios - excel"||n.startsWith("snapshot fase");
+}
+function historyMap(month,phase){
+  const m=new Map();
+  DB.hist.forEach(r=>{
+    if(normalizeMonth(getField(r,["Mes"]))!==month||Number(clean(getField(r,["Fase"])))!==Number(phase))return;
+    const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"]));
+    const ex=clean(getField(r,["Exhibición","Exhibicion"]));
+    const key=clean(getField(r,["Llave"]))||makeKey(codigo,ex);
+    const rawComentario=clean(getField(r,["Comentario"]));
+    const rawFoto=clean(getField(r,["Foto URL","Foto"]));
+    const rawSource=clean(getField(r,["Fuente actualización","Fuente actualizacion"]));
+    const rawPresence=clean(getField(r,["Presencia Mueble","Presencia mueble"]));
+    const shifted=looksLikeHistorySource_(rawPresence)&&(looksLikeUrl_(rawSource)||!rawSource)&&!looksLikeUrl_(rawFoto);
+    const comentario=shifted?rawFoto:rawComentario;
+    const foto=shifted?(looksLikeUrl_(rawSource)?rawSource:""):rawFoto;
+    const source=shifted?rawPresence:rawSource;
+    const presenciaMueble=shifted?normalizePresence(rawComentario):normalizePresence(rawPresence);
+    m.set(key,{estado:canonicalStatus(getField(r,["Estado"])),razon:clean(getField(r,["Razón","Razon"])),comentario,presenciaMueble,foto,source,fecha:formatSheetDate(getField(r,["Fecha Snapshot"])),dateObj:parseSheetDate(getField(r,["Fecha Snapshot"]))});
+  });
+  return m
+}
 function revisionMap(month){const m=new Map();DB.revision.forEach(r=>{if(normalizeMonth(getField(r,["Mes"]))!==month)return;const key=clean(getField(r,["Llave"]));if(key)m.set(key,{cambios:normalizeChange(getField(r,["Cambios"])),fecha:formatSheetDate(getField(r,["Fecha Carga"]))})});return m}
 function currentStateMap(){const m=new Map();DB.estado.forEach(r=>{const codigo=normalizeCode(getField(r,["Código Local","Codigo Local"])),ex=clean(getField(r,["Exhibición","Exhibicion"]));if(!codigo||!ex)return;const d=parseSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"]));const value={estado:canonicalStatus(getField(r,["Estado"])),razon:clean(getField(r,["Razón","Razon"])),comentario:clean(getField(r,["Comentario"])),presenciaMueble:normalizePresence(getField(r,["Presencia Mueble","Presencia mueble"])),foto:clean(getField(r,["Foto URL","Foto"])),fecha:d?formatDate(d):formatSheetDate(getField(r,["FechaHora","Fecha Hora","Fecha"])),dateObj:d};const derivedKey=makeKey(codigo,ex);const storedKey=clean(getField(r,["Llave"]));m.set(derivedKey,value);if(storedKey&&storedKey!==derivedKey)m.set(storedKey,value)});return m}
 
@@ -314,7 +345,7 @@ function operationalMetricRows(rows){return rows.filter(r=>!isUnimarc(r))}
 function mercaderistaPerformanceRows(){return RAW.filter(r=>r.planificada&&baseFilter(r,{ignoreMerc:true}))}
 function supervisorPerformanceRows(){return RAW.filter(r=>r.planificada&&baseFilter(r,{ignoreSupervisor:true,ignoreMerc:true}))}
 
-function render(){const details=filteredRows(),coverageMetrics=metricRows(),opsMetrics=operationalMetricRows(coverageMetrics);renderKpis(coverageMetrics,opsMetrics);renderCoverageDonut(coverageMetrics);renderImplementationDonut(opsMetrics);renderBar(opsMetrics);renderSupervisores(supervisorPerformanceRows());renderMercaderistas(mercaderistaPerformanceRows());renderTable(details);renderHistoricalInsights();document.getElementById("detailCount").textContent=details.length;updatePhaseNote();document.getElementById("updateHeader").textContent=state.phase==="F2"?"Actualización de estado":"Fuente / actualización"}
+function render(){const details=filteredRows(),coverageMetrics=metricRows(),opsMetrics=operationalMetricRows(coverageMetrics);renderKpis(coverageMetrics,opsMetrics);renderCoverageDonut(coverageMetrics);renderImplementationDonut(opsMetrics);renderBar(opsMetrics);renderSupervisores(supervisorPerformanceRows());renderMercaderistas(mercaderistaPerformanceRows());renderTable(details);renderHistoricalInsights();document.getElementById("detailCount").textContent=details.length;updatePhaseNote();document.getElementById("updateHeader").textContent=state.phase==="F2"?"Actualización de estado":"Fuente / actualización";const f1h=document.getElementById("f1StateHeader");if(f1h)f1h.style.display=state.phase==="F2"?"":"none"}
 function renderKpis(coverageRows,opsRows){
   const coverageAnswered=coverageRows.filter(r=>r.estado!=="Sin información");
   const answered=opsRows.filter(r=>r.estado!=="Sin información"),noInfo=coverageRows.filter(r=>r.estado==="Sin información"),implemented=answered.filter(r=>r.estado==="Implementado"),notImp=answered.filter(r=>r.estado==="No implementado");
@@ -341,7 +372,18 @@ function renderSupervisores(rows){const panel=document.getElementById("superviso
 
 function renderMercaderistas(rows){const panel=document.getElementById("merchPanel"),tbody=document.getElementById("merchTableBody"),empty=document.getElementById("merchEmpty");if(state.supervisor==="Todos"){panel.classList.add("hidden");return}panel.classList.remove("hidden");const groups={};rows.filter(r=>r.supervisor===state.supervisor&&r.mercaderista).forEach(r=>{const k=r.mercaderista;if(!groups[k])groups[k]=[];groups[k].push(r)});const names=Object.keys(groups).sort((a,b)=>a.localeCompare(b,"es"));document.getElementById("merchCount").textContent=names.length;document.getElementById("merchPanelSub").textContent=`${state.supervisor} · selecciona un mercaderista para filtrar el tablero.`;document.getElementById("clearMerchFilter").style.display=state.mercaderista!=="Todos"?"inline":"none";tbody.innerHTML="";empty.style.display=names.length?"none":"block";names.forEach(name=>{const coverageRows=groups[name],coverageAnswered=coverageRows.filter(r=>r.estado!=="Sin información"),a=operationalMetricRows(coverageRows),answered=a.filter(r=>r.estado!=="Sin información"),impl=answered.filter(r=>r.estado==="Implementado"),cov=coverageRows.length?Math.round(coverageAnswered.length/coverageRows.length*100):0,imp=answered.length?Math.round(impl.length/answered.length*100):0,noInfo=coverageRows.length-coverageAnswered.length,tr=document.createElement("tr");tr.className="merch-row"+(state.mercaderista===name?" active":"");tr.innerHTML=`<td class="merch-name">${esc(name)}</td><td>${new Set(a.map(r=>r.codigo)).size}</td><td>${a.length}</td><td class="metric-cell"><div class="metric-main">${cov}%</div><div class="metric-sub">${coverageAnswered.length} de ${coverageRows.length}</div><div class="mini-track"><div class="mini-fill" style="width:${cov}%"></div></div></td><td class="metric-cell"><div class="metric-main">${imp}%</div><div class="metric-sub">${impl.length} de ${answered.length}</div><div class="mini-track"><div class="mini-fill green" style="width:${imp}%"></div></div></td><td>${noInfo}</td>`;tr.onclick=()=>{state.mercaderista=name;buildMercaderistaSelect();render()};tbody.appendChild(tr)})}
 
-function renderTable(rows){const tbody=document.getElementById("tableBody"),empty=document.getElementById("emptyState");tbody.innerHTML="";empty.style.display=rows.length?"none":"block";rows.forEach(r=>{const tr=document.createElement("tr"),sourceClass=r.actualizacion==="Sin cambios - Excel"?" inherit":r.actualizacion==="Pendiente"?" pending":"";const reason=[r.razon,r.comentario].filter(Boolean).join(" · ");tr.innerHTML=`<td class="mono">${esc(r.fecha||"—")}</td><td>${esc(r.cliente)}</td><td class="mono">${esc(r.codigo)}</td><td>${esc(r.exhibicion)}${r.nombreFormulario?`<div style="font-size:10px;color:#5B6B7C;margin-top:2px">${esc(r.nombreFormulario)}</div>`:""}${!r.planificada?'<span class="extra-chip">EXTRA</span>':""}</td><td><span class="cat-chip">${esc(r.categoria)}</span></td><td><span class="status-chip ${classify(r.estado)}">${esc(r.estado)}</span></td><td>${r.estado==="No implementado"?(r.presenciaMueble?`<span class="status-chip ${r.presenciaMueble==="Sí"?"pos":"neg"}">${esc(r.presenciaMueble)}</span>`:"—"):"—"}</td><td><span class="source-chip${sourceClass}">${esc(r.actualizacion||"—")}</span></td><td>${esc(reason||"—")}</td><td>${esc(r.mercaderista||"—")}</td><td>${esc(r.supervisor||"—")}</td><td>${photoCell(r.foto)}</td>`;tbody.appendChild(tr)});tbody.querySelectorAll("img[data-photo]").forEach(img=>img.onclick=()=>openLightbox(img.dataset.photo))}
+function renderTable(rows){
+  const tbody=document.getElementById("tableBody"),empty=document.getElementById("emptyState");
+  tbody.innerHTML="";empty.style.display=rows.length?"none":"block";
+  rows.forEach(r=>{
+    const tr=document.createElement("tr"),sourceClass=r.actualizacion==="Sin cambios - Excel"?" inherit":r.actualizacion==="Pendiente"?" pending":"";
+    const reason=[r.razon,r.comentario].filter(Boolean).join(" · ");
+    const f1Cell=state.phase==="F2"?`<td><span class="status-chip ${r.estadoFase1==="No aplica"?"":classify(r.estadoFase1||"Sin información")}">${esc(r.estadoFase1||"Sin información")}</span></td>`:"";
+    tr.innerHTML=`<td class="mono">${esc(r.fecha||"—")}</td><td>${esc(r.cliente)}</td><td class="mono">${esc(r.codigo)}</td><td>${esc(r.exhibicion)}${r.nombreFormulario?`<div style="font-size:10px;color:#5B6B7C;margin-top:2px">${esc(r.nombreFormulario)}</div>`:""}${!r.planificada?'<span class="extra-chip">EXTRA</span>':""}</td><td><span class="cat-chip">${esc(r.categoria)}</span></td><td><span class="status-chip ${classify(r.estado)}">${esc(r.estado)}</span></td>${f1Cell}<td>${r.estado==="No implementado"?(r.presenciaMueble?`<span class="status-chip ${r.presenciaMueble==="Sí"?"pos":"neg"}">${esc(r.presenciaMueble)}</span>`:"—"):"—"}</td><td><span class="source-chip${sourceClass}">${esc(r.actualizacion||"—")}</span></td><td>${esc(reason||"—")}</td><td>${esc(r.mercaderista||"—")}</td><td>${esc(r.supervisor||"—")}</td><td>${photoCell(r.foto)}</td>`;
+    tbody.appendChild(tr)
+  });
+  tbody.querySelectorAll("img[data-photo]").forEach(img=>img.onclick=()=>openLightbox(img.dataset.photo))
+}
 function driveThumb(url,size=180){const m=clean(url).match(/\/d\/([A-Za-z0-9_-]+)/)||clean(url).match(/[?&]id=([A-Za-z0-9_-]+)/);return m?`https://drive.google.com/thumbnail?id=${m[1]}&sz=w${size}`:""}
 function photoCell(url){if(!url)return'<div class="no-photo">—</div>';const thumb=driveThumb(url);return thumb?`<img class="thumb" src="${escAttr(thumb)}" data-photo="${escAttr(url)}" alt="Foto" loading="lazy">`:`<a href="${escAttr(url)}" target="_blank" rel="noopener">Abrir ↗</a>`}
 
@@ -433,7 +475,7 @@ function downloadComparison(){
 
 function downloadSummary(){const coverageMetrics=metricRows();if(!coverageMetrics.length){alert("No hay exhibiciones planificadas para generar el resumen con los filtros seleccionados.");return}const opsMetrics=operationalMetricRows(coverageMetrics),m=metricSummary(coverageMetrics,opsMetrics),rows=[["CENTRO DE REPORTES · EXHIBICIONES SECUNDARIAS",""],["Generado",reportDate()],["",""],...getFilterSummary(),["",""],["Métrica","Resultado"],["Planificadas (excluye Unimarc)",m.planned],["Información levantada (incluye Unimarc)",m.coverage],["Respondidas cobertura",`${m.coverageAnswered} de ${m.coveragePlanned}`],["Implementación (excluye Unimarc)",m.implementation],["Implementadas",m.implemented],["No implementadas",m.notImplemented],["Mueble en sala",`${m.furnitureIn} · ${m.furnitureInCount} de ${m.presenceBase}`],["Mueble no está en sala",`${m.furnitureOut} · ${m.furnitureOutCount} de ${m.presenceBase}`],["Sin información (incluye Unimarc)",m.noInfo],["Locales (excluye Unimarc)",m.stores],["Extras visibles",filteredRows().filter(r=>!r.planificada&&!isUnimarc(r)).length]];const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(rows);ws["!merges"]=[XLSX.utils.decode_range("A1:B1")];ws["!cols"]=[{wch:38},{wch:45}];styleRange(ws,0,0,0,1,xlsxTitleStyle());rows.forEach((r,i)=>{if(i>0)styleRange(ws,i,0,i,1,()=>xlsxBodyStyle(i%2===0));if(r[0]==="Métrica")styleRange(ws,i,0,i,1,xlsxHeaderStyle())});XLSX.utils.book_append_sheet(wb,ws,"Resumen");XLSX.writeFile(wb,buildFileName("SecondaryShelf_Resumen"),{cellStyles:true})}
 function exhibitionExportName(r){const b=clean(r.exhibicion),f=clean(r.nombreFormulario);return!f||normalizeText(f)===normalizeText(b)?b:`${b} / ${f}`}
-function downloadDetail(){const rows=filteredRows();if(!rows.length){alert("No hay exhibiciones para descargar.");return}const data=rows.map(r=>({"Periodo":monthLabel(r.periodo),"Fase":r.fase,"Fecha":r.fecha,"Cliente":r.cliente,"Código Local":r.codigo,"Nombre Local":r.nombreLocal,"Mercaderista":r.mercaderista,"Exhibición":exhibitionExportName(r),"Categoría":r.categoria,"Estado":r.estado,"Mueble en sala":r.estado==="No implementado"?(r.presenciaMueble||"Sin información"):"—","Actualización de estado":r.actualizacion,"Razón":r.razon,"Comentario":r.comentario,"Supervisor":r.supervisor,"Tipo de exhibición":r.origen,"Foto":r.foto})),headers=Object.keys(data[0]),aoa=[[`DETALLE DE EXHIBICIONES · ${monthLabel(state.period).toUpperCase()} · ${state.phase}`],["Generado",reportDate()],[],headers,...data.map(x=>headers.map(h=>x[h]))],wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(aoa),lastCol=XLSX.utils.encode_col(headers.length-1);ws["!merges"]=[XLSX.utils.decode_range(`A1:${lastCol}1`)];ws["!autofilter"]={ref:`A4:${lastCol}${data.length+4}`};ws["!rows"]=[{hpt:28},{hpt:20},{hpt:8},{hpt:30}];styleRange(ws,0,0,0,headers.length-1,xlsxTitleStyle());styleRange(ws,3,0,3,headers.length-1,xlsxHeaderStyle());const estadoCol=headers.indexOf("Estado"),fotoCol=headers.indexOf("Foto");for(let i=0;i<data.length;i++){const rr=i+4,alt=i%2===1;styleRange(ws,rr,0,rr,headers.length-1,()=>xlsxBodyStyle(alt));styleCell(ws,rr,estadoCol,statusExcelStyle(data[i].Estado,alt));if(data[i].Foto)setHyperlinkCell(ws,XLSX.utils.encode_cell({r:rr,c:fotoCol}),data[i].Foto,"Abrir foto ↗")}ws["!cols"]=[{wch:18},{wch:12},{wch:13},{wch:16},{wch:14},{wch:40},{wch:28},{wch:48},{wch:18},{wch:19},{wch:18},{wch:24},{wch:24},{wch:36},{wch:24},{wch:20},{wch:15}];XLSX.utils.book_append_sheet(wb,ws,"Detalle");XLSX.writeFile(wb,buildFileName("SecondaryShelf_Detalle"),{cellStyles:true})}
+function downloadDetail(){const rows=filteredRows();if(!rows.length){alert("No hay exhibiciones para descargar.");return}const data=rows.map(r=>({"Periodo":monthLabel(r.periodo),"Fase":r.fase,"Fecha":r.fecha,"Cliente":r.cliente,"Código Local":r.codigo,"Nombre Local":r.nombreLocal,"Mercaderista":r.mercaderista,"Exhibición":exhibitionExportName(r),"Categoría":r.categoria,...(state.phase==="F2"?{"Estado Fase 1":r.estadoFase1||"Sin información"}:{}),"Estado":r.estado,"Mueble en sala":r.estado==="No implementado"?(r.presenciaMueble||"Sin información"):"—","Actualización de estado":r.actualizacion,"Razón":r.razon,"Comentario":r.comentario,"Supervisor":r.supervisor,"Tipo de exhibición":r.origen,"Foto":r.foto})),headers=Object.keys(data[0]),aoa=[[`DETALLE DE EXHIBICIONES · ${monthLabel(state.period).toUpperCase()} · ${state.phase}`],["Generado",reportDate()],[],headers,...data.map(x=>headers.map(h=>x[h]))],wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(aoa),lastCol=XLSX.utils.encode_col(headers.length-1);ws["!merges"]=[XLSX.utils.decode_range(`A1:${lastCol}1`)];ws["!autofilter"]={ref:`A4:${lastCol}${data.length+4}`};ws["!rows"]=[{hpt:28},{hpt:20},{hpt:8},{hpt:30}];styleRange(ws,0,0,0,headers.length-1,xlsxTitleStyle());styleRange(ws,3,0,3,headers.length-1,xlsxHeaderStyle());const estadoCol=headers.indexOf("Estado"),fotoCol=headers.indexOf("Foto");for(let i=0;i<data.length;i++){const rr=i+4,alt=i%2===1;styleRange(ws,rr,0,rr,headers.length-1,()=>xlsxBodyStyle(alt));styleCell(ws,rr,estadoCol,statusExcelStyle(data[i].Estado,alt));if(data[i].Foto)setHyperlinkCell(ws,XLSX.utils.encode_cell({r:rr,c:fotoCol}),data[i].Foto,"Abrir foto ↗")}ws["!cols"]=[{wch:18},{wch:12},{wch:13},{wch:16},{wch:14},{wch:40},{wch:28},{wch:48},{wch:18},{wch:19},{wch:18},{wch:24},{wch:24},{wch:36},{wch:24},{wch:20},{wch:15}];XLSX.utils.book_append_sheet(wb,ws,"Detalle");XLSX.writeFile(wb,buildFileName("SecondaryShelf_Detalle"),{cellStyles:true})}
 
 function esc(v){return clean(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
 function escAttr(v){return esc(v)}

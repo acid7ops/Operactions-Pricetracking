@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="es-CL" translate="no">
+<head>
+  <meta charset="UTF-8">
+  <meta name="google" content="notranslate">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>PLAN NOEL · Visibility | Centro de Reportes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    :root{--navy:#00294F;--blue:#0057A8;--derma:#A70532;--ink:#102538;--muted:#617489;--line:#DCE6F0;--mist:#EEF3F8;--canvas:#F4F7FB;--white:#fff;--green:#237C51;--red:#A3373D;--amber:#B27B18;--purple:#6952A3}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--canvas);font-family:Montserrat,system-ui,sans-serif;color:var(--ink)}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}a{color:var(--blue)}.hidden{display:none!important}
+    .shell{background:var(--navy);color:#fff;position:sticky;top:0;z-index:20;box-shadow:0 4px 12px #00294f20}.shell-inner{max-width:1450px;margin:auto;display:flex;align-items:center;gap:14px;padding:12px 22px;flex-wrap:wrap}.logo{width:40px;height:33px;border:1px solid #ffffff55;background:#ffffff12;display:grid;place-items:center;font-weight:800;font-size:11px}.brand{display:flex;align-items:center;gap:10px}.brand .over{font-size:9px;text-transform:uppercase;letter-spacing:1.2px;color:#B8D6F0;font-weight:800}.brand strong{font-size:15px}.navigation{display:flex;gap:5px;margin-left:auto}.navigation a{color:#C9DEF0;padding:10px 12px;font-size:12px;text-decoration:none;font-weight:700}.navigation a.current,.navigation a:hover{color:#fff;background:#ffffff21}
+    .container{max-width:1450px;padding:25px 22px 65px;margin:auto}.eyebrow{font-size:10px;color:var(--blue);letter-spacing:1.6px;text-transform:uppercase;font-weight:800}.page-title{font-size:27px;letter-spacing:-.65px;color:var(--navy);font-weight:800;margin:5px 0}.lead{font-size:12px;max-width:850px;color:var(--muted);line-height:1.6;margin:0}.heading-row{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;margin-bottom:18px}.actions{display:flex;gap:7px;flex-wrap:wrap}.btn{min-height:39px;padding:9px 14px;background:#fff;border:1px solid var(--line);font-size:11px;font-weight:800;color:var(--navy)}.btn:hover{background:var(--mist)}.btn.primary{background:var(--blue);color:white;border-color:var(--blue)}.btn.primary:hover{background:var(--navy)}
+    .panel{background:#fff;border:1px solid var(--line);padding:18px 19px;margin-bottom:13px}.panel-head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;margin-bottom:14px}.panel-head h2{font-size:15px;font-weight:800;margin:0;color:var(--navy)}.panel-head p{font-size:10.5px;color:var(--muted);margin:4px 0 0;line-height:1.5}.tiny{font-size:10px;color:var(--muted)}.small{font-size:11px;color:var(--muted)}.chip{font-size:10px;font-weight:800;padding:5px 8px;white-space:nowrap;background:var(--mist);color:var(--navy);display:inline-flex}.chip.green{background:#E8F4ED;color:var(--green)}.chip.red{background:#FCECEE;color:var(--red)}.chip.amber{background:#FEF4E1;color:#8E6008}.chip.purple{background:#F0ECF8;color:var(--purple)}
+    .phase-rail{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}.phase-tile{border:1px solid var(--line);background:#fff;text-align:left;padding:10px 10px 12px;min-width:0;min-height:116px;display:flex;flex-direction:column;gap:6px;color:var(--navy)}.phase-tile:hover{background:#F3F8FD}.phase-tile.selected{background:var(--navy);border-color:var(--navy);color:#fff}.phase-tile:focus-visible{outline:3px solid #79ABDC}.phase-tile .ph{display:flex;align-items:center;justify-content:space-between;gap:5px;font-size:12px;font-weight:800}.phase-tile .date{font-size:9px;opacity:.8}.phase-tile .st{font-size:9px;font-weight:700;opacity:.8}.phase-pct{display:flex;align-items:center;justify-content:space-between;gap:3px;font-size:9px}.phase-pct b{font-size:10px}.phase-track{height:4px;background:#E2EBF3;overflow:hidden}.phase-track i{display:block;background:var(--blue);height:100%}.selected .phase-track{background:#ffffff35}.selected .phase-track i{background:#81C7FF}
+    .controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(185px,1.4fr);gap:9px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:10px;font-weight:700;color:var(--muted)}.field select,.field input{border:1px solid var(--line);background:#fff;border-radius:0;min-width:0;width:100%;padding:10px 10px;font-size:12px;height:41px}.field select:focus,.field input:focus{outline:2px solid #95C4EE}.filter-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:15px}.seg{display:flex;gap:0;flex-wrap:wrap}.seg button{border:1px solid var(--line);background:#fff;padding:9px 13px;font-size:11px;color:var(--navy);font-weight:800;min-height:38px}.seg button+button{border-left:0}.seg button.on{color:#fff;background:var(--navy);border-color:var(--navy)}.seg button[data-bu="Derma"].on{background:var(--derma);border-color:var(--derma)}.seg button[data-bu="Competencia"].on{background:var(--purple);border-color:var(--purple)}
+    .kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin-bottom:13px}.kpi{border:1px solid var(--line);border-top:3px solid var(--blue);background:#fff;padding:13px;min-width:0}.kpi.green{border-top-color:var(--green)}.kpi.amber{border-top-color:var(--amber)}.kpi.red{border-top-color:var(--red)}.kpi.purple{border-top-color:var(--purple)}.kpi .num{font-size:26px;color:var(--navy);font-weight:800;line-height:1.15;letter-spacing:-.5px}.kpi.green .num{color:var(--green)}.kpi.purple .num{color:var(--purple)}.kpi .name{font-weight:800;font-size:10.5px;margin-top:5px;color:var(--navy)}.kpi .sub{font-size:9.5px;color:var(--muted);line-height:1.5;margin-top:4px}
+    .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.metric-head{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}.metric-head strong{font-size:11px;color:var(--navy)}.metric-head b{font-size:18px;color:var(--blue)}.metric-head.green b{color:var(--green)}.metric-head.purple b{color:var(--purple)}.track{height:11px;background:#E9EFF5;width:100%;overflow:hidden}.track i{display:block;height:100%;background:var(--blue);max-width:100%}.track.green i{background:var(--green)}.track.purple i{background:var(--purple)}.metric-note{font-size:9.5px;color:var(--muted);margin-top:7px;line-height:1.45}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:13px}.two-col .panel{min-width:0}.bar-list{display:flex;flex-direction:column;gap:10px;max-height:410px;overflow-y:auto}.bar-row{display:grid;grid-template-columns:minmax(95px,140px) minmax(80px,1fr) 55px 55px;align-items:center;gap:9px;font-size:10px}.bar-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}.bar-stack{display:flex;height:17px;width:100%;background:#E9EFF5;overflow:hidden}.bar-stack span{height:100%;display:block}.bar-row .pct{text-align:right;color:var(--navy);font-weight:800}.bar-row .count{text-align:right;color:var(--muted)}.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;font-size:9.5px;color:var(--muted)}.legend span{display:inline-flex;align-items:center;gap:5px}.dot{height:8px;width:8px;display:inline-block}
+    .trend{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-items:end;padding:5px 3px 0;min-height:255px}.trend-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;height:230px;min-width:0}.trend-value{font-size:10px;color:var(--navy);font-weight:800}.trend-bar{display:flex;align-items:flex-end;width:min(38px,94%);height:165px;background:#E9EFF5}.trend-bar i{display:block;width:100%;background:var(--blue)}.trend-col.selected .trend-bar i{background:#00294F}.trend-col .phase-name{font-size:11px;font-weight:800;color:var(--navy)}.trend-col .phase-date{font-size:8.5px;color:var(--muted);text-align:center}.trend-legend{font-size:9px;color:var(--muted);margin-top:8px}
+    .comparison{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.comparison .mini{padding:11px;background:#F7FAFD;border:1px solid var(--line)}.comparison .mini b{font-size:21px;color:var(--navy);display:block}.comparison .mini span{font-size:9px;color:var(--muted);font-weight:700}.table-clip{overflow:auto;max-height:460px;border:1px solid var(--line)}.data-table{border-collapse:collapse;width:100%;min-width:680px;font-size:11px}.data-table th{text-align:left;position:sticky;top:0;background:#EDF3F9;border-bottom:1px solid #C9D9E9;padding:10px;font-size:9px;color:var(--navy);text-transform:uppercase;letter-spacing:.3px;z-index:1}.data-table td{padding:9px 10px;border-bottom:1px solid #E8EFF5;vertical-align:top;line-height:1.5}.data-table tbody tr:hover{background:#F8FBFE}.data-table tbody tr.clickable{cursor:pointer}.data-table td strong{font-weight:800}.data-table .name{max-width:185px;white-space:normal}.pct-cell{font-weight:800;white-space:nowrap}.progress-small{width:83px;height:4px;background:#E6EFF5;margin-top:5px}.progress-small i{height:100%;display:block;background:var(--blue)}.progress-small.green i{background:var(--green)}.nowrap{white-space:nowrap}.detail-table{min-width:1200px}.detail-table td{font-size:10px}.detail-note{max-width:270px;min-width:160px;white-space:normal}.link-photo{display:inline-block;margin:0 6px 4px 0;white-space:nowrap;font-size:10px;font-weight:700}.table-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}.empty{padding:25px;text-align:center;color:var(--muted);font-size:11px}.error{border:1px solid #E4AEB4;background:#FFF0F1;color:#872F3A;padding:15px;margin-bottom:14px;font-size:12px;line-height:1.6}.loading{border:1px solid var(--line);background:#fff;padding:28px;text-align:center;color:var(--muted);font-size:12px;margin-bottom:14px}.footer{text-align:center;font-size:10px;color:var(--muted);padding:13px}.stamp{font-size:9px;color:var(--muted)}
+    @media(max-width:1140px){.phase-rail{grid-template-columns:repeat(4,minmax(0,1fr))}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.controls{grid-template-columns:repeat(3,minmax(0,1fr))}.controls .search-field{grid-column:span 2}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.shell-inner{padding:12px}.navigation{width:100%;margin-left:0;justify-content:space-between}.navigation a{font-size:10px;padding:8px}.container{padding:16px 12px 50px}.page-title{font-size:22px}.panel{padding:13px}.phase-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.phase-tile{min-height:109px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.kpi .num{font-size:23px}.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.controls .search-field{grid-column:1/-1}.filter-top{align-items:stretch}.seg{width:100%}.seg button{flex:1;padding:9px 5px;font-size:9.5px}.metrics{grid-template-columns:1fr;gap:14px}.two-col{grid-template-columns:1fr}.comparison{grid-template-columns:repeat(2,minmax(0,1fr))}.bar-row{grid-template-columns:95px minmax(70px,1fr) 41px 33px;gap:5px}.trend-col .phase-date{font-size:7px}.trend-value{font-size:9px}.trend-bar{width:24px}.actions{width:100%}.actions .btn{flex:1}}
+  
+    /* Conexión CSV de solo lectura. No se inserta ninguna interfaz externa. */
+    .sheet-setup{background:#fff;border:1px solid var(--line);padding:17px 19px;margin:0 0 14px;}
+    .sheet-setup h2{font-size:15px;color:var(--navy);margin:0 0 7px}
+    .sheet-setup p{font-size:11px;color:var(--muted);line-height:1.7;margin:0 0 12px}
+    .sheet-setup-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .sheet-setup-row input{width:min(680px,100%);flex:1 1 320px;min-height:43px;padding:10px 13px;border:1px solid #B7CBDE;color:var(--navy);font-size:12px}
+    .sheet-setup-actions{display:flex;gap:7px;flex-wrap:wrap}
+    .sheet-setup code{font:11px Consolas,monospace;background:#EFF5FA;padding:2px 4px}
+    .source-status{font-size:10px;color:var(--muted);font-weight:700;margin:8px 0 3px}
+    .config-warning{padding:10px 12px;background:#FFF8ED;border-left:3px solid #B27B18;color:#785A23;font-size:10.5px;line-height:1.6}
+    .connection-hint{font-size:10px;margin-top:7px;color:var(--muted)}
+    @media(max-width:640px){.sheet-setup-row input{flex-basis:100%}.sheet-setup-actions{width:100%}.sheet-setup-actions button{flex:1}}
+</style>
+</head>
+<body>
+<header class="shell"><div class="shell-inner"><div class="brand"><span class="logo">OPS</span><div><div class="over">Beiersdorf · Field Sales Operations</div><strong>Navidad 2026 · Visibility</strong></div></div><nav class="navigation"><a href="../index.html">← Volver al Centro</a><a href="https://script.google.com/macros/s/AKfycbxCvlFDGZF6M42NoRNr1IUZGL1lubDBc-KNZEZldgJLwOiFGnqSb2F5udomKV2_2vQ0/exec?view=form" target="_blank" rel="noopener noreferrer">Formulario de terreno</a><a class="current" href="#dashboard">PLAN NOEL</a></nav></div></header>
+<main class="container">
+ <div class="heading-row"><div><div class="eyebrow">Centro de Reportes · Terreno · Seguimiento por fases</div><h1 class="page-title">PLAN NOEL</h1><p class="lead">Seguimiento semanal con porcentajes de levantamiento e implementación, comparación entre fases y evidencias por exhibición. Cosmetics, Derma y competencia se miden por separado.</p></div><div class="actions"><button type="button" class="btn" id="configureBtn" title="Configurar fuente de Google Sheets">⚙ Fuente</button><button type="button" class="btn" id="refreshBtn">↻ Actualizar</button><button type="button" class="btn primary" id="exportBtn">↓ Exportar Excel</button></div></div>
+
+ <section id="sheetSetup" class="sheet-setup hidden" aria-labelledby="setupTitle">
+   <h2 id="setupTitle">Conectar Google Sheets · Configuración única</h2>
+   <p>Este visualizador consulta directamente las pestañas de PLAN NOEL, del mismo modo que Secondary Shelf. Pega aquí el enlace de la planilla de Navidad o su ID; la configuración se recuerda en este navegador.</p>
+   <div class="sheet-setup-row"><input type="text" id="sheetUrlInput" autocomplete="off" spellcheck="false" placeholder="https://docs.google.com/spreadsheets/d/…/edit" aria-label="Enlace de Google Sheets"><div class="sheet-setup-actions"><button type="button" class="btn primary" id="saveSheetBtn">Conectar</button><button type="button" class="btn" id="cancelSheetBtn">Cancelar</button></div></div>
+   <p class="connection-hint">Para dejarlo configurado para toda la oficina, pega ese ID en la constante <code>PLAN_NOEL_SHEET_ID</code> dentro del HTML, una sola vez.</p>
+   <div class="config-warning">Privacidad: la lectura CSV desde el navegador solo funciona con pestañas accesibles para los usuarios. No publiques la planilla original si contiene correos, RUT u otros datos internos. Utiliza una fuente de consulta de solo lectura con únicamente los datos necesarios si los permisos corporativos no lo permiten.</div>
+ </section>
+ <div class="source-status" id="sheetSourceStatus">Fuente: Google Sheets · Sin configurar</div>
+ <div id="errorBox" class="error hidden" role="alert"></div><div id="loadingBox" class="loading">Cargando datos de la campaña desde Google Sheets…</div>
+ <div id="dashboard" class="hidden">
+   <section class="panel"><div class="panel-head"><div><h2>Calendario de las siete fases</h2><p>Selecciona una fase para revisar sus resultados. Las fases futuras se muestran como planificadas, sin información arrastrada.</p></div><span class="chip" id="phaseBadge">—</span></div><div class="phase-rail" id="phaseRail"></div></section>
+   <section class="panel"><div class="filter-top"><div><h2 style="margin:0;font-size:15px;color:var(--navy)">Filtros de la campaña</h2><p class="tiny" style="margin:5px 0 0">Los indicadores y el detalle cambian con tu selección.</p></div><div class="seg" id="buTabs"><button data-bu="" type="button" class="on">Todas</button><button data-bu="Cosmetics" type="button">Cosmetics</button><button data-bu="Derma" type="button">Derma</button><button data-bu="Competencia" type="button">Competencia</button></div></div><div class="controls"><div class="field"><label for="retailerSelect">Retailer</label><select id="retailerSelect"></select></div><div class="field"><label for="supervisorSelect">Supervisor</label><select id="supervisorSelect"></select></div><div class="field"><label for="typeSelect">Tipo de exhibición</label><select id="typeSelect"></select></div><div class="field"><label for="statusSelect">Estado</label><select id="statusSelect"></select></div><div class="field search-field"><label for="searchInput">Buscar sala, ID o responsable</label><input id="searchInput" type="search" autocomplete="off" placeholder="Ej. J507, PU21, Corsi…"></div></div></section>
+   <div class="kpis" id="kpiRow"></div>
+   <section class="panel"><div class="panel-head"><div><h2>Avance de la fase seleccionada</h2><p>Levantamiento = respondidos / objetivos. Implementación = implementados / exhibiciones propias respondidas.</p></div><span id="currentPhaseTitle" class="chip">—</span></div><div class="metrics" id="metricBars"></div></section>
+   <section class="two-col"><div class="panel"><div class="panel-head"><div><h2>Implementación por grupo</h2><p>Verde: implementado · rojo: no implementado · amarillo: pendiente. Competencia se mide por presencia.</p></div><select id="groupBy" aria-label="Agrupar resultados" style="border:1px solid var(--line);padding:8px;font-size:11px"><option value="retailer">Por retailer</option><option value="supervisor">Por supervisor</option><option value="type">Por tipo</option><option value="bu">Por BU</option></select></div><div class="bar-list" id="groupBars"></div><div class="legend"><span><i class="dot" style="background:var(--green)"></i>Implementado / Presencia</span><span><i class="dot" style="background:var(--red)"></i>No implementado / Ausencia</span><span><i class="dot" style="background:#E6B04B"></i>Pendiente</span></div></div><div class="panel"><div class="panel-head"><div><h2>Evolución de las siete fases</h2><p>Altura de barra: % levantamiento. Número superior: % implementación propia.</p></div></div><div id="trend" class="trend"></div><p class="trend-legend">Las fases programadas permanecen en 0% hasta recibir respuestas. Los PDQ se incluyen únicamente en F1 y F3; competencia en F4.</p></div></section>
+   <section id="competitionPanel" class="panel hidden"><div class="panel-head"><div><h2>Presencia de competencia · Fase 4</h2><p>Se mide por separado de la implementación de Cosmetics y Derma. Las fotos se consultan en el detalle.</p></div></div><div class="kpis" id="competitionKpis" style="margin:0"></div></section>
+   <section class="two-col"><div class="panel"><div class="panel-head"><h2>Evolución frente a la fase anterior</h2><span id="compareBadge" class="chip">—</span></div><div class="comparison" id="comparison"></div><p class="tiny" style="margin:12px 0 0">Comparación solo entre exhibiciones propias presentes en ambas fases. No se imputan respuestas pendientes.</p></div><div class="panel"><div class="panel-head"><h2>Resultados por supervisor / retailer</h2><select id="performanceGroup" style="font-size:11px;border:1px solid var(--line);padding:7px"><option value="supervisor">Supervisor</option><option value="retailer">Retailer</option><option value="merch">Mercaderista</option></select></div><div class="table-clip"><table class="data-table"><thead><tr><th id="performanceTitle">Supervisor</th><th>Respondidos</th><th>% Levantamiento</th><th>% Implementación</th><th>% Presencia*</th></tr></thead><tbody id="performanceBody"></tbody></table></div><p class="tiny" style="margin:10px 0 0">* Presencia corresponde exclusivamente a competencia, cuando aplica.</p></div></section>
+   <section class="panel"><div class="panel-head"><div><h2>Detalle de exhibiciones por fase</h2><p id="detailCount">—</p></div><div class="actions"><button id="clearFilters" type="button" class="btn">Limpiar filtros</button><button id="detailExportBtn" type="button" class="btn">↓ Descargar detalle</button></div></div><div class="table-clip"><table class="data-table detail-table"><thead><tr><th>Retailer</th><th>Sala</th><th>BU</th><th>Exhibición / marca</th><th>Supervisor</th><th>Mercaderista</th><th>Estado</th><th>Buena carga</th><th>Motivo / comentario</th><th>Actualización</th><th>Fotos</th></tr></thead><tbody id="detailBody"></tbody></table></div><div class="table-bottom"><span class="small" id="pageInfo">—</span><div class="actions"><button type="button" class="btn" id="prevBtn">← Anterior</button><button type="button" class="btn" id="nextBtn">Siguiente →</button></div></div></section>
+   <div class="footer" id="updatedAt">Navidad 2026 · Beiersdorf Field Sales Operations</div>
+ </div>
+</main>
+<script>
+/* Reporte autónomo: no depende de Comun.html ni de su variable `$`. */
+const el=id=>document.getElementById(id);
+const esc=s=>String(s===null||s===undefined?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=(a,b)=>b?Math.round(a*100/b):0;
+const unique=xs=>[...new Set(xs.filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'es',{numeric:true}));
+const validStatus=s=>['Implementado','No implementado','Con presencia','Sin presencia'].includes(s);
+const ownType=t=>t.type!=='Payloader Competencia';
+const fmtDate=s=>{if(!s)return'—';const x=String(s).slice(0,10).split('-');return x.length===3?x[2]+'/'+x[1]+'/'+x[0]:String(s)};
+const dateSpan=p=>fmtDate(p.start).slice(0,5)+'–'+fmtDate(p.end).slice(0,5);
+const isCompetition=t=>t.type==='Payloader Competencia';
+function getTargets(db,phaseId){const p=db.phases.find(x=>x.id===phaseId);if(!p)return[];if(p.state==='Cerrada')return(db.historyTargets||[]).filter(t=>t.phase===phaseId);return(db.targets||[]).filter(t=>{if(t.type==='PDQ Belleza Jumbo'&&!['F1','F3'].includes(phaseId))return false;if(t.type==='Payloader Competencia'&&phaseId!=='F4')return false;if(!['PDQ Belleza Jumbo','Payloader Competencia','Payloader Navidad'].includes(t.type))return false;return !t.createdAt||String(t.createdAt).slice(0,10)<=p.end});}
+function getResponse(db,phaseId,id){const p=db.phases.find(x=>x.id===phaseId);const records=p?.state==='Cerrada'?db.historyResponses:db.responses;return records?.[phaseId+'|'+id]||null;}
+function stats(db,phaseId,targets){const s={total:targets.length,responded:0,own:0,ownAnswered:0,implemented:0,notImplemented:0,goodLoad:0,comp:0,compAnswered:0,present:0,absent:0};for(const t of targets){const r=getResponse(db,phaseId,t.id),status=r?.status;if(isCompetition(t)){s.comp++;if(status==='Con presencia'){s.responded++;s.compAnswered++;s.present++}else if(status==='Sin presencia'){s.responded++;s.compAnswered++;s.absent++;}}else{s.own++;if(status==='Implementado'){s.responded++;s.ownAnswered++;s.implemented++;if(r?.load==='Sí')s.goodLoad++}else if(status==='No implementado'){s.responded++;s.ownAnswered++;s.notImplemented++}}}s.pending=s.total-s.responded;s.coverage=pct(s.responded,s.total);s.implementation=pct(s.implemented,s.ownAnswered);s.loadQuality=pct(s.goodLoad,s.implemented);s.presence=pct(s.present,s.compAnswered);return s;}
+function viewRows(phaseId=selectedPhase,ignoreStatus=false){const query=filters.search.toLocaleLowerCase('es');return getTargets(DATA,phaseId).filter(t=>{
+ const status=getResponse(DATA,phaseId,t.id)?.status||'Sin información';
+ return(!filters.bu||t.bu===filters.bu)&&(!filters.retailer||t.retailer===filters.retailer)&&(!filters.supervisor||t.supervisor===filters.supervisor)&&(!filters.type||t.type===filters.type)&&(ignoreStatus||!filters.status||filters.status===status)&&(!query||[t.id,t.store,t.retailer,t.supervisor,t.merch,t.name,t.brand].join(' ').toLocaleLowerCase('es').includes(query));
+ }).sort((a,b)=>String(a.retailer).localeCompare(String(b.retailer),'es')||String(a.store).localeCompare(String(b.store),'es',{numeric:true})||String(a.bu).localeCompare(String(b.bu),'es'));}
+function photoList(r){if(Array.isArray(r?.photos)&&r.photos.length)return r.photos;return r?.photo?[r.photo]:[];}
+function photoLinks(r){const links=photoList(r).filter(url=>String(url).startsWith('https://')).slice(0,6);return links.length?links.map((url,i)=>`<a class="link-photo" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Foto ${i+1}</a>`).join(''):'—';}
+function badge(status){const color=status==='Implementado'?'green':status==='Con presencia'?'purple':status==='No implementado'||status==='Sin presencia'?'red':'amber';return `<span class="chip ${color}">${esc(status||'Sin información')}</span>`}
+// MISMA DINÁMICA QUE SECONDARY SHELF: Google Sheets -> CSV -> dashboard nativo.
+// Una vez tengas el ID, colócalo aquí para que funcione para todos los usuarios.
+const PLAN_NOEL_SHEET_ID = '1EaANXzqT0h_JmgZ2DLwQH46dPpIiQnAW3R5wBDAuQrI';
+const PLAN_NOEL_TABS = Object.freeze({
+  targets:'Objetivos', pdq:'PDQ Belleza', competition:'Competencia',
+  phases:'Fases', responses:'Respuestas', history:'Histórico'
+});
+const PLAN_NOEL_STORAGE_KEY = 'bdf_plan_noel_sheet_v1';
+function sheetIdFrom(value){
+  const s=String(value||'').trim();
+  const m=s.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]{20,})/);
+  const id=m?m[1]:s;
+  return /^[A-Za-z0-9_-]{20,120}$/.test(id)?id:'';
+}
+function configuredSheetId(){
+  const q=new URLSearchParams(location.search).get('sheet');
+  if(q&&sheetIdFrom(q))return sheetIdFrom(q);
+  return sheetIdFrom(PLAN_NOEL_SHEET_ID)||sheetIdFrom(localStorage.getItem(PLAN_NOEL_STORAGE_KEY)||'');
+}
+function showSheetSetup(show=true){
+  el('sheetSetup').classList.toggle('hidden',!show);
+  if(show)el('sheetUrlInput').value=configuredSheetId()||'';
+}
+// GID verificados en el Google Sheets Plan NOEL (12-11-2026).
+// Usarlos evita errores al consultar pestañas con espacios o tildes.
+const PLAN_NOEL_SOURCE_ID = '1EaANXzqT0h_JmgZ2DLwQH46dPpIiQnAW3R5wBDAuQrI';
+const PLAN_NOEL_GIDS = Object.freeze({
+  targets:789276567, pdq:918601198, competition:1012149390,
+  phases:510675783, responses:14208828, history:1296758216
+});
+let planNoelJsonpCounter = 0;
+function planNoelSheetQuery(id,key){
+  // Un GID de una planilla no es válido para otra. Si cambia la fuente,
+  // se vuelve a buscar por el nombre real de la pestaña.
+  const gid = id===PLAN_NOEL_SOURCE_ID ? PLAN_NOEL_GIDS[key] : null;
+  return gid!==null&&gid!==undefined ? 'gid='+encodeURIComponent(gid)
+    : 'sheet='+encodeURIComponent(PLAN_NOEL_TABS[key]);
+}
+function reportCsvUrl(id,key){
+  return 'https://docs.google.com/spreadsheets/d/'+encodeURIComponent(id)+
+    '/gviz/tq?tqx=out:csv&headers=1&'+planNoelSheetQuery(id,key)+'&_='+Date.now();
+}
+async function fetchPlanCsv(id,key){
+  const tab=PLAN_NOEL_TABS[key];
+  const resp=await fetch(reportCsvUrl(id,key),{cache:'no-store',credentials:'omit'});
+  if(!resp.ok)throw new Error('HTTP '+resp.status);
+  const csv=await resp.text();
+  if(/^\s*(<!doctype html|<html|<script)/i.test(csv))throw new Error('Google devolvió HTML en lugar de CSV');
+  if(typeof Papa==='undefined')throw new Error('No se cargó PapaParse');
+  const parsed=Papa.parse(csv.replace(/^\uFEFF/,''),{
+    header:true,skipEmptyLines:'greedy',transformHeader:h=>String(h||'').trim()
+  });
+  if(parsed.errors.some(e=>e.code!=='TooFewFields'))
+    throw new Error(parsed.errors[0].message);
+  const fields=(parsed.meta&&parsed.meta.fields)||[];
+  // No aceptar una página de error disfrazada de CSV.
+  const expected={targets:'TargetID',pdq:'TargetID',competition:'TargetID',
+    phases:'FaseID',responses:'IDRespuesta',history:'FaseID'}[key];
+  if(!fields.includes(expected))throw new Error('Encabezado '+expected+' no encontrado');
+  return (parsed.data||[]).filter(r=>Object.values(r).some(x=>String(x??'').trim()));
+}
+function rowsFromGoogleVisualization(response,key){
+  const tab=PLAN_NOEL_TABS[key];
+  if(!response||response.status!=='ok'||!response.table){
+    const detail=(response&&response.errors||[]).map(e=>e.detailed_message||e.message).filter(Boolean).join(' / ');
+    throw new Error(detail||'Respuesta de Google no válida para «'+tab+'»');
+  }
+  const table=response.table;
+  const headers=(table.cols||[]).map((c,i)=>String((c&&c.label)||'').trim()||'Columna '+(i+1));
+  const expected={targets:'TargetID',pdq:'TargetID',competition:'TargetID',
+    phases:'FaseID',responses:'IDRespuesta',history:'FaseID'}[key];
+  if(!headers.includes(expected))throw new Error('No se encontró '+expected+' en «'+tab+'»');
+  return (table.rows||[]).map(row=>{
+    const obj={};
+    headers.forEach((name,i)=>{
+      const cell=row&&row.c&&row.c[i];
+      if(cell===null||cell===undefined){obj[name]='';return;}
+      // Para fechas usamos el valor formateado de la hoja si existe.
+      const val=cell.f!==undefined&&cell.f!==null ? cell.f : cell.v;
+      obj[name]=val===null||val===undefined?'':String(val);
+    });
+    return obj;
+  }).filter(r=>Object.values(r).some(v=>String(v).trim()));
+}
+function fetchPlanJsonp(id,key){
+  const tab=PLAN_NOEL_TABS[key];
+  return new Promise((resolve,reject)=>{
+    const callback='__bdfNoelGviz_'+(++planNoelJsonpCounter);
+    const script=document.createElement('script');
+    let finished=false;
+    let timeout;
+    const clean=()=>{
+      if(timeout)clearTimeout(timeout);
+      if(script.parentNode)script.parentNode.removeChild(script);
+      try{delete window[callback]}catch(_e){window[callback]=undefined}
+    };
+    const done=(error,rows)=>{
+      if(finished)return;
+      finished=true;
+      clean();
+      if(error)reject(error);else resolve(rows);
+    };
+    window[callback]=(response)=>{
+      try{done(null,rowsFromGoogleVisualization(response,key));}
+      catch(error){done(error);}
+    };
+    const tqx='out:json;responseHandler:'+callback;
+    // JSONP es una alternativa directa de Google Visualization para evitar
+    // restricciones CORS en la descarga CSV. No interviene un proxy tercero.
+    script.src='https://docs.google.com/spreadsheets/d/'+encodeURIComponent(id)+
+      '/gviz/tq?tqx='+encodeURIComponent(tqx)+'&headers=1&'+
+      planNoelSheetQuery(id,key)+'&_='+Date.now();
+    script.async=true;
+    script.onerror=()=>done(new Error('Google bloqueó la consulta JSONP de «'+tab+'»'));
+    timeout=setTimeout(()=>done(new Error('Tiempo de espera agotado en «'+tab+'»')),18000);
+    document.head.appendChild(script);
+  });
+}
+async function fetchPlanTab(id,key){
+  const tab=PLAN_NOEL_TABS[key];
+  try{return await fetchPlanCsv(id,key);}
+  catch(csvError){
+    console.warn('PLAN NOEL: CSV no disponible en '+tab+'; intentando JSONP.',csvError);
+    try{return await fetchPlanJsonp(id,key);}
+    catch(jsonpError){
+      throw new Error('No se pudo leer «'+tab+'» (CSV: '+csvError.message+
+        '; JSONP: '+jsonpError.message+'). Verifica acceso de lectura a Google Sheets.');
+    }
+  }
+}
+const csvText=v=>String(v===undefined||v===null?'':v).trim();
+function dateIso(v){
+  const s=csvText(v),iso=s.match(/^(\d{4})-(\d\d)-(\d\d)/);
+  if(iso)return iso[1]+'-'+iso[2]+'-'+iso[3];
+  const cl=s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+  if(cl)return cl[3]+'-'+cl[2].padStart(2,'0')+'-'+cl[1].padStart(2,'0');
+  return s;
+}
+function photoArray(raw,primary){
+  try {const list=JSON.parse(csvText(raw));
+    if(Array.isArray(list))return list.map(csvText).filter(x=>/^https:\/\//i.test(x)).slice(0,6);
+  }catch(e){}
+  return /^https:\/\//i.test(csvText(primary))?[csvText(primary)]:[];
+}
+function readTarget(r,source){
+  const id=csvText(r.TargetID).toUpperCase();
+  if(!id||csvText(r.Activo).toLowerCase()==='no')return null;
+  const type=source==='pdq'?'PDQ Belleza Jumbo':source==='competition'?'Payloader Competencia':
+    ['Payloader Navidad','PDQ Belleza Jumbo','Payloader Competencia'].includes(csvText(r.Tipo))?csvText(r.Tipo):'Payloader Navidad';
+  return {
+    id,type,bu:type==='Payloader Competencia'?'Competencia':csvText(r.BU)||'Cosmetics',
+    retailer:csvText(r.Retailer),store:csvText(r.Sala).toUpperCase(),
+    supervisor:csvText(r.Supervisor)||'Sin Supervisor',merch:csvText(r.Mercaderista),
+    name:csvText(r['Exhibición']),brand:csvText(r.MarcaCompetencia),
+    createdAt:dateIso(r['Fecha alta']),source:PLAN_NOEL_TABS[source]
+  };
+}
+function assemblePlanData(tabs){
+  const phases=tabs.phases.map(r=>({
+    id:csvText(r.FaseID),start:dateIso(r.FechaInicio),end:dateIso(r.FechaFin),
+    state:csvText(r.Estado),closedAt:csvText(r.FechaCierre),
+    closedBy:csvText(r.CerradaPor),notes:csvText(r.Notas)
+  })).filter(p=>/^F[1-7]$/.test(p.id)).sort((a,b)=>Number(a.id.slice(1))-Number(b.id.slice(1)));
+  if(!phases.length)throw new Error('La pestaña Fases no tiene fases F1–F7 válidas.');
+  const targets=[
+    ...tabs.targets.map(r=>readTarget(r,'targets')),
+    ...tabs.pdq.map(r=>readTarget(r,'pdq')),
+    ...tabs.competition.map(r=>readTarget(r,'competition'))
+  ].filter(Boolean);
+  const ids=new Set();
+  for(const t of targets){if(ids.has(t.id))throw new Error('TargetID duplicado: '+t.id);ids.add(t.id);}
+  const responses={};
+  for(const r of tabs.responses){
+    const phase=csvText(r.FaseID),target=csvText(r.TargetID).toUpperCase();
+    if(!phase||!target)continue;
+    const photos=photoArray(r.FotoURLsJSON,r.FotoURL);
+    responses[phase+'|'+target]={
+      phase,target,status:csvText(r.Estado),load:csvText(r.BuenaCarga),
+      reason:csvText(r.Motivo),comment:csvText(r.Comentario),time:csvText(r.MarcaTiempo),
+      photo:photos[0]||'',photos
+    };
+  }
+  const historyTargets=[],historyResponses={};
+  for(const r of tabs.history){
+    const phase=csvText(r.FaseID),id=csvText(r.TargetID).toUpperCase();
+    if(!phase||!id)continue;
+    const type=csvText(r.Tipo)||'Payloader Navidad';
+    historyTargets.push({
+      phase,id,type,bu:csvText(r.BU)||'Cosmetics',retailer:csvText(r.Retailer),
+      store:csvText(r.Sala),supervisor:csvText(r.Supervisor),
+      merch:csvText(r.Mercaderista),name:csvText(r['Exhibición'])||type,
+      brand:csvText(r.MarcaCompetencia),createdAt:''
+    });
+    const photos=photoArray(r.FotoURLsJSON,r.FotoURL);
+    historyResponses[phase+'|'+id]={
+      phase,target:id,status:csvText(r.Estado),load:csvText(r.BuenaCarga),
+      reason:csvText(r.Motivo),comment:csvText(r.Comentario),
+      time:csvText(r.FechaRespuesta),photo:photos[0]||'',photos
+    };
+  }
+  return {
+    phases,activePhase:phases.find(p=>p.state==='Activa')?.id||null,
+    targets,responses,historyTargets,historyResponses,
+    updatedAt:new Intl.DateTimeFormat('es-CL',{dateStyle:'short',timeStyle:'short',timeZone:'America/Santiago'}).format(new Date())
+  };
+}
+async function readNoelData(){
+  const id=configuredSheetId();
+  if(!id){showSheetSetup(true);throw new Error('Falta ingresar la URL o ID de la planilla Google Sheets de Navidad.');}
+  el('sheetSourceStatus').textContent='Fuente: Google Sheets · Leyendo las seis pestañas…';
+  const keys=Object.keys(PLAN_NOEL_TABS);
+  const rows=await Promise.all(keys.map(k=>fetchPlanTab(id,k)));
+  const tabs=Object.fromEntries(keys.map((key,i)=>[key,rows[i]]));
+  const data=assemblePlanData(tabs);
+  el('sheetSourceStatus').textContent='Fuente: Google Sheets · Consulta directa · '+id.slice(0,8)+'… · '+data.targets.length+' objetivos activos';
+  showSheetSetup(false);
+  return data;
+}
+function api(fn){
+  if(fn==='obtenerDatos')return readNoelData();
+  return Promise.reject(new Error('Esta página es de solo lectura. Para administrar, abre Apps Script.'));
+}
+el('saveSheetBtn').onclick=()=>{
+  const id=sheetIdFrom(el('sheetUrlInput').value);
+  if(!id){alert('Introduce una URL válida de Google Sheets o su ID.');return;}
+  localStorage.setItem(PLAN_NOEL_STORAGE_KEY,id);load();
+};
+el('cancelSheetBtn').onclick=()=>showSheetSetup(false);
+
+let DATA=null,selectedPhase='F1',page=0;const PAGE_SIZE=40;const filters={bu:'',retailer:'',supervisor:'',type:'',status:'',search:''};
+function displayError(message){el('loadingBox').classList.add('hidden');el('errorBox').classList.remove('hidden');el('errorBox').textContent='No se pudo cargar PLAN NOEL: '+String(message||'Error desconocido')+' Comprueba que las pestañas estén disponibles para consulta CSV. Pulsa ⚙ Fuente para cambiar la planilla.';}
+async function load(){el('errorBox').classList.add('hidden');el('loadingBox').classList.remove('hidden');el('refreshBtn').disabled=true;try{const data=await api('obtenerDatos');if(!data||!Array.isArray(data.phases)||!Array.isArray(data.targets))throw new Error('Respuesta incompleta de obtenerDatos: no se recibieron fases u objetivos.');DATA=data;if(!data.phases.some(p=>p.id===selectedPhase))selectedPhase=data.activePhase||data.phases[0]?.id||'F1';if(data.activePhase&&selectedPhase==='F1'&&!data.phases.find(p=>p.id==='F1'&&p.state==='Activa'))selectedPhase=data.activePhase;makeFilterOptions();render();el('loadingBox').classList.add('hidden');el('dashboard').classList.remove('hidden');}catch(error){console.error(error);displayError(error.message);}finally{el('refreshBtn').disabled=false}}
+function selectHTML(values,label,current){const options=['<option value="">'+esc(label)+'</option>',...unique(values).map(x=>`<option value="${esc(x)}">${esc(x)}</option>`)];return options.join('');}
+function makeFilterOptions(){const universe=getTargets(DATA,selectedPhase).filter(t=>!filters.bu||t.bu===filters.bu);
+ for(const [id,key,label] of [['retailerSelect','retailer','Todos los retailers'],['supervisorSelect','supervisor','Todos los supervisores'],['typeSelect','type','Todos los tipos']]){const select=el(id),list=universe.map(t=>t[key]);select.innerHTML=selectHTML(list,label);if(filters[key]&&!list.includes(filters[key]))filters[key]='';select.value=filters[key];}
+ const statuses=filters.bu==='Competencia'?['Con presencia','Sin presencia','Sin información']:filters.bu?['Implementado','No implementado','Sin información']:['Implementado','No implementado','Sin información','Con presencia','Sin presencia'];el('statusSelect').innerHTML=selectHTML(statuses,'Todos los estados');if(filters.status&&!statuses.includes(filters.status))filters.status='';el('statusSelect').value=filters.status;
+ document.querySelectorAll('#buTabs button').forEach(b=>b.classList.toggle('on',b.dataset.bu===filters.bu));}
+function kpiCard(value,label,sub,tone=''){return `<div class="kpi ${tone}"><div class="num">${esc(value)}</div><div class="name">${esc(label)}</div><div class="sub">${esc(sub)}</div></div>`}
+function metric(value,label,sub,tone='',hasDenom=true){return `<div><div class="metric-head ${tone}"><strong>${esc(label)}</strong><b>${hasDenom?esc(value)+'%':'—'}</b></div><div class="track ${tone}"><i style="width:${value}%"></i></div><div class="metric-note">${esc(sub)}</div></div>`}
+function render(){if(!DATA)return;renderPhases();const targets=viewRows(),s=stats(DATA,selectedPhase,targets),p=DATA.phases.find(x=>x.id===selectedPhase);
+ el('phaseBadge').textContent=(p?.state||'—')+' · '+(p?dateSpan(p):'—');el('currentPhaseTitle').textContent=selectedPhase+' · '+(p?.state||'—');
+ el('kpiRow').innerHTML=[kpiCard(s.total,'Objetivos','Planificados en la selección'),kpiCard(s.responded,'Información levantada',s.coverage+'% · '+s.responded+' de '+s.total),kpiCard(s.pending,'Sin información','Pendientes de esta fase','amber'),kpiCard(s.ownAnswered?s.implementation+'%':'—','Implementación',s.implemented+' de '+s.ownAnswered+' propias respondidas','green'),kpiCard(s.implemented,'Implementados','Exhibiciones propias','green'),kpiCard(s.notImplemented,'No implementados','Exhibiciones propias','red')].join('');
+ const met=[metric(s.coverage,'Levantamiento',s.responded+' de '+s.total+' objetivos respondidos'),metric(s.implementation,'Implementación propia',s.implemented+' de '+s.ownAnswered+' respuestas válidas de Cosmetics, Derma y PDQ','green',s.ownAnswered>0)];if(s.comp)met.push(metric(s.presence,'Presencia competencia',s.present+' de '+s.compAnswered+' respuestas de competencia','purple',s.compAnswered>0));else met.push(metric(s.loadQuality,'Buena carga',s.goodLoad+' de '+s.implemented+' muebles implementados','green',s.implemented>0));el('metricBars').innerHTML=met.join('');
+ el('competitionPanel').classList.toggle('hidden',!(selectedPhase==='F4'&&(!filters.bu||filters.bu==='Competencia')));if(selectedPhase==='F4')el('competitionKpis').innerHTML=[kpiCard(s.comp,'Competencia planificada','Objetivos de F4','purple'),kpiCard(s.compAnswered,'Levantados','Información competencia','purple'),kpiCard(s.present,'Con presencia',(s.compAnswered?s.presence+'%':'—')+' de los respondidos','purple'),kpiCard(s.absent,'Sin presencia','Respuestas negativas','red'),kpiCard(s.comp-s.compAnswered,'Pendientes','Sin respuesta','amber'),kpiCard(s.compAnswered?s.presence+'%':'—','Presencia','Con presencia / respondidos','purple')].join('');
+ renderGrouped(targets);renderTrend();renderCompare(targets);renderPerformance(targets);renderDetail(targets);el('updatedAt').textContent='Datos consultados: '+(DATA.updatedAt||'—')+' · Zona horaria: Chile · Base: Google Sheets';}
+function renderPhases(){el('phaseRail').innerHTML=DATA.phases.map(p=>{const rs=viewRows(p.id,true),s=stats(DATA,p.id,rs);return `<button type="button" class="phase-tile ${p.id===selectedPhase?'selected':''}" data-phase="${esc(p.id)}"><div class="ph"><span>${esc(p.id)}</span>${p.id===DATA.activePhase?'<span style="font-size:8px">● LIVE</span>':''}</div><div class="date">${esc(dateSpan(p))}</div><div class="st">${esc(p.state)}</div><div class="phase-pct"><span>Levantamiento</span><b>${s.coverage}%</b></div><div class="phase-track"><i style="width:${s.coverage}%"></i></div><div class="phase-pct"><span>Implementación</span><b>${s.ownAnswered?s.implementation+'%':'—'}</b></div></button>`}).join('');el('phaseRail').querySelectorAll('button[data-phase]').forEach(btn=>btn.addEventListener('click',()=>{selectedPhase=btn.dataset.phase;page=0;makeFilterOptions();render()}));}
+function renderGrouped(targets){const key=el('groupBy').value,map=new Map();for(const t of targets){const k=String(t[key]||'Sin asignar');if(!map.has(k))map.set(k,[]);map.get(k).push(t);}const groups=[...map.entries()].sort((a,b)=>b[1].length-a[1].length||a[0].localeCompare(b[0],'es'));
+ el('groupBars').innerHTML=groups.length?groups.map(([name,rows])=>{const s=stats(DATA,selectedPhase,rows),compOnly=s.own===0,rate=compOnly?s.presence:s.implementation;const good=compOnly?s.present:s.implemented,negative=compOnly?s.absent:s.notImplemented,den=rows.length,missing=den-good-negative;const label=compOnly?'presencia':'implementación';return `<div class="bar-row"><span class="bar-label" title="${esc(name)}">${esc(name)}</span><div class="bar-stack"><span style="width:${pct(good,den)}%;background:${compOnly?'var(--purple)':'var(--green)'}"></span><span style="width:${pct(negative,den)}%;background:var(--red)"></span><span style="width:${pct(missing,den)}%;background:#E6B04B"></span></div><span class="pct" title="% ${label} sobre respondidos">${s.ownAnswered||s.compAnswered?rate+'%':'—'}</span><span class="count">${rows.length}</span></div>`}).join(''):'<div class="empty">Sin objetivos para los filtros actuales.</div>';}
+function renderTrend(){el('trend').innerHTML=DATA.phases.map(p=>{const rs=viewRows(p.id,true),s=stats(DATA,p.id,rs);return `<div class="trend-col ${p.id===selectedPhase?'selected':''}" title="${esc(p.id)}: cobertura ${s.coverage}%, implementación ${s.implementation}%; ${s.responded}/${s.total} respondidos"><span class="trend-value">${s.ownAnswered?s.implementation+'%':'—'}</span><div class="trend-bar"><i style="height:${s.coverage}%"></i></div><span class="phase-name">${esc(p.id)}</span><span class="phase-date">${esc(dateSpan(p))}</span></div>`}).join('');}
+function renderCompare(targets){const i=DATA.phases.findIndex(p=>p.id===selectedPhase),prev=DATA.phases[i-1];el('compareBadge').textContent=prev?prev.id+' → '+selectedPhase:'Primera fase';if(!prev){el('comparison').innerHTML='<p class="small">No existe una fase anterior para comparar.</p>';return;}
+ const prevIDs=new Set(getTargets(DATA,prev.id).map(t=>t.id));let improved=0,worsened=0,maintained=0,stillNo=0,pending=0,notComparable=0;
+ for(const t of targets){if(!ownType(t)||!prevIDs.has(t.id))continue;const a=getResponse(DATA,prev.id,t.id)?.status,b=getResponse(DATA,selectedPhase,t.id)?.status;if(!b||!['Implementado','No implementado'].includes(b)){pending++;continue;}if(!['Implementado','No implementado'].includes(a)){notComparable++;continue;}if(a==='No implementado'&&b==='Implementado')improved++;else if(a==='Implementado'&&b==='No implementado')worsened++;else if(a==='Implementado')maintained++;else stillNo++;}
+ el('comparison').innerHTML=[['↑ '+improved,'Mejoran'],['↓ '+worsened,'Empeoran'],[maintained,'Mantienen implementado'],[stillNo,'Siguen no implementados'],[pending,'Pendientes fase actual'],[notComparable,'Sin base comparable']].map(([n,label])=>`<div class="mini"><b>${n}</b><span>${label}</span></div>`).join('');}
+function renderPerformance(targets){const key=el('performanceGroup').value,map=new Map();for(const t of targets){const name=t[key]||'Sin asignar';if(!map.has(name))map.set(name,[]);map.get(name).push(t);}el('performanceTitle').textContent={supervisor:'Supervisor',retailer:'Retailer',merch:'Mercaderista'}[key];el('performanceBody').innerHTML=[...map.entries()].sort((a,b)=>b[1].length-a[1].length||a[0].localeCompare(b[0],'es')).map(([name,rows])=>{const s=stats(DATA,selectedPhase,rows);return `<tr class="clickable" title="Filtrar por ${esc(name)}" data-group-value="${esc(name)}"><td><strong>${esc(name)}</strong></td><td>${s.responded}/${s.total}</td><td class="pct-cell">${s.coverage}%<div class="progress-small"><i style="width:${s.coverage}%"></i></div></td><td class="pct-cell">${s.ownAnswered?s.implementation+'%':'—'}<div class="progress-small green"><i style="width:${s.implementation}%"></i></div></td><td class="pct-cell">${s.compAnswered?s.presence+'%':'—'}</td></tr>`}).join('')||'<tr><td colspan="5" class="small">No hay objetivos para estos filtros.</td></tr>';
+ el('performanceBody').querySelectorAll('tr[data-group-value]').forEach(tr=>tr.onclick=()=>{const name=tr.dataset.groupValue;if(key==='merch'){filters.search=name;el('searchInput').value=name;}else{filters[key]=name;makeFilterOptions();}page=0;render();});}
+function renderDetail(targets){const pages=Math.max(1,Math.ceil(targets.length/PAGE_SIZE));page=Math.min(page,pages-1);const slice=targets.slice(page*PAGE_SIZE,(page+1)*PAGE_SIZE);el('detailBody').innerHTML=slice.map(t=>{const r=getResponse(DATA,selectedPhase,t.id),status=r?.status||'Sin información';return `<tr><td>${esc(t.retailer||'—')}</td><td><strong>${esc(t.store||'—')}</strong><div class="tiny">${esc(t.id)}</div></td><td>${esc(t.bu||'—')}</td><td class="name">${esc(t.name||t.type)}<div class="tiny">${esc(t.type)} ${t.brand?'· '+esc(t.brand):''}</div></td><td>${esc(t.supervisor||'—')}</td><td>${esc(t.merch||'—')}</td><td>${badge(status)}</td><td>${status==='Implementado'?esc(r?.load||'—'):'—'}</td><td class="detail-note">${esc([r?.reason,r?.comment].filter(Boolean).join(' · ')||'—')}</td><td class="nowrap">${esc(r?.time||'—')}</td><td>${photoLinks(r)}</td></tr>`}).join('')||'<tr><td colspan="11" class="empty">No hay exhibiciones para esta selección.</td></tr>';el('detailCount').textContent=targets.length+' objetivos de '+selectedPhase+' · '+stats(DATA,selectedPhase,targets).responded+' respondidos';el('pageInfo').textContent=targets.length?`${page*PAGE_SIZE+1}–${Math.min((page+1)*PAGE_SIZE,targets.length)} de ${targets.length} · Página ${page+1}/${pages}`:'Sin registros';el('prevBtn').disabled=page===0;el('nextBtn').disabled=page>=pages-1;}
+const safeXlsx=s=>{const text=String(s??'');return ['=','+','-','@'].includes(text[0])?"'"+text:text;};
+function detailData(){const heads=['Fase','Inicio','Fin','Estado fase','ID objetivo','Tipo','BU','Retailer','Sala','Exhibición','Marca competencia','Supervisor','Mercaderista','Estado levantamiento','Buena carga','Motivo','Comentario','Fecha actualización','Fotos'];const p=DATA.phases.find(x=>x.id===selectedPhase),rows=viewRows().map(t=>{const r=getResponse(DATA,selectedPhase,t.id);return[selectedPhase,p?.start||'',p?.end||'',p?.state||'',t.id,t.type,t.bu,t.retailer,t.store,t.name,t.brand||'',t.supervisor,t.merch,r?.status||'Sin información',r?.load||'',r?.reason||'',r?.comment||'',r?.time||'',photoList(r).join(' | ')].map(safeXlsx)});return {heads,rows};}
+function saveCsv(filename,heads,rows){const csv='\uFEFF'+[heads,...rows].map(r=>r.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(';')).join('\r\n');const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);}
+function download(detailOnly=false){if(!DATA)return;const {heads,rows}=detailData(),name='Navidad2026_'+selectedPhase+'_'+new Date().toISOString().slice(0,10);if(typeof XLSX==='undefined'){saveCsv(name+'_Detalle.csv',heads,rows);return;}const wb=XLSX.utils.book_new(),sheet=XLSX.utils.aoa_to_sheet([heads,...rows]);sheet['!cols']=heads.map(h=>({wch:Math.min(49,Math.max(12,h.length+4))}));sheet['!autofilter']={ref:'A1:S'+Math.max(1,rows.length+1)};XLSX.utils.book_append_sheet(wb,sheet,'Detalle '+selectedPhase);if(!detailOnly){const summaryHeaders=['Fase','Inicio','Fin','Estado','Objetivos','Respondidos','Levantamiento %','Implementados','No implementados','Implementación %','Buena carga','Buena carga %','Competencia objetivos','Competencia respondida','Con presencia','Sin presencia','Presencia %'];const summary=DATA.phases.map(p=>{const s=stats(DATA,p.id,viewRows(p.id,true));return[p.id,p.start,p.end,p.state,s.total,s.responded,s.coverage,s.implemented,s.notImplemented,s.implementation,s.goodLoad,s.loadQuality,s.comp,s.compAnswered,s.present,s.absent,s.presence]});const ws=XLSX.utils.aoa_to_sheet([summaryHeaders,...summary]);ws['!cols']=summaryHeaders.map(h=>({wch:Math.max(14,h.length+3)}));XLSX.utils.book_append_sheet(wb,ws,'Resumen 7 fases');}XLSX.writeFile(wb,name+(detailOnly?'_Detalle':'_Reporte')+'.xlsx');}
+function clearFilters(){Object.assign(filters,{bu:'',retailer:'',supervisor:'',type:'',status:'',search:''});el('searchInput').value='';page=0;makeFilterOptions();render();}
+window.addEventListener('error',e=>{console.error('Reporte error:',e.message);if(!DATA)displayError('Error JavaScript: '+e.message);});
+el('configureBtn').onclick=()=>showSheetSetup(true);el('refreshBtn').onclick=load;el('exportBtn').onclick=()=>download(false);el('detailExportBtn').onclick=()=>download(true);el('clearFilters').onclick=clearFilters;el('prevBtn').onclick=()=>{page--;renderDetail(viewRows())};el('nextBtn').onclick=()=>{page++;renderDetail(viewRows())};el('groupBy').onchange=()=>renderGrouped(viewRows());el('performanceGroup').onchange=()=>renderPerformance(viewRows());
+document.querySelectorAll('#buTabs button').forEach(b=>b.onclick=()=>{filters.bu=b.dataset.bu;filters.retailer='';filters.supervisor='';filters.type='';filters.status='';page=0;makeFilterOptions();render()});
+for(const [id,key] of [['retailerSelect','retailer'],['supervisorSelect','supervisor'],['typeSelect','type'],['statusSelect','status']])el(id).onchange=e=>{filters[key]=e.target.value;page=0;render()};el('searchInput').oninput=e=>{filters.search=e.target.value.trim();page=0;render()};
+load();
+</script>
+</body>
+</html>

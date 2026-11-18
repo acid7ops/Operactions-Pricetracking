@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js"></script>
 <style>
 :root{
   --blue:#0A4DB8;--blue-strong:#003E9C;--blue-soft:#EAF1FF;--ink:#101A2E;--muted:#667085;--faint:#98A2B3;
@@ -26,6 +27,18 @@ button,select,input{font:inherit}button{color:inherit}
 .title .badge:last-child{display:none}.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#43C97A;margin-right:5px}
 .top-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:4px}.last-updated{font-size:10px;color:var(--muted);font-weight:500}
 .refresh{margin:0;border:1px solid var(--line-strong);background:#fff;color:var(--ink);padding:6px 10px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 1px 1px rgba(16,24,40,.02)}.refresh:hover{border-color:#BCC7D6;background:#FAFBFD}
+.top-actions{display:flex;align-items:center;gap:6px}
+.export-wrap{position:relative}
+.export-btn{border:1px solid var(--line-strong);background:var(--blue);color:#fff;padding:6px 10px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+.export-btn:hover{background:var(--blue-strong)}
+.export-menu{display:none;position:absolute;right:0;top:auto;bottom:calc(100% + 7px);min-width:220px;background:#fff;border:1px solid var(--line);border-radius:11px;box-shadow:0 16px 38px rgba(16,24,40,.18);padding:5px;z-index:1000}
+.export-menu.open{display:block}
+.export-option{width:100%;border:0;background:#fff;text-align:left;padding:9px 10px;border-radius:8px;cursor:pointer}
+.export-option:hover{background:#F5F8FD}
+.export-option strong{display:block;font-size:11px;color:var(--ink);margin-bottom:2px}
+.export-option span{display:block;font-size:9.5px;color:var(--muted);line-height:1.3}
+.export-sep{height:1px;background:var(--line);margin:4px 2px}
+
 .modebar,.filterbar{background:#fff;border:1px solid var(--line);margin:0 10px 8px;padding:8px 9px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;border-radius:12px;box-shadow:var(--shadow)}
 .mode-tabs{display:flex;background:#EEF2F7;padding:2px;border-radius:9px;gap:2px}.mode-btn{border:0;background:transparent;color:var(--muted);font-weight:700;font-size:11px;padding:6px 9px;border-radius:7px;cursor:pointer}.mode-btn.active{background:var(--ink);color:#fff}
 .field{display:flex;align-items:center;gap:6px}.label{font-family:'Inter',sans-serif;font-size:9px;line-height:1;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);white-space:nowrap}
@@ -66,7 +79,7 @@ button,select,input{font:inherit}button{color:inherit}
 .bar-panel{display:flex;flex-direction:column;min-height:0}.bar-wrap{height:275px;overflow:auto;margin-top:2px}.bar-inner{height:268px;min-width:100%}.link-btn{border:0;background:transparent;color:var(--blue);font-weight:700;text-decoration:none;cursor:pointer;padding:0;font-size:11px}.link-btn:hover{text-decoration:underline}.bar-tools{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:5px}
 .history,.section{background:#fff;border:1px solid var(--line);margin:0 10px 8px;border-radius:12px;box-shadow:var(--shadow);overflow:hidden}.history{padding:10px 11px}.history.hidden{display:none}.history h2,.section-head h2{font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:1.15;font-weight:700;letter-spacing:-.015em}.history p,.section-head p{font-size:10.5px;color:var(--muted);line-height:1.35}
 .history-metrics{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;margin-top:8px}.history-card,.transition{min-width:0;padding:8px 9px;border:1px solid var(--line);border-radius:10px;background:#FBFCFE}.history-card .l,.transition .l{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.025em;color:var(--muted);line-height:1.2}.history-card .v,.transition .v{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-top:4px;line-height:1}.transition.good{background:var(--green-soft)}.transition.bad{background:var(--red-soft)}.transition.wait{background:var(--amber-soft)}.transition.blue{background:var(--blue-soft)}.evolution-card{cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease;user-select:none}.evolution-card:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(16,24,40,.08);border-color:#B8C6D8}.evolution-card.active{border-color:var(--blue);box-shadow:0 0 0 2px rgba(10,77,184,.12) inset,0 3px 10px rgba(10,77,184,.08)}.evolution-card:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.evolution-filter-status{display:flex;align-items:center;gap:8px;margin-top:7px;padding-top:7px;border-top:1px solid var(--line);font-size:9.5px;color:var(--muted)}.evolution-filter-status strong{color:var(--ink)}.evolution-filter-status button{border:0;background:transparent;color:var(--blue);font-size:9.5px;font-weight:700;cursor:pointer;padding:0}.evolution-filter-status button:hover{text-decoration:underline}
-.section-head{padding:10px 11px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}.section-head:hover{background:#FBFCFE}.section-head h2{margin:0}.section-head p{margin:3px 0 0}.count{font-size:9px;font-weight:700;background:var(--blue-soft);color:var(--blue-strong);padding:4px 7px;border-radius:999px}.section-body{display:none;padding:0 10px 10px}.section-body.open{display:block}
+.section-head{padding:10px 11px;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer}.section-actions{display:flex;align-items:center;gap:7px;flex-shrink:0}.detail-export-section{overflow:visible;position:relative;z-index:30}.detail-export-section .section-head{overflow:visible}.detail-export-section .export-wrap{z-index:1001}.section-head:hover{background:#FBFCFE}.section-head h2{margin:0}.section-head p{margin:3px 0 0}.count{font-size:9px;font-weight:700;background:var(--blue-soft);color:var(--blue-strong);padding:4px 7px;border-radius:999px}.section-body{display:none;padding:0 10px 10px}.section-body.open{display:block}
 .table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;max-height:480px}table{width:100%;border-collapse:collapse;min-width:720px}th{position:sticky;top:0;background:#F7F9FC;padding:7px 8px;text-align:left;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.025em;color:var(--muted);border-bottom:1px solid var(--line);z-index:1}td{padding:7px 8px;border-bottom:1px solid #EEF1F5;font-size:10.5px;vertical-align:middle}.row-click{cursor:pointer}.row-click:hover{background:#FAFBFD}
 .metric-cell{min-width:115px}.metric-top{display:flex;align-items:center;justify-content:space-between;gap:6px}.metric-value{font-weight:700;color:var(--ink);font-size:10.5px}.metric-note{font-size:8.5px;color:var(--muted)}.mini-progress{height:5px;background:#E9EEF5;border-radius:999px;overflow:hidden;margin-top:4px}.mini-progress-fill{height:100%;border-radius:999px}.mini-progress-fill.coverage{background:var(--blue)}.mini-progress-fill.implementation{background:var(--green)}
 .supervisor-row{cursor:pointer}.supervisor-row:hover{background:#FAFBFD}.supervisor-name{display:flex;align-items:center;gap:7px}.supervisor-chevron{font-size:9px;color:var(--muted);transition:.15s}.supervisor-row.open .supervisor-chevron{transform:rotate(180deg)}.supervisor-detail-row td{padding:0;border-bottom:1px solid var(--line)}.supervisor-detail{background:#F8FAFD;padding:8px 10px 9px}.supervisor-detail-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:6px}.inline-merch-table{width:100%;min-width:650px;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}.inline-merch-table th{position:static;padding:6px 7px;font-size:8px}.inline-merch-table td{padding:6px 7px;font-size:10px}.inline-empty{font-size:10px;color:var(--muted);padding:5px 2px}
@@ -80,7 +93,12 @@ button,select,input{font:inherit}button{color:inherit}
 <body>
 <header class="topbar">
   <div class="top-left"><div class="brand">OPS</div><div><div class="eyebrow">BEIERSDORF · FIELD SALES</div><div class="title">Secondary Shelf <span class="badge"><span class="live-dot"></span>LIVE</span></div></div></div>
-  <div class="top-right"><div class="last-updated" id="lastUpdated">Sin actualizar</div><button class="refresh" id="refreshBtn">↻ Actualizar datos</button></div>
+  <div class="top-right">
+    <div class="last-updated" id="lastUpdated">Sin actualizar</div>
+    <div class="top-actions">
+      <button class="refresh" id="refreshBtn">↻ Actualizar datos</button>
+    </div>
+  </div>
 </header>
 <div class="modebar">
   <div class="mode-tabs"><button class="mode-btn active" id="modeActual">Seguimiento actual</button><button class="mode-btn" id="modeHistory">Histórico</button></div>
@@ -161,7 +179,7 @@ button,select,input{font:inherit}button{color:inherit}
   </section>
   <section class="section" id="supervisorSection"><div class="section-head" data-toggle="supervisorBody"><div><h2>Seguimiento por supervisor</h2><p>Expande un supervisor para revisar sus mercaderistas sin cambiar los filtros del tablero.</p></div><span class="count" id="supervisorCount">0</span></div><div class="section-body" id="supervisorBody"><div class="table-wrap"><table><thead><tr><th>Supervisor</th><th>Locales</th><th>Planificadas</th><th>Info levantada</th><th>Implementación</th><th>Sin información</th></tr></thead><tbody id="supervisorTable"></tbody></table><div class="empty" id="supervisorEmpty" style="display:none">Sin datos.</div></div></div></section>
   <section class="section" id="merchSection" style="display:none"><div class="section-head" data-toggle="merchBody"><div><h2>Seguimiento por mercaderista</h2><p id="merchSub">Selecciona un supervisor.</p></div><span class="count" id="merchCount">0</span></div><div class="section-body" id="merchBody"><div class="table-wrap"><table><thead><tr><th>Mercaderista</th><th>Locales</th><th>Planificadas</th><th>Info levantada</th><th>Implementación</th><th>Sin información</th></tr></thead><tbody id="merchTable"></tbody></table><div class="empty" id="merchEmpty" style="display:none">Sin datos.</div></div></div></section>
-  <section class="section"><div class="section-head" data-toggle="detailBody"><div><h2>Ver detalle de exhibiciones</h2><p>Detalle completo de la vista filtrada.</p></div><span class="count" id="detailCount">0</span></div><div class="section-body" id="detailBody"><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Categoría</th><th>Estado</th><th id="f1Header" style="display:none">Estado F1</th><th>Mueble en sala</th><th>Actualización</th><th>Razón / comentario</th><th>Mercaderista</th><th>Supervisor</th><th>Foto</th></tr></thead><tbody id="detailTable"></tbody></table><div class="empty" id="detailEmpty" style="display:none">No hay exhibiciones con estos filtros.</div></div></div></section>
+  <section class="section detail-export-section"><div class="section-head" data-toggle="detailBody"><div><h2>Ver detalle de exhibiciones</h2><p>Detalle completo de la vista filtrada.</p></div><div class="section-actions" onclick="event.stopPropagation()"><div class="export-wrap"><button class="export-btn" id="exportBtn" type="button">⇩ Exportar Excel</button><div class="export-menu" id="exportMenu"><button class="export-option" id="exportSummaryBtn" type="button"><strong>Resumen de la vista</strong><span>KPIs, filtros, razones, clientes y supervisores.</span></button><div class="export-sep"></div><button class="export-option" id="exportDetailBtn" type="button"><strong>Detalle filtrado</strong><span>Resumen en una pestaña y detalle completo en otra.</span></button></div></div><span class="count" id="detailCount">0</span></div></div><div class="section-body" id="detailBody"><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Código</th><th>Exhibición</th><th>Categoría</th><th>Estado</th><th id="f1Header" style="display:none">Estado F1</th><th>Mueble en sala</th><th>Actualización</th><th>Razón / comentario</th><th>Mercaderista</th><th>Supervisor</th><th>Foto</th></tr></thead><tbody id="detailTable"></tbody></table><div class="empty" id="detailEmpty" style="display:none">No hay exhibiciones con estos filtros.</div></div></div></section>
   <div class="footer">SECONDARY SHELF · BEIERSDORF FIELD SALES</div>
 </main>
 <div class="lightbox" id="lightbox"><span class="close" id="closeLightbox">×</span><img id="lightboxImg" alt="Foto"></div>
@@ -215,7 +233,7 @@ function sortRows(rows){return rows.sort((a,b)=>a.cliente.localeCompare(b.client
 function gvizValue(cell){if(!cell)return'';if(cell.f!==undefined&&cell.f!==null&&cell.f!=='')return cell.f;const v=cell.v;if(v===null||v===undefined)return'';if(v instanceof Date)return formatDate(v);if(typeof v==='string'){const m=v.match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/);if(m){const d=new Date(+m[1],+m[2],+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0));return formatDate(d)}}return String(v)}
 function tableToObjects(table){const headers=(table?.cols||[]).map((c,i)=>clean(c.label)||clean(c.id)||`Col${i+1}`);return (table?.rows||[]).map(r=>{const o={};headers.forEach((h,i)=>o[h]=gvizValue(r.c?.[i]));return o}).filter(o=>Object.values(o).some(v=>clean(v)!==''))}
 function jsonpSheet(key,cfg,attempt=0){return new Promise((resolve,reject)=>{const cb=`__bdf_${key}_${Date.now()}_${Math.random().toString(36).slice(2)}`;let settled=false;const script=document.createElement('script');const cleanup=()=>{clearTimeout(timer);try{delete window[cb]}catch(_){window[cb]=undefined}script.remove()};window[cb]=resp=>{if(settled)return;settled=true;cleanup();if(!resp||resp.status!=='ok'){reject(new Error(`${cfg.name}: respuesta inválida de Google Sheets`));return}resolve(tableToObjects(resp.table))};const q=new URLSearchParams({sheet:cfg.name,range:cfg.range,headers:'1',tqx:`out:json;responseHandler:${cb}`,_:String(Date.now())});script.src=`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?${q.toString()}`;script.async=true;script.onerror=()=>{if(settled)return;settled=true;cleanup();if(attempt<1){setTimeout(()=>jsonpSheet(key,cfg,attempt+1).then(resolve,reject),350)}else reject(new Error(`${cfg.name}: no fue posible cargar la pestaña`))};const timer=setTimeout(()=>{if(settled)return;settled=true;cleanup();if(attempt<1){jsonpSheet(key,cfg,attempt+1).then(resolve,reject)}else reject(new Error(`${cfg.name}: tiempo de espera agotado`))},18000);document.head.appendChild(script)})}
-async function loadAll(){const status=document.getElementById('statusMsg'),app=document.getElementById('app'),btn=document.getElementById('refreshBtn');btn.disabled=true;status.classList.remove('error');status.innerHTML='<strong>Cargando Google Sheets</strong>Planificación, fases y estado actual…';status.style.display='block';app.style.display='none';const entries=Object.entries(SHEETS);const results=await Promise.allSettled(entries.map(([k,c])=>jsonpSheet(k,c)));const errors=[];results.forEach((r,i)=>{const [key,cfg]=entries[i];if(r.status==='fulfilled')DB[key]=r.value;else{DB[key]=[];if(cfg.required)errors.push(r.reason?.message||cfg.name)}});if(errors.length){status.classList.add('error');status.innerHTML=`<strong>No se pudo leer el maestro</strong>${esc(errors.join(' · '))}<div class="status-actions"><button onclick="loadAll()">Reintentar</button><a href="${SHEET_LINK}" target="_blank" rel="noopener">Abrir Google Sheets ↗</a></div><div style="margin-top:10px;font-size:11px;color:var(--muted)">El archivo debe estar compartido al menos como “Cualquier persona con el enlace · Lector”.</div>`;btn.disabled=false;return}try{preparePeriods();rebuildUniverse();buildPeriodControls();status.style.display='none';app.style.display='block';document.getElementById('lastUpdated').textContent='Actualizado · '+new Intl.DateTimeFormat('es-CL',{dateStyle:'short',timeStyle:'short'}).format(new Date())}catch(e){console.error(e);status.classList.add('error');status.innerHTML=`<strong>Error procesando datos</strong>${esc(e.message||e)}`;return}finally{btn.disabled=false}}
+async function loadAll(){const status=document.getElementById('statusMsg'),app=document.getElementById('app'),btn=document.getElementById('refreshBtn');btn.disabled=true;status.classList.remove('error');status.innerHTML='<strong>Cargando información</strong>Planificación, fases y estado actual…';status.style.display='block';app.style.display='none';const entries=Object.entries(SHEETS);const results=await Promise.allSettled(entries.map(([k,c])=>jsonpSheet(k,c)));const errors=[];results.forEach((r,i)=>{const [key,cfg]=entries[i];if(r.status==='fulfilled')DB[key]=r.value;else{DB[key]=[];if(cfg.required)errors.push(r.reason?.message||cfg.name)}});if(errors.length){status.classList.add('error');status.innerHTML=`<strong>No se pudo leer el maestro</strong>${esc(errors.join(' · '))}<div class="status-actions"><button onclick="loadAll()">Reintentar</button><a href="${SHEET_LINK}" target="_blank" rel="noopener">Abrir Google Sheets ↗</a></div><div style="margin-top:10px;font-size:11px;color:var(--muted)">El archivo debe estar compartido al menos como “Cualquier persona con el enlace · Lector”.</div>`;btn.disabled=false;return}try{preparePeriods();rebuildUniverse();buildPeriodControls();status.style.display='none';app.style.display='block';document.getElementById('lastUpdated').textContent='Actualizado · '+new Intl.DateTimeFormat('es-CL',{dateStyle:'short',timeStyle:'short'}).format(new Date())}catch(e){console.error(e);status.classList.add('error');status.innerHTML=`<strong>Error procesando datos</strong>${esc(e.message||e)}`;return}finally{btn.disabled=false}}
 
 function preparePeriods(){const months=new Set();DB.plan.forEach(r=>{const m=normalizeMonth(getField(r,['Mes']));if(m)months.add(m)});DB.control.forEach(r=>{const m=normalizeMonth(getField(r,['Mes']));if(m)months.add(m)});MONTHS=[...months].sort().reverse();CURRENT_MONTH=MONTHS[0]||monthFromDate(new Date());if(!state.period||!MONTHS.includes(state.period))state.period=CURRENT_MONTH}
 function plansForMonth(month){return DB.plan.map(r=>{const mes=normalizeMonth(getField(r,['Mes']));if(mes!==month)return null;const codigo=code(getField(r,['Código Local','Codigo Local'])),exhibicion=clean(getField(r,['Exhibición','Exhibicion']));return{mes,llave:clean(getField(r,['Llave']))||makeKey(codigo,exhibicion),cliente:canonicalClient(getField(r,['Retailer'])),codigo,nombreLocal:clean(getField(r,['Nombre Local'])),supervisor:clean(getField(r,['Supervisor'])),mercaderista:clean(getField(r,['Mercaderista'])),tipo:clean(getField(r,['Tipo'])),categoria:canonicalCategory(getField(r,['Categoría','Categoria'])),exhibicion,nombreFormulario:clean(getField(r,['Nombre Formulario'])),aplicacionFase:phaseApplication(getField(r,['Aplicación fase','Aplicacion fase']))}}).filter(Boolean)}
@@ -469,8 +487,394 @@ function comparisonRows(){const controls=controlsForMonth(state.period),clients=
 function renderHistory(){const panel=document.getElementById('historyPanel'),rows=comparisonRows();if(!rows.length){panel.classList.add('hidden');return}panel.classList.remove('hidden');document.getElementById('historySub').textContent=state.mode==='actual'?'F1 congelada versus estado actual de F2.':'Snapshots oficiales del periodo.';const a1=rows.filter(r=>r.a!=='Sin información').length,a2=rows.filter(r=>r.b!=='Sin información').length,i1=rows.filter(r=>r.a==='Implementado').length,i2=rows.filter(r=>r.b==='Implementado').length;document.getElementById('hTarget').textContent=rows.length;document.getElementById('hCov1').textContent=(rows.length?Math.round(a1/rows.length*100):0)+'%';document.getElementById('hImp1').textContent=(a1?Math.round(i1/a1*100):0)+'%';document.getElementById('hCov2').textContent=(rows.length?Math.round(a2/rows.length*100):0)+'%';document.getElementById('hImp2').textContent=(a2?Math.round(i2/a2*100):0)+'%';document.getElementById('tMaintain').textContent=rows.filter(r=>r.evo==='Mantiene').length;document.getElementById('tImprove').textContent=rows.filter(r=>r.evo==='Mejora').length;document.getElementById('tWorse').textContent=rows.filter(r=>r.evo==='Empeora').length;document.getElementById('tStill').textContent=rows.filter(r=>r.evo==='Sigue no implementado').length;document.getElementById('tPending').textContent=rows.filter(r=>r.evo==='Pendiente').length;document.querySelectorAll('.evolution-card').forEach(card=>card.classList.toggle('active',card.dataset.evo===state.evolution));const status=document.getElementById('evolutionFilterStatus'),text=document.getElementById('evolutionFilterText');if(state.evolution==='Todos'){status.style.display='none'}else{status.style.display='flex';const labels={Mantiene:'Mantiene implementado',Mejora:'Mejora',Empeora:'Empeora','Sigue no implementado':'Sigue no implementado',Pendiente:'Pendiente F2'};text.innerHTML=`Filtro activo: <strong>${labels[state.evolution]||state.evolution}</strong>`}}
 function openLightbox(url){const img=document.getElementById('lightboxImg');img.src=driveThumb(url,1200)||url;document.getElementById('lightbox').classList.add('open')}
 
+
+function exportTimestamp(){
+  const d=new Date();
+  return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function exportSafeName(v){
+  return clean(v).replace(/[\\/:*?"<>|]+/g,'_').replace(/\s+/g,'_').slice(0,80);
+}
+function currentFilterPairs(){
+  const evoLabels={Mantiene:'Mantiene implementado',Mejora:'Mejora',Empeora:'Empeora','Sigue no implementado':'Sigue no implementado',Pendiente:'Pendiente F2'};
+  const clients=!state.clients.length?'Todos los clientes':state.clients.length===1&&state.clients[0]==='__NO_LIDER__'?'Todos - Líder':state.clients.join(', ');
+  return [
+    ['Modo',state.mode==='actual'?'Seguimiento actual':'Histórico'],
+    ['Periodo',monthLabel(state.period)],
+    ['Fase',state.phase==='F1'?'Fase 1':'Fase 2'],
+    ['Cliente',clients],
+    ['Estado',state.statuses.length?state.statuses.join(', '):'Todos'],
+    ['Tipo',state.displayType],
+    ['Categoría',state.categories.length?state.categories.join(', '):'Todos'],
+    ['Mueble',state.furniture==='Todos'?'Todos':state.furniture==='Sí'?'En sala':'No está en sala'],
+    ['Supervisor',state.supervisor==='Todos'?'Todos los supervisores':state.supervisor],
+    ['Mercaderista',state.merch==='Todos'?'Todos los mercaderistas':state.merch],
+    ['Razón no implementación',state.reason],
+    ['Evolución F1 → F2',state.evolution==='Todos'?'Todas':(evoLabels[state.evolution]||state.evolution)],
+    ['Búsqueda',state.search||'—'],
+    ['Local seleccionado',state.drill||'—']
+  ];
+}
+function exportMetrics(){
+  const coverage=metricRows(),ops=operational(coverage);
+  const coverageAnswered=coverage.filter(r=>r.estado!=='Sin información');
+  const answered=ops.filter(r=>r.estado!=='Sin información');
+  const impl=answered.filter(r=>r.estado==='Implementado');
+  const notImp=answered.filter(r=>r.estado==='No implementado');
+  const presence=notImp.filter(r=>r.presenciaMueble==='Sí'||r.presenciaMueble==='No');
+  const inRoom=presence.filter(r=>r.presenciaMueble==='Sí');
+  const types=new Set(coverage.map(r=>norm(r.exhibicion||r.nombreFormulario)).filter(Boolean));
+  const stockRows=stockAlertRows().filter(r=>r.estado==='No implementado'&&norm(r.razon)==='sin stock');
+  const stockStores=new Set(stockRows.map(r=>r.codigo).filter(Boolean));
+  return {
+    planned:ops.length,
+    coveragePct:coverage.length?Math.round(coverageAnswered.length/coverage.length*100):0,
+    coverageAnswered:coverageAnswered.length,
+    coverageTotal:coverage.length,
+    implementationPct:answered.length?Math.round(impl.length/answered.length*100):0,
+    implemented:impl.length,
+    answered:answered.length,
+    notImplemented:notImp.length,
+    furniturePct:presence.length?Math.round(inRoom.length/presence.length*100):0,
+    furnitureIn:inRoom.length,
+    furnitureBase:presence.length,
+    furnitureTypes:types.size,
+    stores:new Set(ops.map(r=>r.codigo).filter(Boolean)).size,
+    stockAlert:stockStores.size
+  };
+}
+function styleExcelHeader(row,color='0A4DB8'){
+  row.eachCell(cell=>{
+    cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:color}};
+    cell.font={name:'Arial',size:10,bold:true,color:{argb:'FFFFFF'}};
+    cell.alignment={vertical:'middle',horizontal:'center',wrapText:true};
+    cell.border={bottom:{style:'thin',color:{argb:'D6DCE6'}}};
+  });
+  row.height=24;
+}
+function styleExcelTitle(ws,title,subtitle=''){
+  ws.mergeCells('A1:H2');
+  const c=ws.getCell('A1');
+  c.value=title;
+  c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'0A4DB8'}};
+  c.font={name:'Arial',size:20,bold:true,color:{argb:'FFFFFF'}};
+  c.alignment={vertical:'middle',horizontal:'left'};
+  if(subtitle){
+    ws.mergeCells('A3:H3');
+    const s=ws.getCell('A3');
+    s.value=subtitle;
+    s.font={name:'Arial',size:10,color:{argb:'667085'}};
+    s.alignment={vertical:'middle',horizontal:'left'};
+  }
+}
+function applyExcelTableBorders(ws,startRow,endRow,startCol,endCol){
+  for(let r=startRow;r<=endRow;r++){
+    for(let c=startCol;c<=endCol;c++){
+      const cell=ws.getCell(r,c);
+      cell.border={
+        top:{style:'hair',color:{argb:'E2E7EF'}},
+        left:{style:'hair',color:{argb:'E2E7EF'}},
+        bottom:{style:'hair',color:{argb:'E2E7EF'}},
+        right:{style:'hair',color:{argb:'E2E7EF'}}
+      };
+    }
+  }
+}
+function statusCellColor(cell,value){
+  const n=norm(value);
+  let fill='EEF2F7',font='344054';
+  if(n==='implementado'){fill='EAF7F0';font='168A4A'}
+  else if(n==='no implementado'){fill='FCEDEA';font='C63A2C'}
+  else if(n==='sin informacion'){fill='FFF5DD';font='9A6700'}
+  cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:fill}};
+  cell.font={name:'Arial',size:9,bold:true,color:{argb:font}};
+  cell.alignment={horizontal:'center',vertical:'middle',wrapText:true};
+}
+function percentCellColor(cell,value){
+  const v=Number(value)||0;
+  const fill=v>=80?'EAF7F0':v>=60?'FFF5DD':'FCEDEA';
+  const font=v>=80?'168A4A':v>=60?'9A6700':'C63A2C';
+  cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:fill}};
+  cell.font={name:'Arial',size:9,bold:true,color:{argb:font}};
+  cell.alignment={horizontal:'center'};
+}
+async function downloadExcelWorkbook(wb,filename){
+  const buffer=await wb.xlsx.writeBuffer();
+  const blob=new Blob([buffer],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function ensureExcelJs(){
+  if(typeof ExcelJS==='undefined'){
+    alert('No se pudo cargar el generador de Excel. Revisa tu conexión y vuelve a intentar.');
+    return false;
+  }
+  return true;
+}
+function addFilterBlock(ws,startRow){
+  const pairs=currentFilterPairs();
+  ws.getCell(startRow,1).value='Filtros aplicados';
+  ws.getCell(startRow,1).font={name:'Arial',size:12,bold:true,color:{argb:'101A2E'}};
+  ws.mergeCells(startRow,1,startRow,4);
+  const headerRow=ws.getRow(startRow+1);
+  headerRow.values=['Filtro','Valor'];
+  styleExcelHeader(headerRow,'101A2E');
+  pairs.forEach((p,i)=>{
+    const r=startRow+2+i;
+    ws.getCell(r,1).value=p[0];
+    ws.getCell(r,2).value=p[1];
+    ws.getCell(r,1).font={name:'Arial',size:9,bold:true,color:{argb:'475467'}};
+    ws.getCell(r,2).font={name:'Arial',size:9,color:{argb:'101A2E'}};
+    ws.getCell(r,2).alignment={wrapText:true,vertical:'top'};
+    if(i%2===1){
+      ws.getCell(r,1).fill=ws.getCell(r,2).fill={type:'pattern',pattern:'solid',fgColor:{argb:'F8FAFC'}};
+    }
+  });
+  applyExcelTableBorders(ws,startRow+1,startRow+1+pairs.length,1,2);
+  return startRow+2+pairs.length;
+}
+function addKpiBlock(ws,startRow){
+  const m=exportMetrics();
+  const kpis=[
+    ['Planificadas',m.planned,'101A2E'],
+    ['Información levantada',m.coveragePct+'%','0A4DB8'],
+    ['Implementación',m.implementationPct+'%','168A4A'],
+    ['Mueble en sala',m.furniturePct+'%','168A4A'],
+    ['Tipos de mueble',m.furnitureTypes,'0A4DB8'],
+    ['Locales',m.stores,'101A2E'],
+    ['Stores Stock Alert',m.stockAlert,'C63A2C']
+  ];
+  ws.getCell(startRow,1).value='Indicadores';
+  ws.getCell(startRow,1).font={name:'Arial',size:12,bold:true,color:{argb:'101A2E'}};
+  ws.mergeCells(startRow,1,startRow,8);
+  const row1=startRow+1,row2=startRow+4;
+  kpis.forEach((k,i)=>{
+    const baseCol=(i%4)*2+1;
+    const baseRow=i<4?row1:row2;
+    ws.mergeCells(baseRow,baseCol,baseRow,baseCol+1);
+    ws.mergeCells(baseRow+1,baseCol,baseRow+2,baseCol+1);
+    const label=ws.getCell(baseRow,baseCol);
+    const value=ws.getCell(baseRow+1,baseCol);
+    label.value=k[0];
+    label.fill={type:'pattern',pattern:'solid',fgColor:{argb:'EEF2F7'}};
+    label.font={name:'Arial',size:9,bold:true,color:{argb:'667085'}};
+    label.alignment={horizontal:'center',vertical:'middle'};
+    value.value=k[1];
+    value.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFFFFF'}};
+    value.font={name:'Arial',size:18,bold:true,color:{argb:k[2]}};
+    value.alignment={horizontal:'center',vertical:'middle'};
+    for(let rr=baseRow;rr<=baseRow+2;rr++)for(let cc=baseCol;cc<=baseCol+1;cc++){
+      ws.getCell(rr,cc).border={
+        top:{style:'thin',color:{argb:'D6DCE6'}},
+        left:{style:'thin',color:{argb:'D6DCE6'}},
+        bottom:{style:'thin',color:{argb:'D6DCE6'}},
+        right:{style:'thin',color:{argb:'D6DCE6'}}
+      };
+    }
+  });
+  return startRow+7;
+}
+function groupSummaryRows(rows,keyField){
+  const groups={};
+  rows.forEach(r=>{
+    const key=clean(r[keyField])||'Sin información';
+    (groups[key]||(groups[key]=[])).push(r);
+  });
+  return Object.keys(groups).sort((a,b)=>a.localeCompare(b,'es')).map(name=>{
+    const p=perfRow(groups[name]);
+    return [name,p.stores,p.planned,p.cov,p.imp,p.noInfo];
+  });
+}
+function addSummaryTable(ws,startRow,title,headers,rows,widths=[]){
+  ws.getCell(startRow,1).value=title;
+  ws.getCell(startRow,1).font={name:'Arial',size:12,bold:true,color:{argb:'101A2E'}};
+  ws.mergeCells(startRow,1,startRow,Math.max(2,headers.length));
+  const hr=ws.getRow(startRow+1);
+  hr.values=headers;
+  styleExcelHeader(hr,'0A4DB8');
+  rows.forEach((vals,i)=>{
+    const r=startRow+2+i;
+    vals.forEach((v,j)=>ws.getCell(r,j+1).value=v);
+    if(i%2===1)for(let c=1;c<=headers.length;c++)ws.getCell(r,c).fill={type:'pattern',pattern:'solid',fgColor:{argb:'F8FAFC'}};
+    for(let c=1;c<=headers.length;c++){
+      ws.getCell(r,c).font={name:'Arial',size:9,color:{argb:'101A2E'}};
+      ws.getCell(r,c).alignment={vertical:'middle',wrapText:true};
+    }
+  });
+  if(rows.length)applyExcelTableBorders(ws,startRow+1,startRow+1+rows.length,1,headers.length);
+  widths.forEach((w,i)=>ws.getColumn(i+1).width=w);
+  return startRow+2+rows.length;
+}
+async function exportSummaryExcel(){
+  if(!ensureExcelJs())return;
+  const btn=document.getElementById('exportSummaryBtn');
+  const old=btn.innerHTML;btn.disabled=true;btn.innerHTML='<strong>Generando…</strong><span>Preparando Excel</span>';
+  try{
+    const wb=new ExcelJS.Workbook();
+    wb.creator='Beiersdorf · Field Sales';
+    wb.created=new Date();
+    wb.properties.date1904=false;
+
+    const ws=wb.addWorksheet('Resumen',{views:[{showGridLines:false}]});
+    ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0};
+    styleExcelTitle(ws,'Secondary Shelf · Resumen',`Vista exportada · ${new Intl.DateTimeFormat('es-CL',{dateStyle:'medium',timeStyle:'short'}).format(new Date())}`);
+    ws.columns=[{width:24},{width:30},{width:16},{width:16},{width:16},{width:16},{width:16},{width:16}];
+
+    let row=5;
+    row=addFilterBlock(ws,row)+2;
+    row=addKpiBlock(ws,row)+2;
+
+    const currentOps=operational(metricRows());
+    const reasonCounts={};
+    currentOps.filter(r=>r.estado==='No implementado').forEach(r=>{
+      const x=clean(r.razon)||'Sin razón informada';
+      reasonCounts[x]=(reasonCounts[x]||0)+1;
+    });
+    const reasons=Object.keys(reasonCounts).sort((a,b)=>reasonCounts[b]-reasonCounts[a]).map(x=>[x,reasonCounts[x]]);
+    row=addSummaryTable(ws,row,'Razones de no implementación',['Razón','Cantidad'],reasons,[34,14])+2;
+
+    const clients=groupSummaryRows(currentOps,'cliente');
+    row=addSummaryTable(ws,row,'Resumen por cliente',['Cliente','Locales','Planificadas','Info levantada %','Implementación %','Sin información'],clients,[20,11,13,18,18,15])+2;
+
+    const supervisors=groupSummaryRows(supervisorRows(),'supervisor');
+    addSummaryTable(ws,row,'Resumen por supervisor',['Supervisor','Locales','Planificadas','Info levantada %','Implementación %','Sin información'],supervisors,[26,11,13,18,18,15]);
+
+    // Percentage coloring
+    ws.eachRow((excelRow,rowNumber)=>{
+      if(rowNumber<1)return;
+      excelRow.eachCell(cell=>{
+        if(typeof cell.value==='number' && (cell.address.startsWith('D')||cell.address.startsWith('E'))){
+          const rowValues=excelRow.values||[];
+          if(String(rowValues[1]||'').toLowerCase().includes('cliente')||String(rowValues[1]||'').toLowerCase().includes('supervisor'))return;
+        }
+      });
+    });
+    ws.freezePanes={xSplit:0,ySplit:4};
+
+    await downloadExcelWorkbook(wb,`SecondaryShelf_Resumen_${exportTimestamp()}.xlsx`);
+  }catch(e){
+    console.error(e);alert('No fue posible generar el Excel de resumen: '+(e.message||e));
+  }finally{
+    btn.disabled=false;btn.innerHTML=old;document.getElementById('exportMenu').classList.remove('open');
+  }
+}
+async function exportDetailExcel(){
+  if(!ensureExcelJs())return;
+  const btn=document.getElementById('exportDetailBtn');
+  const old=btn.innerHTML;btn.disabled=true;btn.innerHTML='<strong>Generando…</strong><span>Preparando detalle</span>';
+  try{
+    const rows=filteredRows();
+    const wb=new ExcelJS.Workbook();
+    wb.creator='Beiersdorf · Field Sales';
+    wb.created=new Date();
+
+    // Hoja 1: resumen/contexto de la exportación
+    const summary=wb.addWorksheet('Resumen',{views:[{showGridLines:false}]});
+    summary.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0};
+    styleExcelTitle(summary,'Secondary Shelf · Exportación de detalle',`${rows.length} exhibiciones · ${monthLabel(state.period)} · ${state.phase==='F1'?'Fase 1':'Fase 2'}`);
+    summary.columns=[{width:24},{width:34},{width:16},{width:16},{width:16},{width:16},{width:16},{width:16}];
+
+    let sr=5;
+    sr=addFilterBlock(summary,sr)+2;
+    sr=addKpiBlock(summary,sr)+2;
+
+    const currentOps=operational(metricRows());
+    const reasonCounts={};
+    currentOps.filter(r=>r.estado==='No implementado').forEach(r=>{
+      const x=clean(r.razon)||'Sin razón informada';
+      reasonCounts[x]=(reasonCounts[x]||0)+1;
+    });
+    const reasons=Object.keys(reasonCounts)
+      .sort((a,b)=>reasonCounts[b]-reasonCounts[a])
+      .map(x=>[x,reasonCounts[x]]);
+    sr=addSummaryTable(summary,sr,'Razones de no implementación',['Razón','Cantidad'],reasons,[34,14])+2;
+
+    const clients=groupSummaryRows(currentOps,'cliente');
+    addSummaryTable(summary,sr,'Resumen por cliente',['Cliente','Locales','Planificadas','Info levantada %','Implementación %','Sin información'],clients,[20,11,13,18,18,15]);
+
+    // Hoja 2: detalle puro, desde la primera fila
+    const ws=wb.addWorksheet('Detalle',{views:[{showGridLines:false}]});
+    ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0};
+
+    const headers=[
+      'Fecha','Cliente','Código local','Nombre local','Exhibición','Nombre formulario',
+      'Tipo','Categoría','Estado','Estado F1','Presencia mueble','Razón','Comentario',
+      'Mercaderista','Supervisor','Fuente / actualización','Planificada / Extra',
+      'Evolución F1 → F2','Foto URL'
+    ];
+
+    const headerRow=ws.getRow(1);
+    headerRow.values=headers;
+    styleExcelHeader(headerRow,'0A4DB8');
+
+    rows.forEach((x,i)=>{
+      const row=ws.getRow(2+i);
+      const evolution=EVOLUTION_MAP.get(x.llave)||'';
+      row.values=[
+        x.fecha||'',
+        x.cliente||'',
+        x.codigo||'',
+        x.nombreLocal||'',
+        x.exhibicion||'',
+        x.nombreFormulario||'',
+        x.tipo||'',
+        x.categoria||'',
+        x.estado||'',
+        state.phase==='F2'?(x.estadoFase1||''):'',
+        x.presenciaMueble||'',
+        x.razon||'',
+        x.comentario||'',
+        x.mercaderista||'',
+        x.supervisor||'',
+        x.actualizacion||'',
+        x.planificada?'Planificada':'Extra',
+        evolution,
+        x.foto||''
+      ];
+      row.height=21;
+      row.eachCell((cell,col)=>{
+        cell.font={name:'Arial',size:9,color:{argb:'101A2E'}};
+        cell.alignment={vertical:'middle',wrapText:true};
+        cell.border={bottom:{style:'hair',color:{argb:'E2E7EF'}}};
+        if(i%2===1)cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'F8FAFC'}};
+      });
+      statusCellColor(row.getCell(9),x.estado||'');
+      if(state.phase==='F2'&&x.estadoFase1)statusCellColor(row.getCell(10),x.estadoFase1||'');
+      if(x.razon&&norm(x.razon)==='sin stock'){
+        row.getCell(12).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF5DD'}};
+        row.getCell(12).font={name:'Arial',size:9,bold:true,color:{argb:'9A6700'}};
+      }
+    });
+
+    ws.autoFilter={from:{row:1,column:1},to:{row:Math.max(1,rows.length+1),column:headers.length}};
+    ws.views=[{state:'frozen',ySplit:1,showGridLines:false}];
+
+    const widths=[15,16,13,22,30,28,14,18,18,18,16,28,36,24,24,24,16,22,42];
+    widths.forEach((w,i)=>ws.getColumn(i+1).width=w);
+
+    // Orden explícito: Resumen primero, Detalle segundo.
+    await downloadExcelWorkbook(wb,`SecondaryShelf_Detalle_${exportTimestamp()}.xlsx`);
+  }catch(e){
+    console.error(e);alert('No fue posible generar el Excel de detalle: '+(e.message||e));
+  }finally{
+    btn.disabled=false;btn.innerHTML=old;document.getElementById('exportMenu').classList.remove('open');
+  }
+}
+
 function bind(){
   document.getElementById('refreshBtn').onclick=loadAll;
+  const exportBtn=document.getElementById('exportBtn');
+  const exportMenu=document.getElementById('exportMenu');
+  exportBtn.onclick=e=>{e.stopPropagation();exportMenu.classList.toggle('open')};
+  exportMenu.onclick=e=>e.stopPropagation();
+  document.getElementById('exportSummaryBtn').onclick=exportSummaryExcel;
+  document.getElementById('exportDetailBtn').onclick=exportDetailExcel;
   document.getElementById('modeActual').onclick=()=>{state.mode='actual';state.period=CURRENT_MONTH;rebuildUniverse()};
   document.getElementById('modeHistory').onclick=()=>{state.mode='history';rebuildUniverse()};
   document.getElementById('periodSelect').onchange=e=>{state.period=e.target.value;rebuildUniverse()};
@@ -502,6 +906,7 @@ function bind(){
   document.addEventListener('click',()=>{
     clientPanel.classList.remove('open');
     clientBtn.classList.remove('open');
+    exportMenu.classList.remove('open');
   });
 }
 
